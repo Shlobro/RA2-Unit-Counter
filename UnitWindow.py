@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QFrame, QWidget, QVBoxLayout, QHBoxLayout, QLayout
 
 from CounterWidget import (CounterWidgetImagesAndNumber, CounterWidgetNumberOnly, CounterWidgetImageOnly)
-from common import name_to_path, country_name_to_faction
+from constants import name_to_path, country_name_to_faction  # Updated import from constants
 
 class UnitWindowBase(QMainWindow):
     def __init__(self, player, hud_pos, selected_units_dict, spacing=0):
@@ -25,7 +25,6 @@ class UnitWindowBase(QMainWindow):
         self.counters = {}
         self.spacing = spacing  # Store the spacing
 
-
         # Set window geometry and flags
         pos = self.get_default_position()
         self.setGeometry(pos['x'], pos['y'], 120, 120)
@@ -40,12 +39,10 @@ class UnitWindowBase(QMainWindow):
         self.load_selected_units_and_create_counters()
         self.show()
 
-
     def get_default_size(self):
         raise NotImplementedError("Subclasses should implement this method.")
 
     def set_layout(self, layout_type, spacing):
-        """Set the layout based on the provided layout type and spacing."""
         self.layout = QVBoxLayout() if layout_type == 'Vertical' else QHBoxLayout()
         self.layout.setSpacing(spacing)
         self.layout.setContentsMargins(0, 0, 0, 0)
@@ -62,11 +59,9 @@ class UnitWindowBase(QMainWindow):
             new_layout = QVBoxLayout() if layout_type == 'Vertical' else QHBoxLayout()
             new_layout.setSpacing(spacing if spacing is not None else self.layout.spacing())
             new_layout.setContentsMargins(0, 0, 0, 0)
-
             for counter_widget, _ in self.counters.values():
                 self.layout.removeWidget(counter_widget)
                 new_layout.addWidget(counter_widget)
-
             QWidget().setLayout(self.layout)
             self.unit_frame.setLayout(new_layout)
             self.layout = new_layout
@@ -93,9 +88,8 @@ class UnitWindowBase(QMainWindow):
     def update_selected_widgets(self, faction, unit_type, unit_name, state):
         unit_info = self.selected_units.get(faction, {}).get(unit_type, {}).get(unit_name, {})
         is_selected = unit_info.get('selected', False)
-        position = unit_info.get('position', -1) # -1 means at the end
+        position = unit_info.get('position', -1)  # -1 means at the end
         if is_selected:
-            # Ensure the counter widget exists
             if unit_name not in self.counters:
                 unit_type = unit_info.get('unit_type')
                 counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
@@ -106,7 +100,6 @@ class UnitWindowBase(QMainWindow):
                     self.layout.insertWidget(position, counter_widget)
                 self.counters[unit_name] = (counter_widget, unit_type)
         else:
-            # Remove the counter widget if it exists
             counter_widget, _ = self.counters.pop(unit_name, (None, None))
             if counter_widget:
                 self.layout.removeWidget(counter_widget)
@@ -115,9 +108,8 @@ class UnitWindowBase(QMainWindow):
     def update_position_widgets(self, faction, unit_type, unit_name):
         unit_info = self.selected_units.get(faction, {}).get(unit_type, {}).get(unit_name, {})
         is_selected = unit_info.get('selected', False)
-        position = unit_info.get('position', -1)  # -1 means at the end
+        position = unit_info.get('position', -1)
         if is_selected:
-            # Remove the existing widget
             counter_widget, _ = self.counters.pop(unit_name, (None, None))
             if counter_widget:
                 self.layout.removeWidget(counter_widget)
@@ -139,7 +131,6 @@ class UnitWindowBase(QMainWindow):
         self.updateGeometry()
 
     def update_labels(self):
-        # Get the player's faction
         player_faction = self.player.faction
         for unit_name, (counter_widget, unit_type) in self.counters.items():
             unit_count = self.get_unit_count(unit_type, unit_name)
@@ -150,7 +141,6 @@ class UnitWindowBase(QMainWindow):
             is_selected = unit_info.get('selected', False)
             if (0 < unit_count < 500):
                 counter_widget.show()
-            # TODO do i really need another condition just for the blitz oil??
             elif is_locked and is_selected and (unit_faction == player_faction or unit_name == "Blitz oil (psychic sensor)"):
                 counter_widget.show()
             else:
@@ -162,7 +152,6 @@ class UnitWindowBase(QMainWindow):
         is_selected = unit_info.get('selected', False)
         is_locked = unit_info.get('locked', False)
         if is_selected:
-            # Ensure the counter widget exists
             if unit_name not in self.counters:
                 unit_type = unit_info.get('unit_type')
                 counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
@@ -170,39 +159,35 @@ class UnitWindowBase(QMainWindow):
                 self.layout.addWidget(counter_widget)
                 self.counters[unit_name] = (counter_widget, unit_type)
         else:
-            # Remove the counter widget if it exists
             counter_widget, _ = self.counters.pop(unit_name, (None, None))
             if counter_widget:
                 self.layout.removeWidget(counter_widget)
                 counter_widget.deleteLater()
 
     def get_unit_count(self, unit_type, unit_name):
-        """Determine the unit type and retrieve the unit count from the relevant section."""
         if self.player is None:
             logging.warning("The game ended while retrieving unit counts.")
-            return 0  # Return 0 or any other default value
-
+            return 0
         try:
             if unit_type == 'Infantry':
                 return self.player.infantry_counts.get(unit_name, 0)
             elif unit_type == 'Tank' or unit_type == 'Naval':
                 return self.player.tank_counts.get(unit_name, 0)
             elif unit_type == 'Structure':
-                if unit_name == 'Slave Miner Deployed' or unit_name == 'Slave miner undeployed':
-                    return self.player.building_counts.get('Slave Miner Deployed', 0) + self.player.tank_counts.get(
-                        'Slave miner undeployed', 0)
+                if unit_name in ('Slave Miner Deployed', 'Slave miner undeployed'):
+                    return (self.player.building_counts.get('Slave Miner Deployed', 0) +
+                            self.player.tank_counts.get('Slave miner undeployed', 0))
                 elif unit_name == 'Allied AFC':
-                    return self.player.building_counts.get('Allied AFC', 0) + self.player.building_counts.get(
-                        'American AFC', 0)
+                    return (self.player.building_counts.get('Allied AFC', 0) +
+                            self.player.building_counts.get('American AFC', 0))
                 else:
                     return self.player.building_counts.get(unit_name, 0)
             else:
-                # Unknown unit type, return 0 as default
                 return 0
         except AttributeError as e:
             logging.error(f"Error retrieving unit count: {e}")
             logging.warning("Game likely ended while retrieving unit counts.")
-            return 0  # Return a default value to avoid further errors
+            return 0
 
     def make_hud_movable(self):
         self.offset = None
@@ -222,7 +207,12 @@ class UnitWindowBase(QMainWindow):
         self.mouseMoveEvent = mouse_move_event
 
     def get_default_position(self):
-        player_color_str = self.player.color_name
+        # Convert player's color to a string key if it's a QColor
+        if not isinstance(self.player.color_name, str):
+            player_color_str = self.player.color_name.name()
+        else:
+            player_color_str = self.player.color_name
+
         hud_type = self.get_hud_type()
         if player_color_str not in self.hud_pos:
             self.hud_pos[player_color_str] = {}
@@ -236,21 +226,20 @@ class UnitWindowBase(QMainWindow):
         return default_position
 
     def update_hud_position(self, x, y):
-        player_color_str = self.player.color_name
+        if not isinstance(self.player.color_name, str):
+            player_color_str = self.player.color_name.name()
+        else:
+            player_color_str = self.player.color_name
         hud_type = self.get_hud_type()
         if player_color_str not in self.hud_pos:
             self.hud_pos[player_color_str] = {}
         self.hud_pos[player_color_str][hud_type] = {"x": x, "y": y}
 
     def get_hud_type(self):
-        """Return the HUD type identifier. To be implemented in subclasses."""
         raise NotImplementedError("Subclasses should implement this method.")
 
     def create_counter_widget(self, unit_name, unit_count, unit_type):
-        """Create a counter widget. To be implemented in subclasses."""
         raise NotImplementedError("Subclasses should implement this method.")
-
-
 
 class UnitWindowWithImages(UnitWindowBase):
     def get_default_size(self):
@@ -269,7 +258,6 @@ class UnitWindowWithImages(UnitWindowBase):
             show_frame=self.show_unit_frames
         )
 
-
 class UnitWindowImagesOnly(UnitWindowBase):
     def get_default_size(self):
         return self.hud_pos.get('image_size', 75)
@@ -285,7 +273,6 @@ class UnitWindowImagesOnly(UnitWindowBase):
             size=self.size,
             show_frame=self.show_unit_frames
         )
-
 
 class UnitWindowNumbersOnly(UnitWindowBase):
     def __init__(self, player, hud_pos, selected_units_dict):

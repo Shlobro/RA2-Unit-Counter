@@ -4,7 +4,7 @@
             "Infantry": {
                 "GI": {
                     "selected": true,
-                    "locked": true,
+                    "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
                     "position": -1
@@ -17,21 +17,21 @@
                     "position": 0
                 },
                 "GGI": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
                     "position": -1
                 },
                 "Allied Engineer": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
                     "position": -1
                 },
                 "Chrono Legionnaire": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
@@ -45,7 +45,7 @@
                     "position": -1
                 },
                 "Rocketeer": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
@@ -183,7 +183,7 @@
             "Tank": {
                 "Grizzly": {
                     "selected": true,
-                    "locked": true,
+                    "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
                     "position": 3
@@ -197,7 +197,7 @@
                 },
                 "Chrono Miner": {
                     "selected": true,
-                    "locked": true,
+                    "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
                     "position": 1
@@ -323,7 +323,7 @@
                     "position": -1
                 },
                 "conscript": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
@@ -345,13 +345,13 @@
                 },
                 "Soviet Engineer": {
                     "selected": true,
-                    "locked": true,
+                    "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
                     "position": -1
                 },
                 "Soviet Dog": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
