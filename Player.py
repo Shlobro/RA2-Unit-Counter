@@ -1,4 +1,3 @@
-# player.py
 import ctypes
 import logging
 import os
@@ -70,32 +69,28 @@ class Player:
         self.initialize_pointers()
 
     def initialize_pointers(self):
-        tank_offset = TANKOFFSET
-        tank_ptr_address = self.real_class_base + tank_offset
-        tank_ptr_data = read_process_memory(self.process_handle, tank_ptr_address, 4)
-        if tank_ptr_data:
-            self.unit_array_ptr = ctypes.c_uint32.from_buffer_copy(tank_ptr_data).value
+        """
+        Read pointers for building, unit (tank), infantry, and aircraft in a single contiguous memory chunk.
+        """
+        # The four pointer offsets are contiguous:
+        # BUILDINGOFFSET, TANKOFFSET, INFOFFSET, AIRCRAFTOFFSET.
+        # Compute the start and total bytes to read.
+        start_offset = BUILDINGOFFSET
+        end_offset = AIRCRAFTOFFSET + 4  # include 4 bytes for the last pointer
+        total_bytes = end_offset - start_offset
+        pointers_data = read_process_memory(self.process_handle, self.real_class_base + start_offset, total_bytes)
+        if pointers_data and len(pointers_data) >= total_bytes:
+            # Extract pointers using offsets relative to BUILDINGOFFSET.
+            self.building_array_ptr = int.from_bytes(pointers_data[0:4], byteorder='little')
+            tank_offset_relative = TANKOFFSET - BUILDINGOFFSET
+            self.unit_array_ptr = int.from_bytes(pointers_data[tank_offset_relative:tank_offset_relative+4], byteorder='little')
+            infantry_offset_relative = INFOFFSET - BUILDINGOFFSET
+            self.infantry_array_ptr = int.from_bytes(pointers_data[infantry_offset_relative:infantry_offset_relative+4], byteorder='little')
+            aircraft_offset_relative = AIRCRAFTOFFSET - BUILDINGOFFSET
+            self.aircraft_array_ptr = int.from_bytes(pointers_data[aircraft_offset_relative:aircraft_offset_relative+4], byteorder='little')
         logging.debug(f"Initialized unit array pointer: {self.unit_array_ptr}")
-
-        building_offset = BUILDINGOFFSET
-        building_ptr_address = self.real_class_base + building_offset
-        building_ptr_data = read_process_memory(self.process_handle, building_ptr_address, 4)
-        if building_ptr_data:
-            self.building_array_ptr = ctypes.c_uint32.from_buffer_copy(building_ptr_data).value
         logging.debug(f"Initialized building array pointer: {self.building_array_ptr}")
-
-        infantry_offset = INFOFFSET
-        infantry_ptr_address = self.real_class_base + infantry_offset
-        infantry_ptr_data = read_process_memory(self.process_handle, infantry_ptr_address, 4)
-        if infantry_ptr_data:
-            self.infantry_array_ptr = ctypes.c_uint32.from_buffer_copy(infantry_ptr_data).value
         logging.debug(f"Initialized infantry array pointer: {self.infantry_array_ptr}")
-
-        aircraft_offset = AIRCRAFTOFFSET
-        aircraft_ptr_address = self.real_class_base + aircraft_offset
-        aircraft_ptr_data = read_process_memory(self.process_handle, aircraft_ptr_address, 4)
-        if aircraft_ptr_data:
-            self.aircraft_array_ptr = ctypes.c_uint32.from_buffer_copy(aircraft_ptr_data).value
         logging.debug(f"Initialized aircraft array pointer: {self.aircraft_array_ptr}")
 
     def read_and_store_inf_units_buildings(self, category_dict, array_ptr, count_type):
@@ -103,16 +98,24 @@ class Player:
             if array_ptr is None:
                 return {}
             counts = {}
-            for offset, name in category_dict.items():
-                specific_address = array_ptr + offset
-                test_address = self.test_addresses[count_type] + offset
-
-                count_data = read_process_memory(self.process_handle, specific_address, 4)
-                test_data = read_process_memory(self.process_handle, test_address, 4)
-
-                if count_data and test_data:
-                    count = int.from_bytes(count_data, byteorder='little')
-                    test = int.from_bytes(test_data, byteorder='little')
+            offsets = sorted(category_dict.keys())
+            min_offset = offsets[0]
+            max_offset = offsets[-1]
+            chunk_size = max_offset - min_offset + 4  # Read enough bytes to cover the highest offset value
+            # Read one contiguous chunk for both the count data and the test data.
+            chunk_data = read_process_memory(self.process_handle, array_ptr + min_offset, chunk_size)
+            test_chunk_data = read_process_memory(self.process_handle, self.test_addresses[count_type] + min_offset, chunk_size)
+            if not chunk_data or not test_chunk_data:
+                logging.warning(f"Failed to read memory chunk for {count_type}.")
+                return {}
+            for offset in offsets:
+                relative_index = offset - min_offset
+                count_bytes = chunk_data[relative_index:relative_index+4]
+                test_bytes = test_chunk_data[relative_index:relative_index+4]
+                if count_bytes and test_bytes and len(count_bytes) == 4 and len(test_bytes) == 4:
+                    count = int.from_bytes(count_bytes, byteorder='little')
+                    test = int.from_bytes(test_bytes, byteorder='little')
+                    name = category_dict[offset]
                     if name == "Blitz oil (psychic sensor)" and 15 > count > 0:
                         counts[name] = count
                     elif name == "Oil":
@@ -123,7 +126,7 @@ class Player:
                     else:
                         counts[name] = 0
                 else:
-                    logging.warning(f"Failed to read memory for {name}, count_data or test_data is None.")
+                    logging.warning(f"Failed to extract 4 bytes for offset {offset} in category {count_type}.")
             return counts
         except ProcessExitedException:
             raise
@@ -146,38 +149,31 @@ class Player:
         try:
             logging.debug(f"Updating dynamic data for player {self.index}")
 
+            # Update balance and spent credit (read individually as these offsets are not obviously contiguous)
             balance_ptr = self.real_class_base + BALANCEOFFSET
             balance_data = read_process_memory(self.process_handle, balance_ptr, 4)
             if balance_data:
-                self.balance = ctypes.c_uint32.from_buffer_copy(balance_data).value
+                self.balance = int.from_bytes(balance_data, byteorder='little')
 
             spent_credit_ptr = self.real_class_base + CREDITSPENT_OFFSET
             spent_credit_data = read_process_memory(self.process_handle, spent_credit_ptr, 4)
             if spent_credit_data:
-                self.spent_credit = ctypes.c_uint32.from_buffer_copy(spent_credit_data).value
+                self.spent_credit = int.from_bytes(spent_credit_data, byteorder='little')
 
-            is_winner_ptr = self.real_class_base + ISWINNEROFFSET
-            is_winner_data = read_process_memory(self.process_handle, is_winner_ptr, 1)
-            if is_winner_data:
-                self.is_winner = bool(ctypes.c_uint8.from_buffer_copy(is_winner_data).value)
+            # Read is_winner and is_loser together (they are contiguous)
+            winners_data = read_process_memory(self.process_handle, self.real_class_base + ISWINNEROFFSET, 2)
+            if winners_data and len(winners_data) >= 2:
+                self.is_winner = bool(winners_data[0])
+                self.is_loser = bool(winners_data[1])
 
-            is_loser_ptr = self.real_class_base + ISLOSEROFFSET
-            is_loser_data = read_process_memory(self.process_handle, is_loser_ptr, 1)
-            if is_loser_data:
-                self.is_loser = bool(ctypes.c_uint8.from_buffer_copy(is_loser_data).value)
+            # Read power output and drain together (8 bytes total)
+            power_data = read_process_memory(self.process_handle, self.real_class_base + POWEROUTPUTOFFSET, 8)
+            if power_data and len(power_data) >= 8:
+                self.power_output = int.from_bytes(power_data[0:4], byteorder='little')
+                self.power_drain = int.from_bytes(power_data[4:8], byteorder='little')
+                self.power = self.power_output - self.power_drain
 
-            power_output_ptr = self.real_class_base + POWEROUTPUTOFFSET
-            power_output_data = read_process_memory(self.process_handle, power_output_ptr, 4)
-            if power_output_data:
-                self.power_output = ctypes.c_uint32.from_buffer_copy(power_output_data).value
-
-            power_drain_ptr = self.real_class_base + POWERDRAINOFFSET
-            power_drain_data = read_process_memory(self.process_handle, power_drain_ptr, 4)
-            if power_drain_data:
-                self.power_drain = ctypes.c_uint32.from_buffer_copy(power_drain_data).value
-
-            self.power = self.power_output - self.power_drain
-
+            # Update unit counts
             if self.infantry_array_ptr == 0:
                 self.initialize_pointers()
             else:
@@ -233,10 +229,10 @@ def detect_if_all_players_are_loaded(process_handle):
             logging.error("Failed to read memory at fixedPoint.")
             return False
 
-        fixedPointValue = ctypes.c_uint32.from_buffer_copy(fixedPointData).value
-        classBaseArray = ctypes.c_uint32.from_buffer_copy(
-            read_process_memory(process_handle, classBaseArrayPtr, 4)
-        ).value
+        fixedPointValue = int.from_bytes(fixedPointData, byteorder='little')
+        classBaseArray = int.from_bytes(
+            read_process_memory(process_handle, classBaseArrayPtr, 4), byteorder='little'
+        )
         classBasePlayer = fixedPointValue + 1120 * 4
 
         for i in range(MAXPLAYERS):
@@ -246,7 +242,7 @@ def detect_if_all_players_are_loaded(process_handle):
                 logging.warning(f"Skipping Player {i} due to incomplete memory read.")
                 continue
 
-            classBasePtr = ctypes.c_uint32.from_buffer_copy(player_data).value
+            classBasePtr = int.from_bytes(player_data, byteorder='little')
             if classBasePtr == INVALIDCLASS:
                 logging.info(f"Skipping Player {i} as not fully initialized yet.")
                 continue
@@ -256,7 +252,7 @@ def detect_if_all_players_are_loaded(process_handle):
             if realClassBaseData is None:
                 continue
 
-            realClassBase = ctypes.c_uint32.from_buffer_copy(realClassBaseData).value
+            realClassBase = int.from_bytes(realClassBaseData, byteorder='little')
 
             loaded = 0
             right_values = {0x551c: 66, 0x5778: 0, 0x57ac: 90}
@@ -287,10 +283,10 @@ def initialize_players_after_loading(game_data, process_handle):
         logging.error("Failed to read memory at fixedPoint.")
         return 0
 
-    fixedPointValue = ctypes.c_uint32.from_buffer_copy(fixedPointData).value
-    classBaseArray = ctypes.c_uint32.from_buffer_copy(
-        read_process_memory(process_handle, classBaseArrayPtr, 4)
-    ).value
+    fixedPointValue = int.from_bytes(fixedPointData, byteorder='little')
+    classBaseArray = int.from_bytes(
+        read_process_memory(process_handle, classBaseArrayPtr, 4), byteorder='little'
+    )
     classbasearray = fixedPointValue + 1120 * 4
     valid_player_count = 0
 
@@ -302,7 +298,7 @@ def initialize_players_after_loading(game_data, process_handle):
             logging.warning(f"Skipping player {i} due to incomplete memory read.")
             continue
 
-        classBasePtr = ctypes.c_uint32.from_buffer_copy(memory_data).value
+        classBasePtr = int.from_bytes(memory_data, byteorder='little')
         if classBasePtr != INVALIDCLASS:
             valid_player_count += 1
             realClassBasePtr = classBasePtr * 4 + classBaseArray
@@ -312,7 +308,7 @@ def initialize_players_after_loading(game_data, process_handle):
                 logging.warning(f"Skipping player {i} due to incomplete real class base read.")
                 continue
 
-            realClassBase = ctypes.c_uint32.from_buffer_copy(realClassBaseData).value
+            realClassBase = int.from_bytes(realClassBaseData, byteorder='little')
             player = Player(i + 1, process_handle, realClassBase)
 
             colorPtr = realClassBase + COLORSCHEMEOFFSET
@@ -320,7 +316,7 @@ def initialize_players_after_loading(game_data, process_handle):
             if color_data is None:
                 logging.warning(f"Skipping color assignment for player {i} due to incomplete memory read.")
                 continue
-            color_scheme_value = ctypes.c_uint32.from_buffer_copy(color_data).value
+            color_scheme_value = int.from_bytes(color_data, byteorder='little')
             player.color = get_color(color_scheme_value)
             player.color_name = get_color_name(color_scheme_value)
             logging.info(f"Player {i} color: {player.color_name}")
@@ -330,7 +326,7 @@ def initialize_players_after_loading(game_data, process_handle):
             if houseTypeClassBaseData is None:
                 logging.warning(f"Skipping country name assignment for player {i} due to incomplete memory read.")
                 continue
-            houseTypeClassBase = ctypes.c_uint32.from_buffer_copy(houseTypeClassBaseData).value
+            houseTypeClassBase = int.from_bytes(houseTypeClassBaseData, byteorder='little')
             countryNamePtr = houseTypeClassBase + COUNTRYSTRINGOFFSET
             country_data = read_process_memory(process_handle, countryNamePtr, 25)
             if country_data is None:
