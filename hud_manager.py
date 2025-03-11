@@ -41,7 +41,9 @@ def load_hud_positions(state):
         'name_widget_size': 50,
         'money_widget_size': 50,
         'power_widget_size': 50,
-        'separate_unit_counters': False
+        'separate_unit_counters': False,
+        'show_money_spent': False,
+        'money_spent_widget_size': 50
     }
     for key, value in defaults.items():
         state.hud_positions.setdefault(key, value)
@@ -66,6 +68,9 @@ def save_hud_positions(state):
             state.hud_positions['show_unit_frames'] = cp.unit_frame_checkbox.isChecked()
             state.hud_positions['money_color'] = cp.color_combo.currentText()
             state.hud_positions['separate_unit_counters'] = cp.separate_units_checkbox.isChecked()
+            state.hud_positions['show_money_spent'] = cp.money_spent_checkbox.isChecked()
+            state.hud_positions['money_spent_widget_size'] = cp.money_spent_size_spinbox.value()
+
 
         if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'path_edit'):
             state.hud_positions['game_path'] = state.control_panel.path_edit.text()
@@ -84,8 +89,10 @@ def save_hud_positions(state):
             try:
                 name_pos = resource_window.windows[0].pos()
                 money_pos = resource_window.windows[1].pos()
-                power_pos = resource_window.windows[2].pos()
-                flag_pos = resource_window.windows[3].pos()
+                money_spent = resource_window.windows[2].pos()
+                power_pos = resource_window.windows[3].pos()
+                flag_pos = resource_window.windows[4].pos()
+
             except Exception as e:
                 logging.exception("Error getting window positions for player %s: %s", player_id, e)
                 continue
@@ -94,6 +101,7 @@ def save_hud_positions(state):
             state.hud_positions[player_id]['name'] = {"x": name_pos.x(), "y": name_pos.y()}
             state.hud_positions[player_id]['money'] = {"x": money_pos.x(), "y": money_pos.y()}
             state.hud_positions[player_id]['power'] = {"x": power_pos.x(), "y": power_pos.y()}
+            state.hud_positions[player_id]['money_spent'] = {"x": money_spent.x(), "y": money_spent.y()}
 
             separate = state.hud_positions.get('separate_unit_counters', False)
             if separate:

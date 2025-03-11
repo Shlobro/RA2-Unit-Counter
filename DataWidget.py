@@ -295,3 +295,62 @@ class FlagWidget(QWidget):
             self.setFixedSize(self.icon_label.width(), self.icon_label.height())
         except Exception as e:
             logging.exception("Error adjusting size in FlagWidget: %s", e)
+
+
+class MoneySpentWidget(BaseDataWidget):
+    def __init__(self, data=None, text_color=Qt.red, size=16, font=None, parent=None):
+        # Disable fixed-width so that it can expand dynamically.
+        super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=False, parent=parent)
+        self.image_path = 'icons/money_spent_icon.png'
+        self.icon_label = QLabel(self)
+        # Insert the icon before the data label in the layout.
+        self.layout.insertWidget(0, self.icon_label, alignment=Qt.AlignVCenter)
+        self.layout.setSpacing(0)  # Remove extra spacing between icon and text.
+        self.data_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.load_and_set_image()
+        self.update_data_label()
+        self.adjust_size()
+
+    def load_and_set_image(self):
+        try:
+            # Scale the icon using the current widget size (self.size)
+            pixmap = QPixmap(self.image_path).scaled(self.size, self.size,
+                                                     Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            self.icon_label.setPixmap(pixmap)
+            self.icon_label.setFixedSize(pixmap.size())
+        except Exception as e:
+            logging.exception("Error loading image in MoneySpentWidget: %s", e)
+
+    def update_data_size(self, new_size):
+        # Update the internal size and then refresh both text and icon.
+        self.size = new_size
+        self.load_and_set_image()  # Reload the icon with the new size.
+        self.update_font_size()    # Update the text font size.
+        self.adjust_size()
+
+    def on_value_changed(self, value):
+        try:
+            self.value = value
+            self.update_data_label()
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in MoneySpentWidget.on_value_changed: %s", e)
+
+    def update_data_label(self):
+        try:
+            self.data_label.setText(f"${int(self.value)}")
+        except Exception as e:
+            logging.exception("Error updating data label in MoneySpentWidget: %s", e)
+
+    def adjust_size(self):
+        try:
+            # Use QFontMetrics to calculate the current text width
+            fm = QFontMetrics(self.data_label.font())
+            text_width = fm.horizontalAdvance(self.data_label.text())
+            total_width = self.icon_label.width() + text_width + self.layout.spacing()
+            total_height = max(self.icon_label.height(), self.data_label.height())
+            self.setFixedSize(total_width, total_height)
+        except Exception as e:
+            logging.exception("Error adjusting size in MoneySpentWidget: %s", e)
+

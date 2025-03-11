@@ -4,7 +4,7 @@ from PySide6.QtGui import QPixmap, QFont, QFontDatabase, QColor
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 
 # Import the new widget classes
-from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget
+from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget, MoneySpentWidget
 
 faction_to_flag = {
     "British": "RA2_Flag_Britain.png",
@@ -30,6 +30,7 @@ class ResourceWindow(QMainWindow):
         money_widget_size = self.hud_positions.get('money_widget_size', 50)
         power_widget_size = self.hud_positions.get('power_widget_size', 50)
         flag_widget_size = self.hud_positions.get('flag_widget_size', 50)
+        money_spent_widget_size = self.hud_positions.get('money_spent_widget_size', 50)
 
         # Load fonts
         font_id = QFontDatabase.addApplicationFont("Other/Futured.ttf")
@@ -81,6 +82,14 @@ class ResourceWindow(QMainWindow):
             font=power_font
         )
 
+        # Create the new money spent widget (for spent credit)
+        self.money_spent_widget = MoneySpentWidget(
+            data=self.player.spent_credit,
+            size=money_spent_widget_size,
+            font=money_font
+        )
+
+
         # Create windows for each widget
         self.name_window = self.create_window_with_widget(
             f"Player {player_index} Name", self.name_widget, player_count, 'name', self.player.color_name
@@ -101,6 +110,7 @@ class ResourceWindow(QMainWindow):
         self.money_window = self.create_window_with_widget(
             f"Player {player_index} Money", self.money_widget, player_count, 'money', self.player.color_name
         )
+
         if self.hud_positions.get('show_money', True):
             self.money_window.show()
         else:
@@ -114,9 +124,21 @@ class ResourceWindow(QMainWindow):
         else:
             self.power_window.hide()
 
+        # Create a separate window for money spent using the helper method
+        self.money_spent_window = self.create_window_with_widget(
+            f"Player {player_index} Money Spent", self.money_spent_widget, player_count, 'money_spent',
+            self.player.color_name
+        )
+
+        if self.hud_positions.get('show_money_spent', True):
+            self.money_spent_window.show()
+        else:
+            self.money_spent_window.hide()
+
         self.windows = [
             self.name_window,
             self.money_window,
+            self.money_spent_window,
             self.power_window,
             self.flag_window
         ]
@@ -172,8 +194,9 @@ class ResourceWindow(QMainWindow):
         self.hud_positions[player_color_str][hud_type] = {"x": x, "y": y}
 
     def update_labels(self):
-        """Update the money and power values."""
+        """Update the money, money spent, and power values."""
         self.money_widget.update_data(self.player.balance)
+        self.money_spent_widget.update_data(self.player.spent_credit)
         self.power_widget.update_data(self.player.power)
         if self.player.power < 0:
             self.power_widget.update_color(new_image_color=Qt.red, new_text_color=Qt.red)

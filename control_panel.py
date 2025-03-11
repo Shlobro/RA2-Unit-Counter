@@ -152,6 +152,26 @@ class ControlPanel(QMainWindow):
         money_group.setLayout(money_layout)
         main_layout.addWidget(money_group)
 
+        # Money spent Settings Group
+        money_spent_group = QGroupBox("Money spent Widget Settings")
+        money_spent_layout = QFormLayout()
+
+        self.money_spent_checkbox = QCheckBox("Show Money spent")
+        self.money_spent_checkbox.setChecked(self.state.hud_positions.get('show_money_spent', True))
+        self.money_spent_checkbox.stateChanged.connect(self.toggle_money_spent)
+        money_spent_layout.addRow(self.money_spent_checkbox)
+
+        money_spent_size_label = QLabel("Money Spent Widget Size:")
+        money_spent_size = self.state.hud_positions.get('money_spent_widget_size', 50)
+        self.money_spent_size_spinbox = QSpinBox()
+        self.money_spent_size_spinbox.setRange(5, 500)
+        self.money_spent_size_spinbox.setValue(money_spent_size)
+        self.money_spent_size_spinbox.valueChanged.connect(self.update_money_spent_widget_size)
+        money_spent_layout.addRow(money_spent_size_label, self.money_spent_size_spinbox)
+
+        money_spent_group.setLayout(money_spent_layout)
+        main_layout.addWidget(money_spent_group)
+
         # Power Widget Settings Group
         power_group = QGroupBox("Power Widget Settings")
         power_layout = QFormLayout()
@@ -399,6 +419,14 @@ class ControlPanel(QMainWindow):
             for _, resource_window in self.state.hud_windows:
                 resource_window.money_widget.update_data_size(new_size)
 
+    def update_money_spent_widget_size(self):
+        new_size = self.money_spent_size_spinbox.value()
+        self.state.hud_positions['money_spent_widget_size'] = new_size
+        logging.info(f"Updated money spent widget size in hud_positions: {new_size}")
+        if self.state.hud_windows:
+            for _, resource_window in self.state.hud_windows:
+                resource_window.money_spent_widget.update_data_size(new_size)
+
     def update_power_widget_size(self):
         new_size = self.power_size_spinbox.value()
         self.state.hud_positions['power_widget_size'] = new_size
@@ -428,6 +456,9 @@ class ControlPanel(QMainWindow):
 
     def toggle_money(self, state_val):
         self.toggle_hud_element('show_money', 'money_widget', state_val)
+
+    def toggle_money_spent(self, state_val):
+        self.toggle_hud_element('show_money_spent', 'money_widget_spent', state_val)
 
     def toggle_power(self, state_val):
         self.toggle_hud_element('show_power', 'power_widget', state_val)
