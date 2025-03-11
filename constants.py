@@ -28,7 +28,10 @@ COUNTRYSTRINGOFFSET = 0x24
 # Offset for color scheme
 COLORSCHEMEOFFSET = 0x16054
 
-# Mapping dictionaries for infantry, tanks, structures, and aircraft
+#offset for number of war factories
+NUMBEROFWFOFFSET = 0x160
+
+# Mapping dictionaries for infantry, tanks, structures, and aircraft, Don't forget these are the offsets inside the arrays not from player base
 infantry_offsets = {
     0x0: "GI", 0x4: "conscript", 0x8: "tesla trooper", 0xc: "Allied Engineer", 0x10: "Rocketeer",
     0x14: "Navy Seal", 0x18: "Yuri Clone", 0x1c: "Ivan", 0x20: "Desolator", 0x24: "Soviet Dog",
@@ -70,7 +73,7 @@ aircraft_offsets = {
     0x1c: "Black Eagle"
 }
 
-# Mapping of color scheme values to actual colors.
+#Mapping of color scheme values to actual colors.
 from PySide6.QtGui import QColor
 COLOR_SCHEME_MAPPING = {
     3: QColor("yellow"),
@@ -83,6 +86,20 @@ COLOR_SCHEME_MAPPING = {
     21: QColor("blue"),
     25: QColor("cyan"),
     29: QColor("green"),
+}
+
+# Mapping of color scheme values to friendly color names.
+COLOR_NAME_MAPPING = {
+    3: "yellow",
+    5: "white",
+    7: "gray",
+    11: "red",
+    13: "orange",
+    15: "pink",
+    17: "purple",
+    21: "blue",
+    25: "cyan",
+    29: "green",
 }
 
 

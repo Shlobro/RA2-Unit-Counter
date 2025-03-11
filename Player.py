@@ -6,11 +6,11 @@ import traceback
 from PySide6.QtGui import QColor
 
 # Import mappings from your constants module (instead of common)
-from constants import COLOR_SCHEME_MAPPING, country_name_to_faction
+from constants import country_name_to_faction, COLOR_NAME_MAPPING, NUMBEROFWFOFFSET
 from constants import (
     MAXPLAYERS, INVALIDCLASS, INFOFFSET, AIRCRAFTOFFSET, TANKOFFSET, BUILDINGOFFSET,
-    CREDITSPENT_OFFSET, BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET, ISLOSEROFFSET,
-    POWEROUTPUTOFFSET, POWERDRAINOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
+    CREDITSPENT_OFFSET, BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
+    POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
     infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets
 )
 from memory_utils import read_process_memory
@@ -22,8 +22,9 @@ def get_color(color_scheme):
     return COLOR_SCHEME_MAPPING.get(color_scheme, QColor("black"))
 
 def get_color_name(color_scheme):
-    """Returns a color name based on the color scheme value."""
-    return COLOR_SCHEME_MAPPING.get(color_scheme, "white")
+    """Returns a friendly color name based on the color scheme value."""
+    return COLOR_NAME_MAPPING.get(color_scheme, "white")
+
 
 class Player:
     def __init__(self, index, process_handle, real_class_base):
@@ -104,19 +105,27 @@ class Player:
             chunk_size = max_offset - min_offset + 4  # Read enough bytes to cover the highest offset value
             # Read one contiguous chunk for both the count data and the test data.
             chunk_data = read_process_memory(self.process_handle, array_ptr + min_offset, chunk_size)
-            test_chunk_data = read_process_memory(self.process_handle, self.test_addresses[count_type] + min_offset, chunk_size)
+            test_chunk_data = read_process_memory(self.process_handle, self.test_addresses[count_type] + min_offset,
+                                                  chunk_size)
             if not chunk_data or not test_chunk_data:
                 logging.warning(f"Failed to read memory chunk for {count_type}.")
                 return {}
             for offset in offsets:
                 relative_index = offset - min_offset
-                count_bytes = chunk_data[relative_index:relative_index+4]
-                test_bytes = test_chunk_data[relative_index:relative_index+4]
+                count_bytes = chunk_data[relative_index:relative_index + 4]
+                test_bytes = test_chunk_data[relative_index:relative_index + 4]
                 if count_bytes and test_bytes and len(count_bytes) == 4 and len(test_bytes) == 4:
                     count = int.from_bytes(count_bytes, byteorder='little')
                     test = int.from_bytes(test_bytes, byteorder='little')
                     name = category_dict[offset]
-                    if name == "Blitz oil (psychic sensor)" and 15 > count > 0:
+                    # Extra tests for war factories:
+                    if name in ["Allied War Factory", "Soviet War Factory", "Yuri War Factory"]:
+                        # Verify that the count is within the allowed maximum AND less than or equal to the test value.
+                        if count <= NUMBEROFWFOFFSET and count <= test:
+                            counts[name] = count
+                        else:
+                            counts[name] = 0
+                    elif name == "Blitz oil (psychic sensor)" and 15 > count > 0:
                         counts[name] = count
                     elif name == "Oil":
                         counts[name] = count
@@ -351,3 +360,5 @@ def initialize_players_after_loading(game_data, process_handle):
 
     logging.info(f"Number of valid players: {valid_player_count}")
     return valid_player_count
+
+
