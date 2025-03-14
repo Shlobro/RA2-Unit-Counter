@@ -3,7 +3,7 @@ import sys
 from logging.handlers import RotatingFileHandler
 
 
-def setup_logging(log_to_console=False, log_file="app.log", max_size=5_000_000, backup_count=5):
+def setup_logging(log_to_console=True, log_file="app.log", max_size=5_000_000, backup_count=5):
     """
     Sets up logging for the application. Logs to console or a rotating file.
 
@@ -27,7 +27,7 @@ def setup_logging(log_to_console=False, log_file="app.log", max_size=5_000_000, 
         handlers.append(file_handler)
 
     logging.basicConfig(
-        level=logging.DEBUG,  # Adjust the level as needed
+        level=logging.INFO,  # Adjust the level as needed
         handlers=handlers,
         format=log_format
     )
@@ -35,6 +35,5 @@ def setup_logging(log_to_console=False, log_file="app.log", max_size=5_000_000, 
     logging.info("Logging setup complete")
 
 
-# Example usage
-setup_logging(log_to_console=False)
-logging.info("This is a test log entry.")
+
+setup_logging()

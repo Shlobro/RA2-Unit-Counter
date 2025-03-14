@@ -22842,3 +22842,212 @@
 2025-03-11 03:53:19,763 - INFO - Saving selected units and HUD positions
 2025-03-11 03:53:19,766 - INFO - Saved selected units.
 2025-03-11 03:53:19,767 - INFO - HUD positions saved successfully.
+2025-03-13 01:38:06,309 - INFO - Logging setup complete
+2025-03-13 01:38:06,309 - INFO - This is a test log entry.
+2025-03-13 01:38:06,351 - INFO - Starting Resource HUD Application
+2025-03-13 01:38:06,366 - INFO - Loading HUD positions
+2025-03-13 01:38:06,367 - INFO - HUD positions loaded successfully.
+2025-03-13 01:38:06,367 - INFO - Creating control panel
+2025-03-13 01:38:06,424 - INFO - Waiting for a valid game path to be selected
+2025-03-13 01:38:06,424 - DEBUG - Starting game path check timer
+2025-03-13 01:38:06,424 - INFO - Starting data update thread
+2025-03-13 01:38:06,425 - INFO - Entering application event loop
+2025-03-13 01:38:06,425 - INFO - Waiting for the game to start and players to load...
+2025-03-13 01:38:06,426 - INFO - Waiting for the game to start...
+2025-03-13 01:38:06,625 - INFO - Game detected
+2025-03-13 01:38:06,626 - INFO - Players loaded. Proceeding with players initialization.
+2025-03-13 01:38:06,626 - DEBUG - Initialized unit array pointer: 295584992
+2025-03-13 01:38:06,626 - DEBUG - Initialized building array pointer: 303069216
+2025-03-13 01:38:06,626 - DEBUG - Initialized infantry array pointer: 295533680
+2025-03-13 01:38:06,626 - DEBUG - Initialized aircraft array pointer: 295571552
+2025-03-13 01:38:06,626 - INFO - Player 0 color: blue
+2025-03-13 01:38:06,626 - INFO - Player 0 country name: Americans
+2025-03-13 01:38:06,627 - INFO - Player 0 faction: Allied
+2025-03-13 01:38:06,627 - INFO - Player 0 name: Phantom-CH
+2025-03-13 01:38:06,627 - DEBUG - Initialized unit array pointer: 294992832
+2025-03-13 01:38:06,627 - DEBUG - Initialized building array pointer: 238295448
+2025-03-13 01:38:06,627 - DEBUG - Initialized infantry array pointer: 314470608
+2025-03-13 01:38:06,627 - DEBUG - Initialized aircraft array pointer: 295930704
+2025-03-13 01:38:06,627 - INFO - Player 1 color: pink
+2025-03-13 01:38:06,627 - INFO - Player 1 country name: Arabs
+2025-03-13 01:38:06,628 - INFO - Player 1 faction: Soviet
+2025-03-13 01:38:06,628 - INFO - Player 1 name: justBIM
+2025-03-13 01:38:06,628 - DEBUG - Initialized unit array pointer: 287304160
+2025-03-13 01:38:06,628 - DEBUG - Initialized building array pointer: 251062520
+2025-03-13 01:38:06,628 - DEBUG - Initialized infantry array pointer: 295321984
+2025-03-13 01:38:06,628 - DEBUG - Initialized aircraft array pointer: 294996160
+2025-03-13 01:38:06,628 - INFO - Player 2 color: cyan
+2025-03-13 01:38:06,628 - INFO - Player 2 country name: Arabs
+2025-03-13 01:38:06,629 - INFO - Player 2 faction: Soviet
+2025-03-13 01:38:06,629 - INFO - Player 2 name: Snark
+2025-03-13 01:38:06,629 - DEBUG - Initialized unit array pointer: 295517280
+2025-03-13 01:38:06,629 - DEBUG - Initialized building array pointer: 324791936
+2025-03-13 01:38:06,629 - DEBUG - Initialized infantry array pointer: 314039104
+2025-03-13 01:38:06,629 - DEBUG - Initialized aircraft array pointer: 295864528
+2025-03-13 01:38:06,629 - INFO - Player 3 color: yellow
+2025-03-13 01:38:06,629 - INFO - Player 3 country name: Americans
+2025-03-13 01:38:06,630 - INFO - Player 3 faction: Allied
+2025-03-13 01:38:06,630 - INFO - Player 3 name: OzzieOwl
+2025-03-13 01:38:06,630 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:06,630 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:06,630 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:06,630 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:06,630 - INFO - Player 4 color: red
+2025-03-13 01:38:06,631 - INFO - Player 4 country name: Arabs
+2025-03-13 01:38:06,631 - INFO - Player 4 faction: Soviet
+2025-03-13 01:38:06,631 - INFO - Player 4 name: r0b0tr0n
+2025-03-13 01:38:06,631 - DEBUG - Initialized unit array pointer: 314050880
+2025-03-13 01:38:06,631 - DEBUG - Initialized building array pointer: 312322976
+2025-03-13 01:38:06,631 - DEBUG - Initialized infantry array pointer: 295893440
+2025-03-13 01:38:06,631 - DEBUG - Initialized aircraft array pointer: 295838560
+2025-03-13 01:38:06,632 - INFO - Player 5 color: orange
+2025-03-13 01:38:06,632 - INFO - Player 5 country name: Americans
+2025-03-13 01:38:06,632 - INFO - Player 5 faction: Allied
+2025-03-13 01:38:06,632 - INFO - Player 5 name: Andoria
+2025-03-13 01:38:06,632 - DEBUG - Initialized unit array pointer: 295048880
+2025-03-13 01:38:06,632 - DEBUG - Initialized building array pointer: 299582960
+2025-03-13 01:38:06,632 - DEBUG - Initialized infantry array pointer: 314145936
+2025-03-13 01:38:06,632 - DEBUG - Initialized aircraft array pointer: 63373344
+2025-03-13 01:38:06,632 - INFO - Player 6 color: green
+2025-03-13 01:38:06,633 - INFO - Player 6 country name: Arabs
+2025-03-13 01:38:06,633 - INFO - Player 6 faction: Soviet
+2025-03-13 01:38:06,633 - INFO - Player 6 name: Danish
+2025-03-13 01:38:06,633 - DEBUG - Initialized unit array pointer: 63563328
+2025-03-13 01:38:06,633 - DEBUG - Initialized building array pointer: 299315856
+2025-03-13 01:38:06,633 - DEBUG - Initialized infantry array pointer: 295850736
+2025-03-13 01:38:06,633 - DEBUG - Initialized aircraft array pointer: 259946720
+2025-03-13 01:38:06,633 - INFO - Player 7 color: purple
+2025-03-13 01:38:06,634 - INFO - Player 7 country name: Arabs
+2025-03-13 01:38:06,634 - INFO - Player 7 faction: Soviet
+2025-03-13 01:38:06,634 - INFO - Player 7 name: CodSetR
+2025-03-13 01:38:06,634 - INFO - Number of valid players: 8
+2025-03-13 01:38:06,634 - DEBUG - Updating dynamic data for player 1
+2025-03-13 01:38:06,634 - INFO - Game started handler called
+2025-03-13 01:38:06,635 - ERROR - Game path is not defined. Please set a valid game path.
+2025-03-13 01:38:06,635 - DEBUG - Wrote oil count 0 to file oil counts\blue_oil_count.txt
+2025-03-13 01:38:06,635 - DEBUG - Updating dynamic data for player 2
+2025-03-13 01:38:06,635 - DEBUG - Wrote oil count 0 to file oil counts\pink_oil_count.txt
+2025-03-13 01:38:06,636 - DEBUG - Updating dynamic data for player 3
+2025-03-13 01:38:06,636 - DEBUG - Wrote oil count 0 to file oil counts\cyan_oil_count.txt
+2025-03-13 01:38:06,636 - DEBUG - Updating dynamic data for player 4
+2025-03-13 01:38:06,637 - DEBUG - Wrote oil count 2 to file oil counts\yellow_oil_count.txt
+2025-03-13 01:38:06,637 - DEBUG - Updating dynamic data for player 5
+2025-03-13 01:38:06,637 - DEBUG - Wrote oil count 0 to file oil counts\red_oil_count.txt
+2025-03-13 01:38:06,637 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:06,637 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:06,637 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:06,638 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:06,638 - DEBUG - Updating dynamic data for player 6
+2025-03-13 01:38:06,638 - DEBUG - Wrote oil count 2 to file oil counts\orange_oil_count.txt
+2025-03-13 01:38:06,638 - DEBUG - Updating dynamic data for player 7
+2025-03-13 01:38:06,639 - DEBUG - Wrote oil count 3 to file oil counts\green_oil_count.txt
+2025-03-13 01:38:06,639 - DEBUG - Updating dynamic data for player 8
+2025-03-13 01:38:06,639 - DEBUG - Wrote oil count 3 to file oil counts\purple_oil_count.txt
+2025-03-13 01:38:07,414 - DEBUG - Checking game path: D:/ra2/Red Alert 2/Red Alert 2
+2025-03-13 01:38:07,414 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2025-03-13 01:38:07,648 - DEBUG - Updating dynamic data for player 1
+2025-03-13 01:38:07,648 - DEBUG - Wrote oil count 0 to file oil counts\blue_oil_count.txt
+2025-03-13 01:38:07,649 - DEBUG - Updating dynamic data for player 2
+2025-03-13 01:38:07,649 - DEBUG - Wrote oil count 0 to file oil counts\pink_oil_count.txt
+2025-03-13 01:38:07,649 - DEBUG - Updating dynamic data for player 3
+2025-03-13 01:38:07,650 - DEBUG - Wrote oil count 0 to file oil counts\cyan_oil_count.txt
+2025-03-13 01:38:07,650 - DEBUG - Updating dynamic data for player 4
+2025-03-13 01:38:07,650 - DEBUG - Wrote oil count 2 to file oil counts\yellow_oil_count.txt
+2025-03-13 01:38:07,650 - DEBUG - Updating dynamic data for player 5
+2025-03-13 01:38:07,651 - DEBUG - Wrote oil count 0 to file oil counts\red_oil_count.txt
+2025-03-13 01:38:07,651 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:07,651 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:07,651 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:07,651 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:07,651 - DEBUG - Updating dynamic data for player 6
+2025-03-13 01:38:07,652 - DEBUG - Wrote oil count 2 to file oil counts\orange_oil_count.txt
+2025-03-13 01:38:07,652 - DEBUG - Updating dynamic data for player 7
+2025-03-13 01:38:07,652 - DEBUG - Wrote oil count 3 to file oil counts\green_oil_count.txt
+2025-03-13 01:38:07,653 - DEBUG - Updating dynamic data for player 8
+2025-03-13 01:38:07,653 - DEBUG - Wrote oil count 3 to file oil counts\purple_oil_count.txt
+2025-03-13 01:38:08,654 - DEBUG - Updating dynamic data for player 1
+2025-03-13 01:38:08,655 - DEBUG - Wrote oil count 0 to file oil counts\blue_oil_count.txt
+2025-03-13 01:38:08,655 - DEBUG - Updating dynamic data for player 2
+2025-03-13 01:38:08,655 - DEBUG - Wrote oil count 0 to file oil counts\pink_oil_count.txt
+2025-03-13 01:38:08,655 - DEBUG - Updating dynamic data for player 3
+2025-03-13 01:38:08,656 - DEBUG - Wrote oil count 0 to file oil counts\cyan_oil_count.txt
+2025-03-13 01:38:08,656 - DEBUG - Updating dynamic data for player 4
+2025-03-13 01:38:08,656 - DEBUG - Wrote oil count 2 to file oil counts\yellow_oil_count.txt
+2025-03-13 01:38:08,657 - DEBUG - Updating dynamic data for player 5
+2025-03-13 01:38:08,657 - DEBUG - Wrote oil count 0 to file oil counts\red_oil_count.txt
+2025-03-13 01:38:08,657 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:08,657 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:08,657 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:08,658 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:08,658 - DEBUG - Updating dynamic data for player 6
+2025-03-13 01:38:08,658 - DEBUG - Wrote oil count 2 to file oil counts\orange_oil_count.txt
+2025-03-13 01:38:08,658 - DEBUG - Updating dynamic data for player 7
+2025-03-13 01:38:08,659 - DEBUG - Wrote oil count 3 to file oil counts\green_oil_count.txt
+2025-03-13 01:38:08,659 - DEBUG - Updating dynamic data for player 8
+2025-03-13 01:38:08,659 - DEBUG - Wrote oil count 3 to file oil counts\purple_oil_count.txt
+2025-03-13 01:38:09,660 - DEBUG - Updating dynamic data for player 1
+2025-03-13 01:38:09,660 - DEBUG - Wrote oil count 0 to file oil counts\blue_oil_count.txt
+2025-03-13 01:38:09,660 - DEBUG - Updating dynamic data for player 2
+2025-03-13 01:38:09,661 - DEBUG - Wrote oil count 0 to file oil counts\pink_oil_count.txt
+2025-03-13 01:38:09,661 - DEBUG - Updating dynamic data for player 3
+2025-03-13 01:38:09,661 - DEBUG - Wrote oil count 0 to file oil counts\cyan_oil_count.txt
+2025-03-13 01:38:09,662 - DEBUG - Updating dynamic data for player 4
+2025-03-13 01:38:09,662 - DEBUG - Wrote oil count 2 to file oil counts\yellow_oil_count.txt
+2025-03-13 01:38:09,662 - DEBUG - Updating dynamic data for player 5
+2025-03-13 01:38:09,663 - DEBUG - Wrote oil count 0 to file oil counts\red_oil_count.txt
+2025-03-13 01:38:09,663 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:09,663 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:09,663 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:09,663 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:09,663 - DEBUG - Updating dynamic data for player 6
+2025-03-13 01:38:09,664 - DEBUG - Wrote oil count 2 to file oil counts\orange_oil_count.txt
+2025-03-13 01:38:09,664 - DEBUG - Updating dynamic data for player 7
+2025-03-13 01:38:09,664 - DEBUG - Wrote oil count 3 to file oil counts\green_oil_count.txt
+2025-03-13 01:38:09,664 - DEBUG - Updating dynamic data for player 8
+2025-03-13 01:38:09,665 - DEBUG - Wrote oil count 3 to file oil counts\purple_oil_count.txt
+2025-03-13 01:38:10,668 - DEBUG - Updating dynamic data for player 1
+2025-03-13 01:38:10,668 - DEBUG - Wrote oil count 0 to file oil counts\blue_oil_count.txt
+2025-03-13 01:38:10,669 - DEBUG - Updating dynamic data for player 2
+2025-03-13 01:38:10,669 - DEBUG - Wrote oil count 0 to file oil counts\pink_oil_count.txt
+2025-03-13 01:38:10,669 - DEBUG - Updating dynamic data for player 3
+2025-03-13 01:38:10,670 - DEBUG - Wrote oil count 0 to file oil counts\cyan_oil_count.txt
+2025-03-13 01:38:10,670 - DEBUG - Updating dynamic data for player 4
+2025-03-13 01:38:10,670 - DEBUG - Wrote oil count 2 to file oil counts\yellow_oil_count.txt
+2025-03-13 01:38:10,671 - DEBUG - Updating dynamic data for player 5
+2025-03-13 01:38:10,671 - DEBUG - Wrote oil count 0 to file oil counts\red_oil_count.txt
+2025-03-13 01:38:10,671 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:10,671 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:10,671 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:10,671 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:10,672 - DEBUG - Updating dynamic data for player 6
+2025-03-13 01:38:10,672 - DEBUG - Wrote oil count 2 to file oil counts\orange_oil_count.txt
+2025-03-13 01:38:10,672 - DEBUG - Updating dynamic data for player 7
+2025-03-13 01:38:10,672 - DEBUG - Wrote oil count 3 to file oil counts\green_oil_count.txt
+2025-03-13 01:38:10,673 - DEBUG - Updating dynamic data for player 8
+2025-03-13 01:38:10,673 - DEBUG - Wrote oil count 3 to file oil counts\purple_oil_count.txt
+2025-03-13 01:38:11,677 - DEBUG - Updating dynamic data for player 1
+2025-03-13 01:38:11,678 - DEBUG - Wrote oil count 0 to file oil counts\blue_oil_count.txt
+2025-03-13 01:38:11,678 - DEBUG - Updating dynamic data for player 2
+2025-03-13 01:38:11,679 - DEBUG - Wrote oil count 0 to file oil counts\pink_oil_count.txt
+2025-03-13 01:38:11,679 - DEBUG - Updating dynamic data for player 3
+2025-03-13 01:38:11,680 - DEBUG - Wrote oil count 0 to file oil counts\cyan_oil_count.txt
+2025-03-13 01:38:11,680 - DEBUG - Updating dynamic data for player 4
+2025-03-13 01:38:11,680 - DEBUG - Wrote oil count 2 to file oil counts\yellow_oil_count.txt
+2025-03-13 01:38:11,681 - DEBUG - Updating dynamic data for player 5
+2025-03-13 01:38:11,681 - DEBUG - Wrote oil count 0 to file oil counts\red_oil_count.txt
+2025-03-13 01:38:11,681 - DEBUG - Initialized unit array pointer: 62343824
+2025-03-13 01:38:11,682 - DEBUG - Initialized building array pointer: 299309416
+2025-03-13 01:38:11,682 - DEBUG - Initialized infantry array pointer: 295407872
+2025-03-13 01:38:11,682 - DEBUG - Initialized aircraft array pointer: 0
+2025-03-13 01:38:11,682 - DEBUG - Updating dynamic data for player 6
+2025-03-13 01:38:11,683 - DEBUG - Wrote oil count 2 to file oil counts\orange_oil_count.txt
+2025-03-13 01:38:11,683 - DEBUG - Updating dynamic data for player 7
+2025-03-13 01:38:11,683 - DEBUG - Wrote oil count 3 to file oil counts\green_oil_count.txt
+2025-03-13 01:38:11,683 - DEBUG - Updating dynamic data for player 8
+2025-03-13 01:38:11,684 - DEBUG - Wrote oil count 3 to file oil counts\purple_oil_count.txt
+2025-03-13 01:38:12,414 - INFO - Exiting application, stopping data update thread
+2025-03-13 01:38:12,695 - INFO - Emitted game_stopped signal.
+2025-03-13 01:38:13,709 - INFO - Data update thread has exited.
+2025-03-13 01:38:13,709 - INFO - Saving selected units and HUD positions
+2025-03-13 01:38:13,711 - INFO - Saved selected units.
+2025-03-13 01:38:13,713 - INFO - HUD positions saved successfully.
