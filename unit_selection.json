@@ -794,7 +794,7 @@
             "Structure": {
                 "Blitz oil (psychic sensor)": {
                     "selected": true,
-                    "locked": false,
+                    "locked": true,
                     "unit_type": "Structure",
                     "faction": "Other",
                     "position": -1
