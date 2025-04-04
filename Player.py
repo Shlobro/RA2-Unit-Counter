@@ -121,10 +121,14 @@ class Player:
                     # Extra tests for war factories:
                     if name in ["Allied War Factory", "Soviet War Factory", "Yuri War Factory"]:
                         # Verify that the count is within the allowed maximum AND less than or equal to the test value.
-                        if count <= NUMBEROFWFOFFSET:
-                            counts[name] = count
-                        else:
-                            counts[name] = 0
+                        warFactories_ptr = self.real_class_base + NUMBEROFWFOFFSET
+                        warFactories_data = read_process_memory(self.process_handle, warFactories_ptr, 4)
+                        if warFactories_data:
+                            warFactories = int.from_bytes(warFactories_data, byteorder='little')
+                            if count <= test and count <= warFactories:
+                                counts[name] = count
+                            else:
+                                counts[name] = 0
                     elif name == "Blitz oil (psychic sensor)" and 15 > count > 0:
                         counts[name] = count
                     elif name == "Oil":
