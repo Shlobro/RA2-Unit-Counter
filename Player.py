@@ -360,6 +360,9 @@ def initialize_players_after_loading(game_data, process_handle):
             ctypes.memmove(player.username, username_data, 0x20)
             logging.info(f"Player {i} name: {player.username.value}")
 
+            # Reset oil_count.txt
+            player.write_oil_count_to_file(0)
+
             game_data.add_player(player)
 
     logging.info(f"Number of valid players: {valid_player_count}")
