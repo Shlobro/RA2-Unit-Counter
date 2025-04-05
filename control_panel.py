@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt
 
 from UnitSelectionWindow import UnitSelectionWindow
 from hud_manager import create_hud_windows
+from UnitWindow import CombinedHudWindow
 
 
 class ControlPanel(QMainWindow):
@@ -268,12 +269,6 @@ class ControlPanel(QMainWindow):
     def toggle_combined_hud(self, state_val):
         self.state.hud_positions['combined_hud'] = (state_val != 0)
         logging.info(f"Toggled combined_hud to: {self.state.hud_positions['combined_hud']}")
-        # If combined mode is enabled, disable the Separate Unit Counters option.
-        if self.state.hud_positions['combined_hud']:
-            self.separate_units_checkbox.setChecked(False)
-            self.separate_units_checkbox.setEnabled(False)
-        else:
-            self.separate_units_checkbox.setEnabled(True)
 
         if self.state.hud_windows:
             for unit_window, resource_window in self.state.hud_windows:
@@ -294,38 +289,44 @@ class ControlPanel(QMainWindow):
         create_hud_windows(self.state)
 
     def toggle_separate_unit_counters(self, state_val):
-        self.state.hud_positions['separate_unit_counters'] = (state_val != 0)
-        logging.info(f"Toggled separate_unit_counters to: {self.state.hud_positions['separate_unit_counters']}")
-        # If separate unit counters are enabled, disable the Combined HUD Mode.
-        if self.state.hud_positions['separate_unit_counters']:
-            self.combined_hud_checkbox.setChecked(False)
-            self.combined_hud_checkbox.setEnabled(False)
+
+        separate = (state_val != 0)
+        self.state.hud_positions['separate_unit_counters'] = separate
+        logging.info(f"Toggled separate_unit_counters to: {separate}")
+
+        if separate:
+            self.counter_size_spinbox.setEnabled(False)
             self.image_size_spinbox.setEnabled(True)
             self.number_size_spinbox.setEnabled(True)
         else:
-            self.combined_hud_checkbox.setEnabled(True)
+            self.counter_size_spinbox.setEnabled(True)
             self.image_size_spinbox.setEnabled(False)
             self.number_size_spinbox.setEnabled(False)
 
-        if len(self.state.hud_windows) > 0:
-            # Recreate unit windows.
-            for unit_window, _ in self.state.hud_windows:
+        # If we're in Combined HUD mode, just update the existing CombinedHudWindow:
+        if self.state.hud_positions.get('combined_hud', False):
+            for win, _ in self.state.hud_windows:
+                if isinstance(win, CombinedHudWindow):
+                    win.update_unit_section(separate)
+        else:
+            # Separate HUD mode: fully rebuild (existing logic)
+            from hud_manager import create_hud_windows
+            # Close and recreate everything
+            for unit_window, resource_window in self.state.hud_windows:
                 if unit_window:
                     if isinstance(unit_window, tuple):
                         for uw in unit_window:
                             uw.close()
                     else:
                         unit_window.close()
-            self.state.hud_windows = [(None, resource_window) for unit_window, resource_window in self.state.hud_windows]
-            from hud_manager import create_unit_windows_in_current_mode
-            create_unit_windows_in_current_mode(self.state)
-            for unit_window, _ in self.state.hud_windows:
-                if unit_window:
-                    if isinstance(unit_window, tuple):
-                        for uw in unit_window:
-                            uw.show()
+                if resource_window:
+                    if hasattr(resource_window, 'windows') and resource_window.windows:
+                        for window in resource_window.windows:
+                            window.close()
                     else:
-                        unit_window.show()
+                        resource_window.close()
+            self.state.hud_windows.clear()
+            create_hud_windows(self.state)
 
     def toggle_unit_frames(self, state_val):
         self.state.hud_positions['show_unit_frames'] = (state_val != 0)
@@ -334,7 +335,7 @@ class ControlPanel(QMainWindow):
             if self.state.hud_positions.get('combined_hud', False):
                 for combined_window, _ in self.state.hud_windows:
                     if hasattr(combined_window, 'unit_widget'):
-                        combined_window.unit_widget.update_show_unit_frames(self.state.hud_positions['show_unit_frames'])
+                        combined_window.update_show_unit_frames(self.state.hud_positions['show_unit_frames'])
             else:
                 for unit_window, _ in self.state.hud_windows:
                     if unit_window:
@@ -347,33 +348,34 @@ class ControlPanel(QMainWindow):
     def update_image_size(self):
         new_size = self.image_size_spinbox.value()
         self.state.hud_positions['image_size'] = new_size
-        logging.info(f"Updated image size: {new_size}")
-        if self.state.hud_windows:
-            # In combined mode, image size might affect the resource widget's image element.
-            if self.state.hud_positions.get('combined_hud', False):
-                for combined_window, _ in self.state.hud_windows:
-                    combined_window.resource_widget.image_size = new_size  # Or call update method if available.
-                    combined_window.resource_widget.update_all_data_size(new_size)
-            else:
-                for unit_window, _ in self.state.hud_windows:
-                    if unit_window and isinstance(unit_window, tuple):
-                        unit_window_images, _ = unit_window
-                        unit_window_images.update_all_counters_size(new_size)
+        logging.info(f"Updated image size to {new_size}")
+        for unit_window, resource_window in self.state.hud_windows:
+            if unit_window and isinstance(unit_window, tuple):
+                img_win, _ = unit_window
+                img_win.update_all_counters_size(new_size)
+            elif unit_window:
+                if hasattr(unit_window, 'update_unit_counters_size'):
+                    unit_window.update_unit_counters_size(new_size, section='images')
+                else:
+                    unit_window.update_all_counters_size(new_size)
 
     def update_number_size(self):
         new_size = self.number_size_spinbox.value()
         self.state.hud_positions['number_size'] = new_size
-        logging.info(f"Updated number size: {new_size}")
-        if self.state.hud_windows:
-            if self.state.hud_positions.get('combined_hud', False):
-                for combined_window, _ in self.state.hud_windows:
-                    combined_window.resource_widget.number_size = new_size
-                    combined_window.resource_widget.update_all_data_size(new_size)
-            else:
-                for unit_window, _ in self.state.hud_windows:
-                    if unit_window and isinstance(unit_window, tuple):
-                        _, unit_window_numbers = unit_window
-                        unit_window_numbers.update_all_counters_size(new_size)
+        logging.info(f"Updated number size to {new_size}")
+        for unit_window, resource_window in self.state.hud_windows:
+            if unit_window and isinstance(unit_window, tuple):
+                # Separate mode, separate counters
+                _, num_win = unit_window
+                num_win.update_all_counters_size(new_size)
+            elif unit_window:
+                # Combined mode or single unit window
+                if hasattr(unit_window, 'update_unit_counters_size'):
+                    # Combined HUD
+                    unit_window.update_unit_counters_size(new_size, section='numbers')
+                else:
+                    # Single UnitWindowWithImages
+                    unit_window.update_all_counters_size(new_size)
 
     def update_distance_between_numbers(self):
         new_distance = self.distance_spinbox.value()
