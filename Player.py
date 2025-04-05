@@ -5,14 +5,15 @@ import traceback
 
 from PySide6.QtGui import QColor
 
-# Import mappings from your constants module (instead of common)
-from constants import country_name_to_faction, COLOR_NAME_MAPPING, NUMBEROFWFOFFSET
 from constants import (
+    country_name_to_faction, COLOR_NAME_MAPPING, NUMBEROFWFOFFSET,
+    QUEUED_FACTORIES_OFFSETS, BUILDING_FACTORIES_OFFSETS,
     MAXPLAYERS, INVALIDCLASS, INFOFFSET, AIRCRAFTOFFSET, TANKOFFSET, BUILDINGOFFSET,
     CREDITSPENT_OFFSET, BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
     POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
     infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets
 )
+from factory import QueuedFactory, BuildingFactory
 from memory_utils import read_process_memory
 from exceptions import ProcessExitedException
 
@@ -46,7 +47,7 @@ class Player:
         self.spent_credit = 0
         self.power_output = 0
         self.power_drain = 0
-        self.power = self.power_output - self.power_drain
+        self.power = 0
 
         # Unit counts
         self.infantry_counts = {}
@@ -69,19 +70,25 @@ class Player:
         }
         self.initialize_pointers()
 
+        # Instantiate factory objects for each production type.
+        self.factories = {
+            "Aircraft": QueuedFactory(process_handle, self.real_class_base, "Aircraft"),
+            "Infantry": QueuedFactory(process_handle, self.real_class_base, "Infantry"),
+            "Vehicles": QueuedFactory(process_handle, self.real_class_base, "Vehicles"),
+            "Ships": QueuedFactory(process_handle, self.real_class_base, "Ships"),
+            "Buildings": BuildingFactory(process_handle, self.real_class_base, "Buildings"),
+            "Defenses": BuildingFactory(process_handle, self.real_class_base, "Defenses")
+        }
+
     def initialize_pointers(self):
         """
-        Read pointers for building, unit (tank), infantry, and aircraft in a single contiguous memory chunk.
+        Read pointers for building, unit (tank), infantry, and aircraft in one contiguous memory chunk.
         """
-        # The four pointer offsets are contiguous:
-        # BUILDINGOFFSET, TANKOFFSET, INFOFFSET, AIRCRAFTOFFSET.
-        # Compute the start and total bytes to read.
         start_offset = BUILDINGOFFSET
         end_offset = AIRCRAFTOFFSET + 4  # include 4 bytes for the last pointer
         total_bytes = end_offset - start_offset
         pointers_data = read_process_memory(self.process_handle, self.real_class_base + start_offset, total_bytes)
         if pointers_data and len(pointers_data) >= total_bytes:
-            # Extract pointers using offsets relative to BUILDINGOFFSET.
             self.building_array_ptr = int.from_bytes(pointers_data[0:4], byteorder='little')
             tank_offset_relative = TANKOFFSET - BUILDINGOFFSET
             self.unit_array_ptr = int.from_bytes(pointers_data[tank_offset_relative:tank_offset_relative+4], byteorder='little')
@@ -102,11 +109,10 @@ class Player:
             offsets = sorted(category_dict.keys())
             min_offset = offsets[0]
             max_offset = offsets[-1]
-            chunk_size = max_offset - min_offset + 4  # Read enough bytes to cover the highest offset value
-            # Read one contiguous chunk for both the count data and the test data.
+            chunk_size = max_offset - min_offset + 4
+            # Read one contiguous chunk for count data and test data.
             chunk_data = read_process_memory(self.process_handle, array_ptr + min_offset, chunk_size)
-            test_chunk_data = read_process_memory(self.process_handle, self.test_addresses[count_type] + min_offset,
-                                                  chunk_size)
+            test_chunk_data = read_process_memory(self.process_handle, self.test_addresses[count_type] + min_offset, chunk_size)
             if not chunk_data or not test_chunk_data:
                 logging.warning(f"Failed to read memory chunk for {count_type}.")
                 return {}
@@ -118,9 +124,7 @@ class Player:
                     count = int.from_bytes(count_bytes, byteorder='little')
                     test = int.from_bytes(test_bytes, byteorder='little')
                     name = category_dict[offset]
-                    # Extra tests for war factories:
                     if name in ["Allied War Factory", "Soviet War Factory", "Yuri War Factory"]:
-                        # Verify that the count is within the allowed maximum AND less than or equal to the test value.
                         warFactories_ptr = self.real_class_base + NUMBEROFWFOFFSET
                         warFactories_data = read_process_memory(self.process_handle, warFactories_ptr, 4)
                         if warFactories_data:
@@ -162,7 +166,6 @@ class Player:
         try:
             logging.debug(f"Updating dynamic data for player {self.index}")
 
-            # Update balance and spent credit (read individually as these offsets are not obviously contiguous)
             balance_ptr = self.real_class_base + BALANCEOFFSET
             balance_data = read_process_memory(self.process_handle, balance_ptr, 4)
             if balance_data:
@@ -173,20 +176,17 @@ class Player:
             if spent_credit_data:
                 self.spent_credit = int.from_bytes(spent_credit_data, byteorder='little')
 
-            # Read is_winner and is_loser together (they are contiguous)
             winners_data = read_process_memory(self.process_handle, self.real_class_base + ISWINNEROFFSET, 2)
             if winners_data and len(winners_data) >= 2:
                 self.is_winner = bool(winners_data[0])
                 self.is_loser = bool(winners_data[1])
 
-            # Read power output and drain together (8 bytes total)
             power_data = read_process_memory(self.process_handle, self.real_class_base + POWEROUTPUTOFFSET, 8)
             if power_data and len(power_data) >= 8:
                 self.power_output = int.from_bytes(power_data[0:4], byteorder='little')
                 self.power_drain = int.from_bytes(power_data[4:8], byteorder='little')
                 self.power = self.power_output - self.power_drain
 
-            # Update unit counts
             if self.infantry_array_ptr == 0:
                 self.initialize_pointers()
             else:
@@ -215,11 +215,43 @@ class Player:
                     aircraft_offsets, self.aircraft_array_ptr, "aircraft"
                 )
 
+            # Update factory production data and log each factory's update status.
+            self.update_factories()
+
         except ProcessExitedException:
             raise
         except Exception as e:
             logging.error(f"Exception in update_dynamic_data for player {self.username.value}: {e}")
             traceback.print_exc()
+
+    def update_factories(self):
+        """
+        Populate self.factory_status by processing both queued and building factories.
+        """
+        self.factory_status = {}
+
+        # A small helper to process a dictionary of offsets,
+        # and log either "Queued factory" or "Building factory"
+        def process_factory_group(group_label, offsets_dict):
+            for factory_name, offset in offsets_dict.items():
+                factory = self.factories.get(factory_name)
+                if not factory:
+                    continue
+
+                status = factory.process_factory(offset)
+                self.factory_status[factory_name] = status
+
+                if status.get("producing"):
+                    logging.Logger(f"{group_label} factory '{factory_name}' is actively producing: {status}")
+                else:
+                    logging.Logger(f"{group_label} factory '{factory_name}' is idle or invalid: {status}")
+
+        # Process queued factories
+        process_factory_group("Queued", QUEUED_FACTORIES_OFFSETS)
+
+        # Process building factories
+        process_factory_group("Building", BUILDING_FACTORIES_OFFSETS)
+
 
 class GameData:
     def __init__(self):
@@ -231,6 +263,7 @@ class GameData:
     def update_all_players(self):
         for player in self.players:
             player.update_dynamic_data()
+
 
 def detect_if_all_players_are_loaded(process_handle):
     try:
@@ -284,6 +317,7 @@ def detect_if_all_players_are_loaded(process_handle):
         logging.error(f"Exception in detect_if_all_players_are_loaded: {e}")
         traceback.print_exc()
         return False
+
 
 def initialize_players_after_loading(game_data, process_handle):
     game_data.players.clear()
@@ -360,12 +394,10 @@ def initialize_players_after_loading(game_data, process_handle):
             ctypes.memmove(player.username, username_data, 0x20)
             logging.info(f"Player {i} name: {player.username.value}")
 
-            # Reset oil_count.txt
+            # Reset oil_count.txt for player initialization.
             player.write_oil_count_to_file(0)
 
             game_data.add_player(player)
 
     logging.info(f"Number of valid players: {valid_player_count}")
     return valid_player_count
-
-

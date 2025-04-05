@@ -5,6 +5,8 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QL
 from CounterWidget import (CounterWidgetImagesAndNumber, CounterWidgetNumberOnly, CounterWidgetImageOnly)
 from constants import name_to_path, country_name_to_faction
 from DataTracker import ResourceWindow
+from factory_panel import FactoryPanel
+
 
 # =============================================================================
 # UnitWindowBase: Shared functionality for unit counter windows.
@@ -245,19 +247,18 @@ class UnitWindowNumbersOnly(UnitWindowBase):
     def get_unit_count(self, unit_type, unit_name):
         return super().get_unit_count(unit_type, unit_name)
 
-
 # =============================================================================
 # CombinedHudWindow: Used in Combined HUD mode.
-# This container embeds the ResourceWindow and the unit counters in one window.
+# This container embeds the ResourceWindow and the unit counters in one window,
+# plus the FactoryPanel if "show_factory_window" is True.
 # =============================================================================
 class CombinedHudWindow(QWidget):
     def __init__(self, player, hud_pos, selected_units_dict):
         """
         Create a combined HUD container for a single player.
         The top section displays resource info.
-        The bottom section displays unit counters:
-          - If separate_unit_counters is enabled, split into two embedded widgets.
-          - Otherwise, a single combined unit counter is shown.
+        The middle section displays unit counters (images/numbers).
+        The bottom section displays the factory panel (if show_factory_window is True).
         """
         super().__init__()
         self.player = player
@@ -268,8 +269,10 @@ class CombinedHudWindow(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.make_hud_movable()
+
         self._init_ui()
-        # Restore saved position.
+
+        # Restore saved position (for combined HUD).
         player_id = (player.color_name.name() if not isinstance(player.color_name, str) else player.color_name)
         if player_id in self.hud_pos and 'combined' in self.hud_pos[player_id]:
             pos = self.hud_pos[player_id]['combined']
@@ -277,7 +280,12 @@ class CombinedHudWindow(QWidget):
 
     def _init_ui(self):
         main_layout = QVBoxLayout(self)
-        # Top section: ResourceWindow.
+        main_layout.setContentsMargins(0, 0, 0, 0)
+
+        # First define self.factory_panel = None so it exists for the while-loop check.
+        self.factory_panel = None
+
+        # (1) Resource widget
         self.resource_widget = ResourceWindow(
             self.player,
             len(self.hud_pos),
@@ -287,25 +295,40 @@ class CombinedHudWindow(QWidget):
         )
         self.resource_widget.setWindowFlags(Qt.Widget)
         main_layout.addWidget(self.resource_widget)
-        # Bottom section: Unit counters.
+
+        # (2) Unit counters
         self.update_unit_section(self.hud_pos.get('separate_unit_counters', False))
+
+        # (3) Factory panel if "show_factory_window" is True
+        if self.hud_pos.get('show_factory_window', True):
+            from factory_panel import FactoryPanel  # or wherever your FactoryPanel is
+            self.factory_panel = FactoryPanel(self.player, self.hud_pos, parent=self)
+            main_layout.addWidget(self.factory_panel)
+
         self.setLayout(main_layout)
 
     def update_unit_section(self, separate: bool):
         """
         Rebuild just the unit‐counter portion of this combined HUD.
-        :param separate: True to split into images-only + numbers-only, False for a single combined widget.
+        :param separate: True to split into images-only + numbers-only,
+                         False for a single combined widget.
         """
         layout = self.layout()
-        # Remove any widgets after the resource_widget
-        while layout.count() > 1:
-            item = layout.takeAt(1)
-            if item.widget():
-                item.widget().setParent(None)
+        # We want to remove any existing unit widgets but keep the resource_widget
+        # (index 0) and the factory_panel if it exists (usually at the bottom).
+        while layout.count() > (1 if self.factory_panel else 1):
+            # The item at the bottom might be the old unit container or the factory panel.
+            item = layout.itemAt(layout.count() - 1)
+            w = item.widget()
+            if w is not None and w is self.factory_panel:
+                break  # do not remove the factory panel
+            layout.removeItem(item)
+            if w is not None:
+                w.setParent(None)
 
+        # Now add a fresh unit section
         if separate:
             # Two embedded widgets side-by-side
-            from PySide6.QtWidgets import QWidget, QHBoxLayout
             container = QWidget()
             h_layout = QHBoxLayout()
             h_layout.setContentsMargins(0, 0, 0, 0)
@@ -326,24 +349,36 @@ class CombinedHudWindow(QWidget):
             layout.addWidget(self.unit_widget)
 
     def update_labels(self):
+        """
+        Update resource widget, unit widgets, and factory panel if present.
+        """
         self.resource_widget.update_labels()
+
+        # If separate_unit_counters is True, we have unit_widget_images + unit_widget_numbers
         if self.hud_pos.get('separate_unit_counters', False):
             self.unit_widget_images.update_labels()
             self.unit_widget_numbers.update_labels()
         else:
             self.unit_widget.update_labels()
 
+        # Also update factory panel
+        if self.factory_panel:
+            self.factory_panel.update_labels()
+
     def make_hud_movable(self):
         self.offset = None
+
         def mouse_press_event(event):
             if event.button() == Qt.LeftButton:
                 self.offset = event.pos()
+
         def mouse_move_event(event):
             if self.offset is not None:
                 new_x = event.globalX() - self.offset.x()
                 new_y = event.globalY() - self.offset.y()
                 self.move(new_x, new_y)
                 self.update_hud_position(new_x, new_y)
+
         self.mousePressEvent = mouse_press_event
         self.mouseMoveEvent = mouse_move_event
 
@@ -380,13 +415,14 @@ class CombinedHudWindow(QWidget):
         Show or hide frames around unit counters in combined HUD mode.
         """
         if self.hud_pos.get('separate_unit_counters', False):
-            # Two embedded widgets
             if hasattr(self, 'unit_widget_images'):
                 self.unit_widget_images.update_show_unit_frames(show)
+            if hasattr(self, 'unit_widget_numbers'):
+                self.unit_widget_numbers.update_show_unit_frames(show)
         else:
-            # Single combined unit widget
             if hasattr(self, 'unit_widget'):
                 self.unit_widget.update_show_unit_frames(show)
+
 
 
 # =============================================================================
