@@ -92,19 +92,21 @@ class CounterWidgetNumberOnly(CounterWidgetBase):
         painter = QPainter(self)
         painter.setFont(self.number_font)
         fm = painter.fontMetrics()
-        text_width = fm.horizontalAdvance(str(self.count))
+        text = str(self.count)
+        text_width = fm.horizontalAdvance(text)
         text_height = fm.height()
         self.setFixedSize(self.fixed_width, self.fixed_height)
-        text_x = (self.fixed_width - text_width) / 2
-        text_y = self.fixed_height - fm.descent()
+        x = (self.fixed_width - text_width) / 2
+        y = self.fixed_height - fm.descent()
+
+        # draw outline + text
         painter.setPen(Qt.black)
-        outline_thickness = 1
-        for dx in range(-outline_thickness, outline_thickness + 1):
-            for dy in range(-outline_thickness, outline_thickness + 1):
-                if dx != 0 or dy != 0:
-                    painter.drawText(int(text_x + dx), int(text_y + dy), str(self.count))
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                if dx or dy:
+                    painter.drawText(int(x+dx), int(y+dy), text)
         painter.setPen(Qt.white)
-        painter.drawText(int(text_x), int(text_y), str(self.count))
+        painter.drawText(int(x), int(y), text)
 
     def update_size(self, new_size):
         super().update_size(new_size)
