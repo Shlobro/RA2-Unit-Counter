@@ -10,6 +10,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from UnitSelectionWindow import UnitSelectionWindow
+from hud_manager import create_hud_windows
+
 
 class ControlPanel(QMainWindow):
     def __init__(self, state):
@@ -260,6 +262,8 @@ class ControlPanel(QMainWindow):
             self.number_size_spinbox.setEnabled(False)
             self.distance_spinbox.setEnabled(False)
             self.counter_size_spinbox.setEnabled(True)
+
+
 
     def toggle_combined_hud(self, state_val):
         self.state.hud_positions['combined_hud'] = (state_val != 0)

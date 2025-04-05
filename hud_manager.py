@@ -1,4 +1,3 @@
-# hud_manager.py
 import configparser
 import json
 import logging
@@ -29,25 +28,32 @@ class CombinedHudWindow(QWidget):
         self.player = player
         self.hud_positions = hud_positions
         self.selected_units_dict = selected_units_dict
+
+        # Use the player's name (or color) for the window title
         self.setWindowTitle(f"{player.color_name} Combined HUD")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.make_hud_movable()
         self._init_ui()
+        # If a saved position exists for this player's combined HUD, move there.
+        player_id = (player.color_name.name() if not isinstance(player.color_name, str) else player.color_name)
+        if player_id in self.hud_positions and 'combined' in self.hud_positions[player_id]:
+            pos = self.hud_positions[player_id]['combined']
+            self.move(pos['x'], pos['y'])
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
         # Create and embed the ResourceWindow.
         self.resource_widget = ResourceWindow(
             self.player,
-            len(self.hud_positions),  # you can adjust this value as needed
+            len(self.hud_positions),  # Adjust if needed
             self.hud_positions,
             self.player.color_name,
-            combined_mode=True  # Tell ResourceWindow it is in combined mode.
+            combined_mode=True  # Inform ResourceWindow that it's in combined mode.
         )
         self.resource_widget.setWindowFlags(Qt.Widget)
 
-        # Create and embed the UnitWindowWithImages using the correct selected_units_dict.
+        # Create and embed the UnitWindowWithImages using the selected_units_dict.
         self.unit_widget = UnitWindowWithImages(
             self.player,
             self.hud_positions,
@@ -65,6 +71,7 @@ class CombinedHudWindow(QWidget):
         self.unit_widget.update_labels()
 
     def make_hud_movable(self):
+        """Make the combined HUD movable and update its position in hud_positions."""
         self.offset = None
 
         def mouse_press_event(event):
@@ -73,14 +80,21 @@ class CombinedHudWindow(QWidget):
 
         def mouse_move_event(event):
             if self.offset is not None:
-                x = event.globalX() - self.offset.x()
-                y = event.globalY() - self.offset.y()
-                self.move(x, y)
-                # TODO : save the position
-                # self.update_hud_position(x, y)
+                new_x = event.globalX() - self.offset.x()
+                new_y = event.globalY() - self.offset.y()
+                self.move(new_x, new_y)
+                self.update_hud_position(new_x, new_y)
 
         self.mousePressEvent = mouse_press_event
         self.mouseMoveEvent = mouse_move_event
+
+    def update_hud_position(self, x, y):
+        """Update the hud_positions dictionary with the current position of this combined HUD."""
+        player_id = (self.player.color_name.name() if not isinstance(self.player.color_name, str)
+                     else self.player.color_name)
+        if player_id not in self.hud_positions:
+            self.hud_positions[player_id] = {}
+        self.hud_positions[player_id]['combined'] = {"x": x, "y": y}
 
 
 # ---------------------------------------------------------------------------
@@ -163,14 +177,12 @@ def save_hud_positions(state):
         # Save window positions per player.
         for unit_window, resource_window in state.hud_windows:
             if resource_window is not None and hasattr(resource_window, 'player'):
-                player_id = (
-                    resource_window.player.color_name.name()
-                    if not isinstance(resource_window.player.color_name, str)
-                    else resource_window.player.color_name
-                )
+                player_id = (resource_window.player.color_name.name()
+                             if not isinstance(resource_window.player.color_name, str)
+                             else resource_window.player.color_name)
                 state.hud_positions.setdefault(player_id, {})
-                # For combined mode, store the container's position.
-                if unit_window and hasattr(unit_window, 'pos'):
+                # For combined mode, save the combined window's position.
+                if unit_window is not None and hasattr(unit_window, 'pos'):
                     pos = unit_window.pos()
                     state.hud_positions[player_id]['combined'] = {"x": pos.x(), "y": pos.y()}
                 # For separate mode, save each child window's position.
@@ -201,8 +213,7 @@ def create_unit_windows_in_current_mode(state):
             for i, (win, resource_win) in enumerate(state.hud_windows):
                 if win:
                     win.close()
-                # resource_win holds the original ResourceWindow instance (if any).
-                # Replace the tuple with the CombinedHudWindow.
+                # Replace with a new CombinedHudWindow.
                 state.hud_windows[i] = (
                     CombinedHudWindow(resource_win.player, state.hud_positions, state.selected_units_dict),
                     None
@@ -218,14 +229,12 @@ def create_unit_windows_in_current_mode(state):
                     else:
                         unit_window.close()
                 if separate:
-                    logging.info("Unit separate.")
                     unit_window_images = UnitWindowImagesOnly(player, state.hud_positions, state.selected_units_dict)
                     unit_window_images.setWindowTitle(f"Player {player.color_name} unit images window")
                     unit_window_numbers = UnitWindowNumbersOnly(player, state.hud_positions, state.selected_units_dict)
                     unit_window_numbers.setWindowTitle(f"Player {player.color_name} unit numbers window")
                     state.hud_windows[i] = ((unit_window_images, unit_window_numbers), resource_window)
                 else:
-                    logging.info("Unit UnitWindowWithImages.")
                     unit_window = UnitWindowWithImages(player, state.hud_positions, state.selected_units_dict)
                     unit_window.setWindowTitle(f"Player {player.color_name} unit window")
                     state.hud_windows[i] = (unit_window, resource_window)
