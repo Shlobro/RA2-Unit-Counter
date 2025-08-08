@@ -384,8 +384,10 @@ class ControlPanel(QMainWindow):
         if self.state.hud_windows:
             if self.state.hud_positions.get('combined_hud', False):
                 for combined_window, _ in self.state.hud_windows:
-                    combined_window.resource_widget.distance_between_numbers = new_distance
-                    combined_window.resource_widget.update_all_data_size(new_distance)
+                    # Only apply distance setting when separate unit counters are enabled
+                    if self.state.hud_positions.get('separate_unit_counters', False):
+                        if hasattr(combined_window, 'unit_widget_numbers'):
+                            combined_window.unit_widget_numbers.update_spacing(new_distance)
             else:
                 for unit_window, _ in self.state.hud_windows:
                     if unit_window and isinstance(unit_window, tuple):
