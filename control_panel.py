@@ -61,6 +61,14 @@ class ControlPanel(QMainWindow):
         self.distance_spinbox.valueChanged.connect(self.update_distance_between_numbers)
         unit_layout.addRow(distance_label, self.distance_spinbox)
 
+        distance_images_label = QLabel("Distance Between Images:")
+        distance_images = self.state.hud_positions.get('distance_between_images', 0)
+        self.distance_images_spinbox = QSpinBox()
+        self.distance_images_spinbox.setRange(0, 150)
+        self.distance_images_spinbox.setValue(distance_images)
+        self.distance_images_spinbox.valueChanged.connect(self.update_distance_between_images)
+        unit_layout.addRow(distance_images_label, self.distance_images_spinbox)
+
         self.unit_frame_checkbox = QCheckBox("Show Unit Frames")
         self.unit_frame_checkbox.setChecked(self.state.hud_positions.get('show_unit_frames', True))
         self.unit_frame_checkbox.stateChanged.connect(self.toggle_unit_frames)
@@ -256,13 +264,17 @@ class ControlPanel(QMainWindow):
             self.image_size_spinbox.setEnabled(True)
             self.number_size_spinbox.setEnabled(True)
             self.distance_spinbox.setEnabled(True)
+            self.distance_images_spinbox.setEnabled(True)
             self.counter_size_spinbox.setEnabled(False)
             self.update_distance_between_numbers()
+            self.update_distance_between_images()
         else:
             self.image_size_spinbox.setEnabled(False)
             self.number_size_spinbox.setEnabled(False)
             self.distance_spinbox.setEnabled(False)
+            self.distance_images_spinbox.setEnabled(True)  # Always enabled for spacing between images
             self.counter_size_spinbox.setEnabled(True)
+            self.update_distance_between_images()  # Apply initial spacing
 
 
 
@@ -298,10 +310,14 @@ class ControlPanel(QMainWindow):
             self.counter_size_spinbox.setEnabled(False)
             self.image_size_spinbox.setEnabled(True)
             self.number_size_spinbox.setEnabled(True)
+            self.distance_spinbox.setEnabled(True)
+            self.distance_images_spinbox.setEnabled(True)
         else:
             self.counter_size_spinbox.setEnabled(True)
             self.image_size_spinbox.setEnabled(False)
             self.number_size_spinbox.setEnabled(False)
+            self.distance_spinbox.setEnabled(False)
+            self.distance_images_spinbox.setEnabled(True)  # Always enabled for spacing between images
 
         # If we're in Combined HUD mode, just update the existing CombinedHudWindow:
         if self.state.hud_positions.get('combined_hud', False):
@@ -393,6 +409,30 @@ class ControlPanel(QMainWindow):
                     if unit_window and isinstance(unit_window, tuple):
                         _, unit_window_numbers = unit_window
                         unit_window_numbers.update_spacing(new_distance)
+
+    def update_distance_between_images(self):
+        new_distance = self.distance_images_spinbox.value()
+        self.state.hud_positions['distance_between_images'] = new_distance
+        logging.info(f"Updated distance between images: {new_distance}")
+        if self.state.hud_windows:
+            if self.state.hud_positions.get('combined_hud', False):
+                for combined_window, _ in self.state.hud_windows:
+                    if self.state.hud_positions.get('separate_unit_counters', False):
+                        # Separate unit counters: apply to images widget only
+                        if hasattr(combined_window, 'unit_widget_images'):
+                            combined_window.unit_widget_images.update_spacing(new_distance)
+                    else:
+                        # Single combined unit widget: apply spacing to the combined widget
+                        if hasattr(combined_window, 'unit_widget'):
+                            combined_window.unit_widget.update_spacing(new_distance)
+            else:
+                for unit_window, _ in self.state.hud_windows:
+                    if unit_window and isinstance(unit_window, tuple):
+                        img_win, _ = unit_window
+                        img_win.update_spacing(new_distance)
+                    elif unit_window:
+                        # Single unit window (non-separate mode)
+                        unit_window.update_spacing(new_distance)
 
     def update_flag_widget_size(self):
         new_size = self.flag_size_spinbox.value()

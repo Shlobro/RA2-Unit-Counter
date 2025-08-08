@@ -185,6 +185,9 @@ class UnitWindowBase(QMainWindow):
 # UnitWindowWithImages: Combined unit window (image and number together).
 # =============================================================================
 class UnitWindowWithImages(UnitWindowBase):
+    def __init__(self, player, hud_pos, selected_units_dict):
+        self.distance_between_images = hud_pos.get('distance_between_images', 0)
+        super().__init__(player, hud_pos, selected_units_dict, spacing=self.distance_between_images)
     def get_default_size(self):
         return self.hud_pos.get('unit_counter_size', 100)
     def get_hud_type(self):
@@ -206,6 +209,9 @@ class UnitWindowWithImages(UnitWindowBase):
 # UnitWindowImagesOnly: Displays only unit images.
 # =============================================================================
 class UnitWindowImagesOnly(UnitWindowBase):
+    def __init__(self, player, hud_pos, selected_units_dict):
+        self.distance_between_images = hud_pos.get('distance_between_images', 0)
+        super().__init__(player, hud_pos, selected_units_dict, spacing=self.distance_between_images)
     def get_default_size(self):
         return self.hud_pos.get('image_size', 75)
     def get_hud_type(self):

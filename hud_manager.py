@@ -39,6 +39,7 @@ def load_hud_positions(state):
         'image_size': 75,
         'number_size': 75,
         'distance_between_numbers': 0,
+        'distance_between_images': 0,
         'show_name': True,
         'show_money': True,
         'show_power': True,
