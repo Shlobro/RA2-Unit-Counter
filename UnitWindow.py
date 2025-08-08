@@ -388,6 +388,21 @@ class CombinedHudWindow(QWidget):
             if hasattr(self, 'unit_widget'):
                 self.unit_widget.update_show_unit_frames(show)
 
+    def update_unit_layout(self, layout_type):
+        """
+        Update the layout of unit counters in Combined HUD mode.
+        """
+        if self.hud_pos.get('separate_unit_counters', False):
+            # Two embedded widgets - update both
+            if hasattr(self, 'unit_widget_images'):
+                self.unit_widget_images.update_layout(layout_type)
+            if hasattr(self, 'unit_widget_numbers'):
+                self.unit_widget_numbers.update_layout(layout_type)
+        else:
+            # Single combined unit widget
+            if hasattr(self, 'unit_widget'):
+                self.unit_widget.update_layout(layout_type)
+
 
 # =============================================================================
 # CombinedUnitWindow: Used in Separate HUD mode when separate unit counters are enabled.

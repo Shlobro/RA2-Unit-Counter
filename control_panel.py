@@ -505,13 +505,20 @@ class ControlPanel(QMainWindow):
         self.state.hud_positions['unit_layout'] = layout_type
         logging.info(f"Updated layout to: {layout_type}")
         if self.state.hud_windows:
-            for unit_window, _ in self.state.hud_windows:
-                if unit_window:
-                    if isinstance(unit_window, tuple):
-                        for uw in unit_window:
-                            uw.update_layout(layout_type)
-                    else:
-                        unit_window.update_layout(layout_type)
+            if self.state.hud_positions.get('combined_hud', False):
+                # Handle Combined HUD mode
+                for combined_window, _ in self.state.hud_windows:
+                    if hasattr(combined_window, 'update_unit_layout'):
+                        combined_window.update_unit_layout(layout_type)
+            else:
+                # Handle separate HUD mode (existing logic)
+                for unit_window, _ in self.state.hud_windows:
+                    if unit_window:
+                        if isinstance(unit_window, tuple):
+                            for uw in unit_window:
+                                uw.update_layout(layout_type)
+                        else:
+                            unit_window.update_layout(layout_type)
         else:
             logging.info("HUD windows do not exist yet, storing the layout for later.")
         self.update_distance_between_numbers()
