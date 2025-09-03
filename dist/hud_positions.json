@@ -50,6 +50,47 @@
             "y": 100
         },
         "flag": {
+            "x": 359,
+            "y": 131
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 215,
+            "y": 174
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 130,
+            "y": 276
+        },
+        "combined": {
+            "x": 130,
+            "y": 276
+        },
+        "factory": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "distance_between_images": 0,
+    "combined_hud": false,
+    "show_factory_window": true,
+    "show_factory_queue": true,
+    "factory_size": 100,
+    "factory_layout": "Horizontal",
+    "show_factory_frames": true,
+    "green": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
             "x": 100,
             "y": 100
         },
@@ -66,8 +107,20 @@
             "y": 100
         },
         "unit_counter_combined": {
-            "x": 130,
-            "y": 276
+            "x": 100,
+            "y": 100
+        },
+        "combined": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 100,
+            "y": 100
         }
+    },
+    "factory": {
+        "x": 100,
+        "y": 100
     }
 }
