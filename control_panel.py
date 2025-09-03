@@ -160,8 +160,7 @@ class ControlPanel(QMainWindow):
         if self.state.hud_windows:
             if self.state.hud_positions.get('combined_hud', False):
                 for combined_window, _ in self.state.hud_windows:
-                    if hasattr(combined_window, 'unit_widget'):
-                        combined_window.update_show_unit_frames(self.state.hud_positions['show_unit_frames'])
+                    combined_window.update_show_unit_frames(self.state.hud_positions['show_unit_frames'])
             else:
                 for unit_window, _ in self.state.hud_windows:
                     if unit_window:
