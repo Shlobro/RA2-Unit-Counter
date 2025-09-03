@@ -9,13 +9,6 @@
                     "faction": "Allied",
                     "position": -1
                 },
-                "Allied Dog": {
-                    "selected": true,
-                    "locked": true,
-                    "unit_type": "Infantry",
-                    "faction": "Allied",
-                    "position": 0
-                },
                 "GGI": {
                     "selected": true,
                     "locked": false,
@@ -59,6 +52,20 @@
                     "position": -1
                 },
                 "Navy Seal": {
+                    "selected": false,
+                    "locked": false,
+                    "unit_type": "Infantry",
+                    "faction": "Allied",
+                    "position": -1
+                },
+                "Allied Attack Dog": {
+                    "locked": true,
+                    "unit_type": "Infantry",
+                    "faction": "Allied",
+                    "position": 2,
+                    "selected": true
+                },
+                "Guardian GI": {
                     "selected": false,
                     "locked": false,
                     "unit_type": "Infantry",
@@ -394,13 +401,6 @@
                     "faction": "Soviet",
                     "position": -1
                 },
-                "Sov Ore Ref": {
-                    "selected": true,
-                    "locked": true,
-                    "unit_type": "Structure",
-                    "faction": "Soviet",
-                    "position": -1
-                },
                 "Flak Cannon": {
                     "selected": false,
                     "locked": false,
@@ -471,13 +471,6 @@
                     "faction": "Soviet",
                     "position": -1
                 },
-                "Tesla Coil": {
-                    "selected": true,
-                    "locked": true,
-                    "unit_type": "Structure",
-                    "faction": "Soviet",
-                    "position": -1
-                },
                 "Soviet Tesla Reactor": {
                     "selected": true,
                     "unit_type": "Structure",
@@ -486,6 +479,14 @@
                 },
                 "Soviet Ore Refinery": {
                     "selected": true,
+                    "locked": true,
+                    "position": -1,
+                    "unit_type": "Structure",
+                    "faction": "Soviet"
+                },
+                "Soviet Tesla Coil": {
+                    "selected": true,
+                    "locked": true,
                     "position": -1,
                     "unit_type": "Structure",
                     "faction": "Soviet"
@@ -804,7 +805,7 @@
         },
         "Other": {
             "Structure": {
-                "Blitz oil (psychic sensor)": {
+                "Psychic Beacon": {
                     "selected": true,
                     "locked": true,
                     "unit_type": "Structure",

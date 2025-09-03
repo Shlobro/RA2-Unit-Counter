@@ -395,12 +395,15 @@ def game_started_handler(state):
             logging.info("No valid players found. HUD will not be displayed.")
             return
         create_hud_windows(state)
-        # Show resource + unit windows if needed
+        # Show unit windows if needed (combined windows are already shown in create_hud_windows)
         for unit_window, resource_window in state.hud_windows:
             if unit_window:
-                unit_window.show()
-            elif resource_window:
-                resource_window.show()
+                # Handle case where unit_window might be a tuple of windows (separate unit counters)
+                if isinstance(unit_window, tuple):
+                    for uw in unit_window:
+                        uw.show()
+                else:
+                    unit_window.show()
 
         # Also show/hide factory windows depending on user preference
         show_factory = state.hud_positions.get('show_factory_window', True)
