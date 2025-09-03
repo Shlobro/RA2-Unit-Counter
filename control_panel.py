@@ -225,15 +225,10 @@ class ControlPanel(QMainWindow):
             self.distance_spinbox.setEnabled(False)
             self.distance_images_spinbox.setEnabled(True)  # Always enabled for spacing between images
 
-        # If we're in Combined HUD mode, just update the existing CombinedHudWindow:
-        if self.state.hud_positions.get('combined_hud', False):
-            for win, _ in self.state.hud_windows:
-                if isinstance(win, CombinedHudWindow):
-                    win.update_unit_section(separate)
-        else:
-            # Separate HUD mode: fully rebuild (existing logic)
-            from hud_manager import create_hud_windows
-            # Close and recreate everything
+        # Do a full recreation in both modes to avoid duplicates (same as combined toggle):
+        from hud_manager import create_hud_windows
+        # Close and recreate everything
+        if self.state.hud_windows:
             for unit_window, resource_window in self.state.hud_windows:
                 if unit_window:
                     if isinstance(unit_window, tuple):
@@ -247,8 +242,8 @@ class ControlPanel(QMainWindow):
                             window.close()
                     else:
                         resource_window.close()
-            self.state.hud_windows.clear()
-            create_hud_windows(self.state)
+        
+        create_hud_windows(self.state)
 
     def create_name_flag_money_tab(self):
         tab = QWidget()
@@ -414,16 +409,9 @@ class ControlPanel(QMainWindow):
         self.state.hud_positions["show_factory_queue"] = show_queue
         logging.info(f"Set show_factory_queue to {show_queue}")
 
-        # If separate HUD mode, update the existing factory windows
-        if not self.state.hud_positions.get('combined_hud', False):
-            if hasattr(self.state, 'factory_windows'):
-                for factory_win in self.state.factory_windows:
-                    factory_win.update_labels()
-        else:
-            # Combined HUD mode: update the embedded factory panels
-            for combined_window, _ in self.state.hud_windows:
-                if hasattr(combined_window, 'factory_panel') and combined_window.factory_panel:
-                    combined_window.factory_panel.update_labels()
+        # Do a full recreation in both modes to fix spacing issues (same approach as other toggles)
+        from hud_manager import create_hud_windows
+        create_hud_windows(self.state)
 
     def toggle_factory_window(self, state_val):
         show = (state_val != 0)

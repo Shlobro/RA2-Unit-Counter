@@ -354,13 +354,16 @@ class CombinedHudWindow(QWidget):
         self.resource_widget.setWindowFlags(Qt.Widget)
         main_layout.addWidget(self.resource_widget)
 
-        # (2) Unit counters
-        self.update_unit_section(self.hud_pos.get('separate_unit_counters', False))
-
-        # (3) Factory panel if "show_factory_window" is True
+        # (2) Factory panel if "show_factory_window" is True - create before unit section
         if self.hud_pos.get('show_factory_window', True):
             from factory_panel import FactoryPanel  # or wherever your FactoryPanel is
             self.factory_panel = FactoryPanel(self.player, self.hud_pos, parent=self)
+
+        # (3) Unit counters - now factory_panel is properly set
+        self.update_unit_section(self.hud_pos.get('separate_unit_counters', False))
+
+        # (4) Add factory panel to layout if it was created
+        if self.factory_panel:
             main_layout.addWidget(self.factory_panel)
 
         self.setLayout(main_layout)
@@ -374,7 +377,7 @@ class CombinedHudWindow(QWidget):
         layout = self.layout()
         # We want to remove any existing unit widgets but keep the resource_widget
         # (index 0) and the factory_panel if it exists (usually at the bottom).
-        while layout.count() > (1 if self.factory_panel else 1):
+        while layout.count() > (2 if self.factory_panel else 1):
             # The item at the bottom might be the old unit container or the factory panel.
             item = layout.itemAt(layout.count() - 1)
             w = item.widget()
@@ -383,6 +386,14 @@ class CombinedHudWindow(QWidget):
             layout.removeItem(item)
             if w is not None:
                 w.setParent(None)
+
+        # Clean up existing widget references before creating new ones
+        if hasattr(self, 'unit_widget'):
+            self.unit_widget = None
+        if hasattr(self, 'unit_widget_images'):
+            self.unit_widget_images = None
+        if hasattr(self, 'unit_widget_numbers'):
+            self.unit_widget_numbers = None
 
         # Now add a fresh unit section
         if separate:
