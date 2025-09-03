@@ -41,8 +41,10 @@ class FactoryPanel(QWidget):
             container = QWidget(self)
             if self.layout_type == 'Vertical':
                 sub_layout = QHBoxLayout(container)
+                sub_layout.setAlignment(Qt.AlignTop)
             else:
                 sub_layout = QVBoxLayout(container)
+                sub_layout.setAlignment(Qt.AlignTop)
 
             sub_layout.setSpacing(0)
             sub_layout.setContentsMargins(0, 0, 0, 0)
