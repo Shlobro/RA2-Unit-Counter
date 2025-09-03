@@ -1,210 +1,165 @@
+# DataWidget.py
 import logging
-
 from PySide6.QtCore import Qt, QPropertyAnimation
 from PySide6.QtGui import QPixmap, QColor, QPainter, QFont, QFontMetrics
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
 class BaseDataWidget(QWidget):
-    def __init__(self, data=None, text_color=Qt.black, size=16, font=None, use_fixed_width=False, max_digits=8, parent=None):
+    def __init__(self, data=None, text_color=Qt.black, size=16, font=None, use_fixed_width=False, max_digits=10, parent=None):
+        """
+        Base widget to display numerical data with optional fixed width.
+        """
         super().__init__(parent)
         self.size = size
         self.value = data if data is not None else 0
-        self.custom_font = font if font else QFont()
+        self.custom_font = font if font is not None else QFont()
         self.text_color = text_color
         self.use_fixed_width = use_fixed_width
         self.max_digits = max_digits
 
-        # Create QLabel for the data (text or number)
+        # Create label for displaying data
         self.data_label = QLabel(str(self.value), self)
         if self.use_fixed_width:
-            self.data_label.setAlignment(Qt.AlignCenter)  # Center the text
-        self.data_label.setStyleSheet(f"color: {QColor(self.text_color).name()}; margin-top: -2px;")  # Adjust text position
+            self.data_label.setAlignment(Qt.AlignCenter)
+        try:
+            self.data_label.setStyleSheet(f"color: {QColor(self.text_color).name()}; margin-top: -2px;")
+        except Exception as e:
+            logging.exception("Error setting stylesheet in BaseDataWidget: %s", e)
 
-        # Apply the custom font or dynamically adjust the font size
         self.update_font_size()
 
         if self.use_fixed_width:
-            # Compute fixed width
             self.compute_fixed_width()
-            # Set fixed size for the data_label
             self.data_label.setFixedWidth(self.fixed_width)
 
-        # Create the layout
+        # Create a horizontal layout for the widget
         self.layout = QHBoxLayout(self)
-        self.layout.setContentsMargins(0, 0, 0, 0)  # Remove margins
-        self.layout.setSpacing(1)  # Reduce the space between elements
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(1)
         self.layout.addWidget(self.data_label, alignment=Qt.AlignVCenter)
 
     def compute_fixed_width(self):
-        # Adjust the point size proportionally to the widget size
-        font = self.custom_font
-        font.setPointSize(int(self.size * 0.6))  # Adjust font size proportionally to image size
-        fm = QFontMetrics(font)
-        max_number = '8' * self.max_digits
-        self.fixed_width = fm.horizontalAdvance(max_number)
+        """
+        Compute a fixed width based on the maximum number of digits.
+        """
+        try:
+            font = self.custom_font
+            font.setPointSize(int(self.size * 0.6))
+            fm = QFontMetrics(font)
+            max_number = '8' * self.max_digits
+            self.fixed_width = fm.horizontalAdvance(max_number)
+        except Exception as e:
+            logging.exception("Error computing fixed width: %s", e)
+            self.fixed_width = 50
 
     def update_font_size(self):
-        """Dynamically resize the font based on the image size, even with custom fonts."""
-        # Adjust the point size proportionally to the widget size
-        font = self.custom_font
-        font.setPointSize(int(self.size * 0.6))  # Adjust font size proportionally to image size
-        self.data_label.setFont(font)
-        self.data_label.adjustSize()
+        """
+        Update the label's font size based on the widget size.
+        """
+        try:
+            font = self.custom_font
+            font.setPointSize(int(self.size * 0.6))
+            self.data_label.setFont(font)
+            self.data_label.adjustSize()
+        except Exception as e:
+            logging.exception("Error updating font size: %s", e)
 
     def update_data_size(self, new_size):
-        """Adjust the text size."""
+        """
+        Adjust the widget's size (and font) dynamically.
+        """
         self.size = new_size
-
-        # Update the font size based on the new size
         self.update_font_size()
-
         if self.use_fixed_width:
-            # Recompute fixed width with the new size
             self.compute_fixed_width()
             self.data_label.setFixedWidth(self.fixed_width)
-
-        # Recalculate the widget size after resizing
         self.adjust_size()
 
     def adjust_size(self):
-        """Recalculate the widget size based on the image and text."""
-        if self.use_fixed_width:
-            # Width is fixed, so we use fixed_width
-            total_width = self.data_label.width() + 1
-        else:
-            total_width = self.data_label.width() + 1
-
+        """
+        Recalculate the widget's size.
+        """
+        total_width = self.data_label.width() + 1
         self.setFixedSize(total_width, self.data_label.height())
 
     def on_value_changed(self, value):
-        self.value = value
-        self.data_label.setText(str(int(value)))  # Display integer for a clean update
-        self.data_label.adjustSize()
-        self.adjust_size()
-
-    def update_color(self, new_text_color=None):
-        """Update the color of the text."""
-        if new_text_color is not None:
-            self.text_color = QColor(new_text_color)
-            logging.debug(f"update_color called with new_text_color: {self.text_color.name()}")
-            self.data_label.setStyleSheet(f"color: {self.text_color.name()}; margin-top: -2px;")
+        """
+        Slot to update the widget when the value changes.
+        """
+        try:
+            self.value = value
+            self.data_label.setText(str(int(value)))
             self.data_label.adjustSize()
             self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in on_value_changed: %s", e)
+
+    def update_color(self, new_text_color=None):
+        """
+        Update the text color of the data label.
+        """
+        try:
+            if new_text_color is not None:
+                self.text_color = QColor(new_text_color)
+                logging.debug(f"update_color: new_text_color: {self.text_color.name()}")
+                self.data_label.setStyleSheet(f"color: {self.text_color.name()}; margin-top: -2px;")
+                self.data_label.adjustSize()
+                self.adjust_size()
+        except Exception as e:
+            logging.exception("Error updating color: %s", e)
 
     def update_data(self, new_data):
-        """Smoothly update the data using QPropertyAnimation."""
-        self.animation = QPropertyAnimation(self, b"value")
-        self.animation.setDuration(500)
-        self.animation.setStartValue(self.value)
-        self.animation.setEndValue(new_data)
-        self.animation.valueChanged.connect(self.on_value_changed)
-        self.animation.start()
+        """
+        Smoothly update the displayed data using QPropertyAnimation.
+        """
+        try:
+            self.animation = QPropertyAnimation(self, b"value")
+            self.animation.setDuration(500)
+            self.animation.setStartValue(self.value)
+            self.animation.setEndValue(new_data)
+            self.animation.valueChanged.connect(self.on_value_changed)
+            self.animation.start()
+        except Exception as e:
+            logging.exception("Error updating data with animation: %s", e)
 
 
 class MoneyWidget(BaseDataWidget):
     def __init__(self, data=None, text_color=Qt.white, size=16, font=None, parent=None):
-        super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=True, max_digits=8, parent=parent)
+        super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=True, max_digits=10, parent=parent)
         self.update_data_label()
 
     def on_value_changed(self, value):
-        self.value = value
-        self.update_data_label()
-        self.data_label.adjustSize()
-        self.adjust_size()
+        try:
+            self.value = value
+            self.update_data_label()
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in MoneyWidget.on_value_changed: %s", e)
 
     def update_data_label(self):
-        self.data_label.setText(f"${int(self.value)}")
+        try:
+            self.data_label.setText(f"${int(self.value)}")
+        except Exception as e:
+            logging.exception("Error updating data label in MoneyWidget: %s", e)
 
 
 class PowerWidget(BaseDataWidget):
-    def __init__(self, data=None, image_path='bolt.png', image_color=Qt.green, text_color=Qt.green, size=16, font=None, parent=None):
+    def __init__(self, data=None, image_path='icons/bolt.png', image_color=Qt.green, text_color=Qt.green, size=16, font=None, parent=None):
         super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=False, parent=parent)
         self.image_path = image_path
         self.image_color = image_color
-
-        # Load and set the image
         self.icon_label = QLabel(self)
         self.load_and_set_image()
-
-        # Insert the icon_label before the data_label
         self.layout.insertWidget(0, self.icon_label, alignment=Qt.AlignVCenter)
-        self.layout.setSpacing(0)  # Remove space between icon and label
-
-        # Adjust data_label alignment to left
+        self.layout.setSpacing(0)
         self.data_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-
-        # Update font size and adjust sizes
         self.update_font_size()
         self.adjust_size()
 
     def load_and_set_image(self):
-        pixmap = QPixmap(self.image_path).scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        # Apply the image color
-        colored_pixmap = QPixmap(pixmap.size())
-        colored_pixmap.fill(Qt.transparent)
-        painter = QPainter(colored_pixmap)
-        painter.setCompositionMode(QPainter.CompositionMode_Source)
-        painter.drawPixmap(0, 0, pixmap)
-        painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
-        painter.fillRect(colored_pixmap.rect(), QColor(self.image_color))
-        painter.end()
-        self.icon_label.setPixmap(colored_pixmap)
-        self.icon_label.setFixedSize(colored_pixmap.size())
-
-    def update_data_size(self, new_size):
-        """Adjust the text size and image size."""
-        self.size = new_size
-        self.load_and_set_image()
-        self.update_font_size()
-        self.adjust_size()
-
-    def adjust_size(self):
-        """Recalculate the widget size based on the image and text."""
-        total_width = self.icon_label.width() + self.data_label.width()
-        total_height = max(self.icon_label.height(), self.data_label.height())
-        self.setFixedSize(total_width, total_height)
-
-    def on_value_changed(self, value):
-        self.value = value
-        self.data_label.setText(str(int(value)))  # Display integer for a clean update
-        self.data_label.adjustSize()
-        self.adjust_size()
-
-    def update_color(self, new_image_color=None, new_text_color=None):
-        """Update the color of the image and the text."""
-        # Update the image color if a new one is provided
-        if new_image_color is not None:
-            self.image_color = QColor(new_image_color)
-            self.load_and_set_image()
-
-        # Update the text color using the method from the base class
-        super().update_color(new_text_color=new_text_color)
-
-
-
-
-class NameWidget(BaseDataWidget):
-    def __init__(self, data=None, image_path=None, image_color=None, text_color=Qt.black, size=16, font=None, parent=None):
-        super().__init__(data=data, text_color=text_color, size=size, font=font, parent=parent)
-        self.image_path = image_path
-        self.image_color = image_color
-
-        if self.image_path:
-            # Load and set the image
-            self.icon_label = QLabel(self)
-            self.load_and_set_image()
-            # Insert the icon_label before the data_label
-            self.layout.insertWidget(0, self.icon_label, alignment=Qt.AlignVCenter)
-
-        self.update_font_size()
-
-
-
-
-    def load_and_set_image(self):
-        pixmap = QPixmap(self.image_path).scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        if self.image_color is not None:
-            # Apply the image color
+        try:
+            pixmap = QPixmap(self.image_path).scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             colored_pixmap = QPixmap(pixmap.size())
             colored_pixmap.fill(Qt.transparent)
             painter = QPainter(colored_pixmap)
@@ -213,24 +168,95 @@ class NameWidget(BaseDataWidget):
             painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
             painter.fillRect(colored_pixmap.rect(), QColor(self.image_color))
             painter.end()
-            pixmap = colored_pixmap  # Use the colored pixmap
-        self.icon_label.setPixmap(pixmap)
-        self.icon_label.setFixedSize(pixmap.size())
+            self.icon_label.setPixmap(colored_pixmap)
+            self.icon_label.setFixedSize(colored_pixmap.size())
+        except Exception as e:
+            logging.exception("Error loading and setting image in PowerWidget: %s", e)
 
     def update_data_size(self, new_size):
-        """Adjust the text size and image size."""
-        self.size = new_size
-        if self.image_path:
+        try:
+            self.size = new_size
             self.load_and_set_image()
-        self.update_font_size()
-        self.adjust_size()
+            self.update_font_size()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error updating data size in PowerWidget: %s", e)
 
     def adjust_size(self):
-        """Recalculate the widget size based on the image and text."""
+        try:
+            total_width = self.icon_label.width() + self.data_label.width()
+            total_height = max(self.icon_label.height(), self.data_label.height())
+            self.setFixedSize(total_width, total_height)
+        except Exception as e:
+            logging.exception("Error adjusting size in PowerWidget: %s", e)
+
+    def on_value_changed(self, value):
+        try:
+            self.value = value
+            self.data_label.setText(str(int(value)))
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in PowerWidget.on_value_changed: %s", e)
+
+    def update_color(self, new_image_color=None, new_text_color=None):
+        try:
+            if new_image_color is not None:
+                self.image_color = QColor(new_image_color)
+                self.load_and_set_image()
+            super().update_color(new_text_color=new_text_color)
+        except Exception as e:
+            logging.exception("Error updating color in PowerWidget: %s", e)
+
+
+class NameWidget(BaseDataWidget):
+    def __init__(self, data=None, image_path=None, image_color=None, text_color=Qt.black, size=16, font=None, parent=None):
+        super().__init__(data=data, text_color=text_color, size=size, font=font, parent=parent)
+        self.image_path = image_path
+        self.image_color = image_color
         if self.image_path:
-            self.setFixedSize(self.icon_label.width() + self.data_label.width() + 1, max(self.icon_label.height(), self.data_label.height()))
-        else:
-            super().adjust_size()
+            self.icon_label = QLabel(self)
+            self.load_and_set_image()
+            self.layout.insertWidget(0, self.icon_label, alignment=Qt.AlignVCenter)
+        self.update_font_size()
+
+    def load_and_set_image(self):
+        try:
+            pixmap = QPixmap(self.image_path).scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            if self.image_color is not None:
+                colored_pixmap = QPixmap(pixmap.size())
+                colored_pixmap.fill(Qt.transparent)
+                painter = QPainter(colored_pixmap)
+                painter.setCompositionMode(QPainter.CompositionMode_Source)
+                painter.drawPixmap(0, 0, pixmap)
+                painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
+                painter.fillRect(colored_pixmap.rect(), QColor(self.image_color))
+                painter.end()
+                pixmap = colored_pixmap
+            self.icon_label.setPixmap(pixmap)
+            self.icon_label.setFixedSize(pixmap.size())
+        except Exception as e:
+            logging.exception("Error loading image in NameWidget: %s", e)
+
+    def update_data_size(self, new_size):
+        try:
+            self.size = new_size
+            if self.image_path:
+                self.load_and_set_image()
+            self.update_font_size()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error updating data size in NameWidget: %s", e)
+
+    def adjust_size(self):
+        try:
+            if self.image_path:
+                self.setFixedSize(self.icon_label.width() + self.data_label.width() + 1, max(self.icon_label.height(), self.data_label.height()))
+            else:
+                super().adjust_size()
+        except Exception as e:
+            logging.exception("Error adjusting size in NameWidget: %s", e)
+
 class FlagWidget(QWidget):
     def __init__(self, image_path=None, size=16, parent=None):
         super().__init__(parent)
@@ -244,22 +270,98 @@ class FlagWidget(QWidget):
         self.icon_label = QLabel(self)
         self.load_and_set_image()
         self.layout.addWidget(self.icon_label, alignment=Qt.AlignVCenter)
-
         self.adjust_size()
 
     def load_and_set_image(self):
-        pixmap = QPixmap(self.image_path).scaled(
-            self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation
-        )
-        self.icon_label.setPixmap(pixmap)
-        self.icon_label.setFixedSize(pixmap.size())
+        try:
+            pixmap = QPixmap(self.image_path).scaled(
+                self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation
+            )
+            self.icon_label.setPixmap(pixmap)
+            self.icon_label.setFixedSize(pixmap.size())
+        except Exception as e:
+            logging.exception("Error loading image in FlagWidget: %s", e)
 
     def update_data_size(self, new_size):
-        """Adjust the image size."""
-        self.size = new_size
-        self.load_and_set_image()
-        self.adjust_size()
+        try:
+            self.size = new_size
+            self.load_and_set_image()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error updating data size in FlagWidget: %s", e)
 
     def adjust_size(self):
-        """Recalculate the widget size based on the image."""
-        self.setFixedSize(self.icon_label.width(), self.icon_label.height())
+        try:
+            self.setFixedSize(self.icon_label.width(), self.icon_label.height())
+        except Exception as e:
+            logging.exception("Error adjusting size in FlagWidget: %s", e)
+
+
+class MoneySpentWidget(BaseDataWidget):
+    def __init__(self, data=None, text_color=Qt.red, size=16, font=None, parent=None):
+        # Disable fixed-width so that it can expand dynamically.
+        super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=False, parent=parent)
+        self.image_path = 'icons/money_spent_icon.png'
+        self.icon_label = QLabel(self)
+        # Insert the icon before the data label in the layout.
+        self.layout.insertWidget(0, self.icon_label, alignment=Qt.AlignVCenter)
+        self.layout.setSpacing(0)  # Remove extra spacing between icon and text.
+        self.data_label.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.load_and_set_image()
+        self.update_data_label()
+        self.adjust_size()
+
+    def load_and_set_image(self):
+        try:
+            # Scale the icon using the current widget size (self.size)
+            pixmap = QPixmap(self.image_path).scaled(self.size, self.size,
+                                                     Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            
+            # Apply text color to the icon
+            colored_pixmap = QPixmap(pixmap.size())
+            colored_pixmap.fill(Qt.transparent)
+            painter = QPainter(colored_pixmap)
+            painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+            painter.drawPixmap(0, 0, pixmap)
+            painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
+            painter.fillRect(colored_pixmap.rect(), self.text_color)
+            painter.end()
+            
+            self.icon_label.setPixmap(colored_pixmap)
+            self.icon_label.setFixedSize(colored_pixmap.size())
+        except Exception as e:
+            logging.exception("Error loading image in MoneySpentWidget: %s", e)
+
+    def update_data_size(self, new_size):
+        # Update the internal size and then refresh both text and icon.
+        self.size = new_size
+        self.load_and_set_image()  # Reload the icon with the new size.
+        self.update_font_size()    # Update the text font size.
+        self.adjust_size()
+
+    def on_value_changed(self, value):
+        try:
+            self.value = value
+            self.update_data_label()
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in MoneySpentWidget.on_value_changed: %s", e)
+
+    def update_data_label(self):
+        try:
+            self.data_label.setText(f"{int(self.value)}")
+        except Exception as e:
+            logging.exception("Error updating data label in MoneySpentWidget: %s", e)
+
+    def adjust_size(self):
+        try:
+            # Use QFontMetrics to calculate the current text width
+            fm = QFontMetrics(self.data_label.font())
+            text_width = fm.horizontalAdvance(self.data_label.text())
+            total_width = self.icon_label.width() + text_width + self.layout.spacing()
+            total_height = max(self.icon_label.height(), self.data_label.height())
+            self.setFixedSize(total_width, total_height)
+        except Exception as e:
+            logging.exception("Error adjusting size in MoneySpentWidget: %s", e)
+
