@@ -182,6 +182,58 @@ class UnitWindowBase(QMainWindow):
     def create_counter_widget(self, unit_name, unit_count, unit_type):
         raise NotImplementedError("Subclasses must implement create_counter_widget().")
 
+    def update_selected_widgets(self, faction, unit_type, unit_name, new_state):
+        """Update counters when units are selected/deselected from UnitSelectionWindow."""
+        if new_state:
+            # Unit was selected - add counter widget if not already present
+            if unit_name not in self.counters:
+                unit_info = self.unit_info_by_name.get(unit_name, {})
+                position = unit_info.get('position', -1)
+                counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
+                counter_widget.hide()  # Will be shown when unit_count > 0
+                
+                # Insert at specified position or append at end
+                if position == -1 or position >= self.layout.count():
+                    self.layout.addWidget(counter_widget)
+                else:
+                    self.layout.insertWidget(position, counter_widget)
+                
+                self.counters[unit_name] = (counter_widget, unit_type)
+        else:
+            # Unit was deselected - remove counter widget
+            if unit_name in self.counters:
+                counter_widget, _ = self.counters[unit_name]
+                self.layout.removeWidget(counter_widget)
+                counter_widget.setParent(None)
+                del self.counters[unit_name]
+        
+        # Update layout and visibility
+        self.updateGeometry()
+        self.update_labels()
+
+    def update_position_widgets(self, faction, unit_type, unit_name):
+        """Update counter position when changed from UnitSelectionWindow."""
+        if unit_name in self.counters:
+            counter_widget, _ = self.counters[unit_name]
+            unit_info = self.unit_info_by_name.get(unit_name, {})
+            position = unit_info.get('position', -1)
+            
+            # Remove from current position
+            self.layout.removeWidget(counter_widget)
+            
+            # Insert at new position
+            if position == -1 or position >= self.layout.count():
+                self.layout.addWidget(counter_widget)
+            else:
+                self.layout.insertWidget(position, counter_widget)
+            
+            self.updateGeometry()
+
+    def update_locked_widgets(self, faction, unit_type, unit_name, new_state):
+        """Update counter when lock state changes from UnitSelectionWindow."""
+        # The lock state affects visibility in update_labels, so just refresh
+        self.update_labels()
+
 
 # =============================================================================
 # UnitWindowWithImages: Combined unit window (image and number together).
@@ -443,6 +495,41 @@ class CombinedHudWindow(QWidget):
             # Single combined unit widget
             if hasattr(self, 'unit_widget'):
                 self.unit_widget.update_layout(layout_type)
+
+    def update_selected_widgets(self, faction, unit_type, unit_name, new_state):
+        """Update counters when units are selected/deselected from UnitSelectionWindow."""
+        if self.hud_pos.get('separate_unit_counters', False):
+            # Update both image and number widgets
+            if hasattr(self, 'unit_widget_images'):
+                self.unit_widget_images.update_selected_widgets(faction, unit_type, unit_name, new_state)
+            if hasattr(self, 'unit_widget_numbers'):
+                self.unit_widget_numbers.update_selected_widgets(faction, unit_type, unit_name, new_state)
+        else:
+            # Update single combined unit widget
+            if hasattr(self, 'unit_widget'):
+                self.unit_widget.update_selected_widgets(faction, unit_type, unit_name, new_state)
+
+    def update_position_widgets(self, faction, unit_type, unit_name):
+        """Update counter position when changed from UnitSelectionWindow."""
+        if self.hud_pos.get('separate_unit_counters', False):
+            if hasattr(self, 'unit_widget_images'):
+                self.unit_widget_images.update_position_widgets(faction, unit_type, unit_name)
+            if hasattr(self, 'unit_widget_numbers'):
+                self.unit_widget_numbers.update_position_widgets(faction, unit_type, unit_name)
+        else:
+            if hasattr(self, 'unit_widget'):
+                self.unit_widget.update_position_widgets(faction, unit_type, unit_name)
+
+    def update_locked_widgets(self, faction, unit_type, unit_name, new_state):
+        """Update counter when lock state changes from UnitSelectionWindow."""
+        if self.hud_pos.get('separate_unit_counters', False):
+            if hasattr(self, 'unit_widget_images'):
+                self.unit_widget_images.update_locked_widgets(faction, unit_type, unit_name, new_state)
+            if hasattr(self, 'unit_widget_numbers'):
+                self.unit_widget_numbers.update_locked_widgets(faction, unit_type, unit_name, new_state)
+        else:
+            if hasattr(self, 'unit_widget'):
+                self.unit_widget.update_locked_widgets(faction, unit_type, unit_name, new_state)
 
 
 

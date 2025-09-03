@@ -68,14 +68,14 @@
             },
             "Structure": {
                 "Allied Power Plant": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
                     "position": -1
                 },
                 "Allied Barracks": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
@@ -374,7 +374,7 @@
             },
             "Structure": {
                 "Soviet Barracks": {
-                    "selected": false,
+                    "selected": true,
                     "locked": true,
                     "unit_type": "Structure",
                     "faction": "Soviet",
