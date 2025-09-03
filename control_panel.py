@@ -649,21 +649,6 @@ class ControlPanel(QMainWindow):
             for _, resource_window in self.state.hud_windows:
                 resource_window.power_widget.update_data_size(new_size)
 
-    def update_distance_between_numbers(self):
-        new_distance = self.distance_spinbox.value()
-        self.state.hud_positions['distance_between_numbers'] = new_distance
-        logging.info(f"Updated distance between numbers: {new_distance}")
-        if self.state.hud_windows:
-            if self.state.hud_positions.get('combined_hud', False):
-                for combined_window, _ in self.state.hud_windows:
-                    combined_window.resource_widget.distance_between_numbers = new_distance
-                    combined_window.resource_widget.update_all_data_size(new_distance)
-            else:
-                for unit_window, _ in self.state.hud_windows:
-                    if unit_window and isinstance(unit_window, tuple):
-                        _, unit_window_numbers = unit_window
-                        unit_window_numbers.update_spacing(new_distance)
-
     def toggle_name(self, state_val):
         self.toggle_hud_element('show_name', 'name_widget', state_val)
 
