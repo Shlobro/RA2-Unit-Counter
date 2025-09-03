@@ -2,7 +2,7 @@
 import logging
 from collections import Counter
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QLayout
 
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
@@ -20,12 +20,18 @@ class FactoryPanel(QWidget):
         # Main layout for the panel
         if self.layout_type == 'Vertical':
             self.main_layout = QVBoxLayout()
+            self.main_layout.setAlignment(Qt.AlignTop)
         else:
             self.main_layout = QHBoxLayout()
+            self.main_layout.setAlignment(Qt.AlignTop)
 
         self.main_layout.setSpacing(0)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSizeConstraint(QLayout.SetFixedSize)
         self.setLayout(self.main_layout)
+        
+        # Set tight size policy for the panel itself
+        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.load_factories_and_create_widgets()
 
@@ -39,6 +45,7 @@ class FactoryPanel(QWidget):
         for factory_name, factory_obj in self.player.factories.items():
             # Container for this factory's row/column
             container = QWidget(self)
+            container.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
             if self.layout_type == 'Vertical':
                 sub_layout = QHBoxLayout(container)
                 sub_layout.setAlignment(Qt.AlignTop)
@@ -133,6 +140,7 @@ class FactoryPanel(QWidget):
 
         new_main_layout.setSpacing(0)
         new_main_layout.setContentsMargins(0, 0, 0, 0)
+        new_main_layout.setSizeConstraint(QLayout.SetFixedSize)
 
         # Move each factory container from old layout to new
         while self.main_layout.count():
