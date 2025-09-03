@@ -2,12 +2,10 @@
 import logging
 from collections import Counter
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
-
-MAX_QUEUE_SLOTS = 5  # Adjust as you like
 
 class FactoryPanel(QWidget):
     def __init__(self, player, hud_pos, parent=None):
@@ -60,17 +58,8 @@ class FactoryPanel(QWidget):
             )
             sub_layout.addWidget(current_widget)
 
-            # 2) Create a fixed number of placeholders for the queue
-            #    We'll store them so we can fill them later.
-            queue_placeholders = []
-            for i in range(MAX_QUEUE_SLOTS):
-                placeholder = QLabel(parent=container)
-                # Give it a fixed size, e.g. half the default or whatever you want.
-                placeholder.setFixedSize(default_size // 2, default_size // 2)
-                # Start out invisible or blank. We can do placeholder.setText("") if we want.
-                # But DO NOT hide() it, or the layout will compress it. Keep it shown but blank.
-                sub_layout.addWidget(placeholder)
-                queue_placeholders.append(placeholder)
+            # 2) Queue widgets will be added dynamically in update_labels
+            queue_widgets = []
 
             # Record everything
             self.main_layout.addWidget(container)
@@ -78,47 +67,51 @@ class FactoryPanel(QWidget):
                 "container": container,
                 "layout": sub_layout,
                 "current_widget": current_widget,
-                "queue_placeholders": queue_placeholders,
-                "queue_widgets": []
+                "queue_widgets": queue_widgets
             }
 
     def update_labels(self):
         self.player.update_factories()
         show_queue = self.hud_pos.get('show_factory_queue', True)
+        default_size = self.get_default_size()
 
         for factory_name, data in self.factory_data.items():
             current_widget = data["current_widget"]
-            placeholders = data["queue_placeholders"]
+            queue_widgets = data["queue_widgets"]
+            sub_layout = data["layout"]
 
             # Update the main factory widget
             status = self.player.factory_status.get(factory_name, {"producing": False})
             current_widget.set_status(status)
 
-            # Fill placeholders
-            if show_queue and status.get("producing"):
-                queued_list = status.get("queued_units", [])
-                c = Counter(queued_list)
-                # Flatten the (unit_name, count) pairs
-                queue_items = []
-                for unit_name, cnt in c.items():
-                    queue_items.extend([unit_name] * cnt)
-            else:
-                queue_items = []
+            # Remove old queue widgets
+            for qw in queue_widgets:
+                qw.setParent(None)
+                qw.deleteLater()
+            queue_widgets.clear()
 
-            # Now update exactly MAX_QUEUE_SLOTS placeholders
-            for i in range(MAX_QUEUE_SLOTS):
-                placeholder = placeholders[i]
+            # If queue is off or not producing, skip building new queue widgets
+            if not show_queue:
+                continue
+            if not status.get("producing"):
+                continue
 
-                if i < len(queue_items):
-                    unit_name = queue_items[i]
-                    # Instead of creating or adding a new widget, just set some text or icon
-                    # or if you want a real widget, see advanced approach below.
-                    placeholder.setText(unit_name)
-                    placeholder.setStyleSheet("border: 1px solid red;")  # for example
-                else:
-                    # No item => blank
-                    placeholder.setText("")
-                    placeholder.setStyleSheet("border: none;")
+            # Create new queue widgets
+            queued_list = status.get("queued_units", [])
+            if not queued_list:
+                continue
+
+            c = Counter(queued_list)
+            for unit_name, count in c.items():
+                item_widget = FactoryQueueItemWidget(
+                    unit_name,
+                    count,
+                    color=self.player.color,
+                    size=default_size // 2,
+                    parent=data["container"]
+                )
+                queue_widgets.append(item_widget)
+                sub_layout.addWidget(item_widget)
 
         self.layout().update()
         self.updateGeometry()
