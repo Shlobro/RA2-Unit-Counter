@@ -82,6 +82,7 @@ class ResourceWindow(QMainWindow):
         )
         self.money_spent_widget = MoneySpentWidget(
             data=self.player.spent_credit,
+            text_color=QColor(118, 181, 197),
             size=money_spent_widget_size,
             font=money_font
         )

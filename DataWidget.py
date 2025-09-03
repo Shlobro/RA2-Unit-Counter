@@ -316,8 +316,19 @@ class MoneySpentWidget(BaseDataWidget):
             # Scale the icon using the current widget size (self.size)
             pixmap = QPixmap(self.image_path).scaled(self.size, self.size,
                                                      Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            self.icon_label.setPixmap(pixmap)
-            self.icon_label.setFixedSize(pixmap.size())
+            
+            # Apply text color to the icon
+            colored_pixmap = QPixmap(pixmap.size())
+            colored_pixmap.fill(Qt.transparent)
+            painter = QPainter(colored_pixmap)
+            painter.setCompositionMode(QPainter.CompositionMode_SourceOver)
+            painter.drawPixmap(0, 0, pixmap)
+            painter.setCompositionMode(QPainter.CompositionMode_SourceIn)
+            painter.fillRect(colored_pixmap.rect(), self.text_color)
+            painter.end()
+            
+            self.icon_label.setPixmap(colored_pixmap)
+            self.icon_label.setFixedSize(colored_pixmap.size())
         except Exception as e:
             logging.exception("Error loading image in MoneySpentWidget: %s", e)
 
@@ -339,7 +350,7 @@ class MoneySpentWidget(BaseDataWidget):
 
     def update_data_label(self):
         try:
-            self.data_label.setText(f"${int(self.value)}")
+            self.data_label.setText(f"{int(self.value)}")
         except Exception as e:
             logging.exception("Error updating data label in MoneySpentWidget: %s", e)
 
