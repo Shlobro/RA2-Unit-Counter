@@ -12,9 +12,10 @@ from UnitWindow import (
     UnitWindowWithImages,
     UnitWindowNumbersOnly,
     UnitWindowImagesOnly,
-    CombinedHudWindow,      # Combined HUD window: one window per player.
-    CombinedUnitWindow      # Used in separate mode if separate unit counters are enabled.
+    CombinedHudWindow,  # Combined HUD window: one window per player.
+    CombinedUnitWindow  # Used in separate mode if separate unit counters are enabled.
 )
+from factory_window import FactoryWindow  # New import for the factory window
 
 
 # ---------------------------------------------------------------------------
@@ -54,7 +55,15 @@ def load_hud_positions(state):
         'separate_unit_counters': False,
         'show_money_spent': False,
         'money_spent_widget_size': 50,
-        'combined_hud': False  # False: separate HUD; True: combined HUD.
+        'combined_hud': False,    # False: separate HUD; True: combined HUD.
+        # --- New defaults for factory windows ---
+        'show_factory_window': True,
+        'show_factory_queue': True,
+        'factory_size': 100,
+        'factory_layout': 'Horizontal',  # Could be Vertical as well.
+        'show_factory_frames': True,
+        # Toggle to show/hide the entire factory window
+        'show_factory_window': True
     }
     for key, value in defaults.items():
         state.hud_positions.setdefault(key, value)
@@ -72,12 +81,15 @@ def save_hud_positions(state):
             state.hud_positions['image_size'] = cp.image_size_spinbox.value()
             state.hud_positions['number_size'] = cp.number_size_spinbox.value()
             state.hud_positions['distance_between_numbers'] = cp.distance_spinbox.value()
-            state.hud_positions['name_widget_size'] = (cp.name_size_spinbox.value() if hasattr(cp, 'name_size_spinbox')
-                                                       else state.hud_positions.get('name_widget_size'))
-            state.hud_positions['money_widget_size'] = (cp.money_size_spinbox.value() if hasattr(cp, 'money_size_spinbox')
-                                                        else state.hud_positions.get('money_widget_size'))
-            state.hud_positions['power_widget_size'] = (cp.power_size_spinbox.value() if hasattr(cp, 'power_size_spinbox')
-                                                        else state.hud_positions.get('power_widget_size'))
+            state.hud_positions['name_widget_size'] = (
+                cp.name_size_spinbox.value() if hasattr(cp, 'name_size_spinbox')
+                else state.hud_positions.get('name_widget_size'))
+            state.hud_positions['money_widget_size'] = (
+                cp.money_size_spinbox.value() if hasattr(cp, 'money_size_spinbox')
+                else state.hud_positions.get('money_widget_size'))
+            state.hud_positions['power_widget_size'] = (
+                cp.power_size_spinbox.value() if hasattr(cp, 'power_size_spinbox')
+                else state.hud_positions.get('power_widget_size'))
             state.hud_positions['show_name'] = cp.name_checkbox.isChecked()
             state.hud_positions['show_money'] = cp.money_checkbox.isChecked()
             state.hud_positions['show_power'] = cp.power_checkbox.isChecked()
@@ -87,6 +99,13 @@ def save_hud_positions(state):
             state.hud_positions['separate_unit_counters'] = cp.separate_units_checkbox.isChecked()
             state.hud_positions['show_money_spent'] = cp.money_spent_checkbox.isChecked()
             state.hud_positions['money_spent_widget_size'] = cp.money_spent_size_spinbox.value()
+            # --- New factory settings ---
+            state.hud_positions['factory_size'] = cp.factory_size_spinbox.value()
+            state.hud_positions['show_factory_frames'] = cp.factory_frame_checkbox.isChecked()
+            state.hud_positions['factory_layout'] = cp.factory_layout_combo.currentText()
+            # If you also added "Show Factory Window" checkbox:
+            if hasattr(cp, 'show_factory_checkbox'):
+                state.hud_positions['show_factory_window'] = cp.show_factory_checkbox.isChecked()
 
         if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'path_edit'):
             state.hud_positions['game_path'] = state.control_panel.path_edit.text()
@@ -114,6 +133,16 @@ def save_hud_positions(state):
                     state.hud_positions[player_id]['money'] = {"x": money_pos.x(), "y": money_pos.y()}
                     state.hud_positions[player_id]['power'] = {"x": power_pos.x(), "y": power_pos.y()}
                     state.hud_positions[player_id]['money_spent'] = {"x": money_spent.x(), "y": money_spent.y()}
+        # Save factory window positions if available.
+        if hasattr(state, 'factory_windows'):
+            for factory_win in state.factory_windows:
+                if factory_win is not None and hasattr(factory_win, 'pos') and factory_win.player:
+                    player_id = (factory_win.player.color_name.name()
+                                 if not isinstance(factory_win.player.color_name, str)
+                                 else factory_win.player.color_name)
+                    state.hud_positions.setdefault(player_id, {})
+                    pos = factory_win.pos()
+                    state.hud_positions[player_id]['factory'] = {"x": pos.x(), "y": pos.y()}
         with open(state.HUD_POSITION_FILE, 'w') as file:
             json.dump(state.hud_positions, file, indent=4)
         logging.info("HUD positions saved successfully.")
@@ -167,9 +196,7 @@ def create_unit_windows_in_current_mode(state):
 def create_hud_windows(state):
     """Create all HUD windows based on loaded players and HUD configuration."""
     try:
-        # ... (path & spectator checks) ...
-
-        # Close existing windows
+        # Close existing windows.
         for unit_window, resource_window in state.hud_windows:
             if unit_window:
                 if isinstance(unit_window, tuple):
@@ -185,25 +212,56 @@ def create_hud_windows(state):
                     resource_window.close()
         state.hud_windows = []
 
+        # Also close any existing factory windows.
+        if hasattr(state, 'factory_windows'):
+            for fac_win in state.factory_windows:
+                fac_win.close()
+        state.factory_windows = []
+
         if not state.players:
             logging.info("No valid players found. HUD will not be displayed.")
             return
 
+        show_factory = state.hud_positions.get('show_factory_window', True)
+
+        # ----------------------------------------
+        # COMBINED HUD MODE
+        # ----------------------------------------
         if state.hud_positions.get('combined_hud', False):
-            # Combined HUD: one window per player
+            # One combined window per player – includes resources, units, and factory panel.
             for player in state.players:
                 logging.info(f"Creating combined HUD for {player.username.value} with color {player.color_name}")
                 combined = CombinedHudWindow(player, state.hud_positions, state.selected_units_dict)
                 combined.show()
+                # We store (combined, None) because there's no separate resource window in combined mode
                 state.hud_windows.append((combined, None))
+
+            # IMPORTANT: We do NOT create separate top-level FactoryWindows here,
+            # because the CombinedHudWindow already embeds a factory panel internally.
+            # So we leave state.factory_windows = [] in combined mode.
+
+        # ----------------------------------------
+        # SEPARATE HUD MODE
+        # ----------------------------------------
         else:
-            # Separate HUD: resource windows + unit windows
+            # Resource windows + separate unit windows + separate factory windows
             for player in state.players:
                 logging.info(f"Creating ResourceWindow for {player.username.value} with color {player.color_name}")
                 res_win = ResourceWindow(player, len(state.players), state.hud_positions, player.color_name)
                 state.hud_windows.append((None, res_win))
 
-            # Only now create unit windows
+                # Create a separate FactoryWindow for each player.
+                # This only happens in separate HUD mode.
+                logging.info(f"Creating FactoryWindow for {player.username.value} with color {player.color_name}")
+                factory_win = FactoryWindow(player, state.hud_positions)
+                factory_win.setWindowTitle(f"Player {player.color_name} Factory Window")
+                if show_factory:
+                    factory_win.show()
+                else:
+                    factory_win.hide()
+                state.factory_windows.append(factory_win)
+
+            # Now create the separate unit windows (images/numbers).
             create_unit_windows_in_current_mode(state)
 
     except Exception as e:
@@ -227,6 +285,10 @@ def update_huds(state):
                     unit_window.update_labels()
             elif resource_window is not None:
                 resource_window.update_labels()
+        # Update factory windows as well.
+        if hasattr(state, 'factory_windows'):
+            for factory_win in state.factory_windows:
+                factory_win.update_labels()
     except Exception as e:
         logging.error(f"Exception in update_huds: {e}")
         traceback.print_exc()
@@ -243,19 +305,31 @@ def game_started_handler(state):
             logging.info("No valid players found. HUD will not be displayed.")
             return
         create_hud_windows(state)
+        # Show resource + unit windows if needed
         for unit_window, resource_window in state.hud_windows:
             if unit_window:
                 unit_window.show()
             elif resource_window:
                 resource_window.show()
 
+        # Also show/hide factory windows depending on user preference
+        show_factory = state.hud_positions.get('show_factory_window', True)
+        if hasattr(state, 'factory_windows'):
+            for factory_win in state.factory_windows:
+                if show_factory:
+                    factory_win.show()
+                else:
+                    factory_win.hide()
+
 
 # ---------------------------------------------------------------------------
 # Game Stopped Handler
 # ---------------------------------------------------------------------------
 def game_stopped_handler(state):
-    """Handler to run when the game stops."""
     logging.info("Game stopped handler called")
+    # forcibly stop the data update thread:
+    if hasattr(state, 'data_update_thread') and state.data_update_thread:
+        state.data_update_thread.stop_event.set()
     save_hud_positions(state)
     for unit_window, resource_window in state.hud_windows:
         if unit_window:
@@ -270,5 +344,10 @@ def game_stopped_handler(state):
                     window.close()
             else:
                 resource_window.close()
+    if hasattr(state, 'factory_windows'):
+        for factory_win in state.factory_windows:
+            factory_win.close()
     state.hud_windows.clear()
+    if hasattr(state, 'factory_windows'):
+        state.factory_windows.clear()
     state.players.clear()
