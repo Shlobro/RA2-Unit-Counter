@@ -54,3 +54,1123 @@
 2025-03-12 23:00:18,627 - INFO - Saving selected units and HUD positions
 2025-03-12 23:00:18,627 - INFO - Saved selected units.
 2025-03-12 23:00:18,627 - INFO - HUD positions saved successfully.
+2025-09-03 14:26:10,008 - INFO - Logging setup complete
+2025-09-03 14:26:10,008 - INFO - This is a test log entry.
+2025-09-03 14:26:10,046 - INFO - Starting Resource HUD Application
+2025-09-03 14:26:10,068 - INFO - Loading HUD positions
+2025-09-03 14:26:10,068 - INFO - HUD positions loaded successfully.
+2025-09-03 14:26:10,068 - INFO - Creating control panel
+2025-09-03 14:26:10,154 - INFO - Waiting for a valid game path to be selected
+2025-09-03 14:26:10,154 - DEBUG - Waiting for valid game path
+2025-09-03 14:26:10,155 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2025-09-03 14:26:10,155 - INFO - Starting data update thread
+2025-09-03 14:26:10,156 - INFO - Entering application event loop
+2025-09-03 14:26:10,156 - INFO - Waiting for the game to start and players to load...
+2025-09-03 14:26:10,157 - INFO - Waiting for the game to start...
+2025-09-03 14:26:10,966 - INFO - Game detected
+2025-09-03 14:26:10,967 - INFO - Skipping Player 0 as not fully initialized yet.
+2025-09-03 14:26:10,967 - INFO - Players loaded. Proceeding with players initialization.
+2025-09-03 14:26:10,967 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:10,967 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:10,967 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:10,967 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:10,968 - INFO - Player 1 color: blue
+2025-09-03 14:26:10,968 - INFO - Player 1 country name: Americans
+2025-09-03 14:26:10,968 - INFO - Player 1 faction: Allied
+2025-09-03 14:26:10,968 - INFO - Player 1 name: lazlo
+2025-09-03 14:26:10,968 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:10,968 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:10,968 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:10,969 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:10,969 - INFO - Player 2 color: orange
+2025-09-03 14:26:10,969 - INFO - Player 2 country name: Americans
+2025-09-03 14:26:10,969 - INFO - Player 2 faction: Allied
+2025-09-03 14:26:10,969 - INFO - Player 2 name: Snark
+2025-09-03 14:26:10,969 - INFO - Number of valid players: 2
+2025-09-03 14:26:10,969 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:10,970 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:10,970 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:10,971 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:10,971 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:10,971 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:10,971 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:10,971 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:10,971 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:10,971 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:10,971 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:10,972 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:10,972 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:10,972 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:10,972 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:10,972 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:10,972 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:10,972 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:10,972 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:10,975 - INFO - Game started handler called
+2025-09-03 14:26:10,975 - INFO - Creating HUD for lazlo with color blue
+2025-09-03 14:26:11,154 - INFO - Creating HUD for Snark with color orange
+2025-09-03 14:26:11,196 - INFO - Unit windows created successfully.
+2025-09-03 14:26:11,197 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:11,199 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:11,980 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:11,981 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:11,981 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:11,981 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:11,982 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:11,982 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:11,982 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:11,982 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:11,982 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:11,983 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:11,983 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:11,983 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:11,984 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:11,987 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:11,989 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:12,994 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:12,995 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:12,995 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:12,995 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:12,995 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:12,995 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:12,995 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:12,995 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:12,995 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:12,996 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:12,996 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:12,996 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:12,996 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:12,997 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:12,997 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:12,997 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:12,997 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:12,997 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:12,997 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:12,999 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:13,002 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:14,008 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:14,009 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:14,009 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:14,009 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:14,009 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:14,009 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:14,010 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:14,010 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:14,010 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:14,010 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:14,011 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:14,011 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:14,011 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:14,015 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:14,018 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:15,022 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:15,023 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:15,023 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:15,024 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:15,024 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:15,024 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:15,024 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:15,024 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:15,024 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:15,024 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:15,024 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:15,024 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:15,025 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:15,025 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:15,025 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:15,025 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:15,025 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:15,025 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:15,025 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:15,028 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:15,031 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:16,036 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:16,037 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:16,037 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:16,037 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:16,037 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:16,037 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:16,037 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:16,038 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:16,038 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:16,038 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:16,038 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:16,038 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:16,039 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:16,039 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:16,039 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:16,039 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:16,039 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:26:16,039 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:16,039 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:16,042 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:16,045 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:17,049 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:17,050 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:17,050 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:17,051 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:17,051 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:17,051 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:17,051 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:17,051 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:17,051 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:17,051 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:17,051 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:17,052 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:17,052 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:17,052 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:17,052 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:17,052 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:17,055 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:17,057 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:18,064 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:18,065 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:18,065 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:18,065 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:18,066 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:18,066 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:18,066 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:18,066 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:18,066 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:18,066 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:18,066 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:18,067 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:18,067 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:18,067 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:18,067 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:18,067 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:18,070 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:18,073 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:19,078 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:19,079 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:19,079 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:19,079 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:19,079 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:19,079 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:19,079 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:19,079 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:19,079 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:19,079 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:19,079 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:19,080 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:19,080 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:19,081 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:19,081 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:19,081 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:19,083 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:19,085 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:20,092 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:20,093 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:20,093 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:20,093 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:20,093 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:20,093 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:20,094 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:20,094 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:20,094 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:20,094 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:20,094 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:20,094 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:20,095 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:20,095 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:20,095 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:20,095 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:20,098 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:20,100 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:21,107 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:21,107 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:21,107 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:21,108 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:21,108 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:21,108 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:21,108 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:21,108 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:21,108 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:21,108 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:21,108 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:21,109 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:21,109 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:21,110 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:21,110 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:21,110 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:21,113 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:21,116 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:22,122 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:22,123 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:22,123 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:22,123 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:22,123 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:22,123 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:22,123 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:22,123 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:22,124 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:22,124 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:22,124 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:22,124 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:22,124 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:22,124 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:22,125 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:22,125 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:22,128 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:22,130 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:23,134 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:23,134 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:23,134 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:23,135 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:23,135 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:23,135 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:23,135 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:23,136 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:23,136 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:23,136 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:23,136 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:23,136 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:23,136 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:23,136 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:23,137 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:23,137 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:23,140 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:23,142 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:24,147 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:24,148 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:24,148 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:24,149 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:24,149 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:24,149 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:24,149 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:24,149 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:24,149 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:24,149 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:24,149 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:24,150 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:24,150 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:24,150 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:24,150 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:24,150 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:24,153 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:24,155 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:25,162 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:25,162 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:25,162 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:25,163 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:25,163 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:25,163 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:25,163 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:25,163 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:25,163 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:25,163 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:25,163 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:25,164 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:25,164 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:25,164 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:25,164 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:25,164 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:25,167 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:25,169 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:26,176 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:26,176 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:26,177 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:26,177 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:26,177 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:26,177 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:26,178 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:26,178 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:26,178 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:26,178 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:26,178 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:26,178 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:26,178 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:26,179 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:26,179 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:26,179 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:26,181 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:26,184 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:27,189 - DEBUG - Updating dynamic data for player 2
+2025-09-03 14:26:27,190 - DEBUG - Wrote oil count 8257536 to file oil counts\blue_oil_count.txt
+2025-09-03 14:26:27,190 - DEBUG - Initialized unit array pointer: 439748256
+2025-09-03 14:26:27,191 - DEBUG - Initialized building array pointer: 411254864
+2025-09-03 14:26:27,191 - DEBUG - Initialized infantry array pointer: 411259792
+2025-09-03 14:26:27,191 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:27,191 - DEBUG - Updating dynamic data for player 3
+2025-09-03 14:26:27,191 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:27,191 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:27,191 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:27,191 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:27,192 - DEBUG - Wrote oil count 0 to file oil counts\orange_oil_count.txt
+2025-09-03 14:26:27,192 - DEBUG - Initialized unit array pointer: 439747856
+2025-09-03 14:26:27,192 - DEBUG - Initialized building array pointer: 439737408
+2025-09-03 14:26:27,192 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:26:27,192 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:26:27,195 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:27,197 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:26:28,205 - INFO - Game process has ended.
+2025-09-03 14:26:28,206 - INFO - Emitted game_stopped signal.
+2025-09-03 14:26:28,206 - INFO - Game stopped handler called
+2025-09-03 14:26:28,206 - INFO - HUD positions saved successfully.
+2025-09-03 14:26:29,217 - INFO - Waiting for the game to start and players to load...
+2025-09-03 14:26:29,217 - INFO - Waiting for the game to start...
+2025-09-03 14:27:39,574 - INFO - Logging setup complete
+2025-09-03 14:27:39,574 - INFO - This is a test log entry.
+2025-09-03 14:27:39,611 - INFO - Starting Resource HUD Application
+2025-09-03 14:27:39,630 - INFO - Loading HUD positions
+2025-09-03 14:27:39,630 - INFO - HUD positions loaded successfully.
+2025-09-03 14:27:39,630 - INFO - Creating control panel
+2025-09-03 14:27:39,695 - INFO - Waiting for a valid game path to be selected
+2025-09-03 14:27:39,695 - DEBUG - Waiting for valid game path
+2025-09-03 14:27:39,695 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2025-09-03 14:27:39,695 - INFO - Starting data update thread
+2025-09-03 14:27:39,695 - INFO - Entering application event loop
+2025-09-03 14:27:39,696 - INFO - Waiting for the game to start and players to load...
+2025-09-03 14:27:39,696 - INFO - Waiting for the game to start...
+2025-09-03 14:27:55,133 - INFO - Game detected
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,134 - WARNING - Memory read incomplete. Game might still be loading.
+2025-09-03 14:27:55,275 - INFO - Game detected
+2025-09-03 14:27:55,275 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:55,275 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:55,275 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:55,276 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:55,276 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:55,276 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:56,143 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:56,143 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:56,143 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:56,143 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:56,143 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:56,143 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:56,281 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:56,281 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:56,281 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:56,282 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:56,282 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:56,282 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:57,159 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:57,159 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:57,159 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:57,159 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:57,159 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:57,159 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:57,296 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:57,296 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:57,296 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:57,297 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:57,297 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:57,297 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:58,174 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:58,174 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:58,175 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:58,175 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:58,175 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:58,175 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:58,298 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:58,298 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:58,298 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:58,298 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:58,298 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:58,298 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:59,190 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:59,190 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:59,190 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:59,190 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:59,190 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:59,190 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:27:59,312 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:27:59,312 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:27:59,313 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:27:59,313 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:27:59,313 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:27:59,313 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:28:00,204 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:28:00,204 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:28:00,205 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:28:00,205 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:28:00,205 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:28:00,205 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:28:00,327 - INFO - Skipping Player 1 as not fully initialized yet.
+2025-09-03 14:28:00,327 - INFO - Skipping Player 2 as not fully initialized yet.
+2025-09-03 14:28:00,328 - INFO - Skipping Player 4 as not fully initialized yet.
+2025-09-03 14:28:00,328 - INFO - Skipping Player 5 as not fully initialized yet.
+2025-09-03 14:28:00,328 - INFO - Skipping Player 6 as not fully initialized yet.
+2025-09-03 14:28:00,328 - INFO - Skipping Player 7 as not fully initialized yet.
+2025-09-03 14:28:01,219 - INFO - Players loaded. Proceeding with players initialization.
+2025-09-03 14:28:01,220 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,220 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,220 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,220 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,220 - INFO - Player 0 color: blue
+2025-09-03 14:28:01,220 - INFO - Player 0 country name: Americans
+2025-09-03 14:28:01,221 - INFO - Player 0 faction: Allied
+2025-09-03 14:28:01,221 - INFO - Player 0 name: Snark
+2025-09-03 14:28:01,221 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,221 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,221 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,221 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,221 - INFO - Player 3 color: orange
+2025-09-03 14:28:01,221 - INFO - Player 3 country name: Americans
+2025-09-03 14:28:01,221 - INFO - Player 3 faction: Allied
+2025-09-03 14:28:01,221 - INFO - Player 3 name: lazlo
+2025-09-03 14:28:01,222 - INFO - Number of valid players: 2
+2025-09-03 14:28:01,222 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:01,222 - INFO - Game started handler called
+2025-09-03 14:28:01,222 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,222 - INFO - Creating HUD for Snark with color blue
+2025-09-03 14:28:01,222 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,247 - INFO - Creating HUD for lazlo with color orange
+2025-09-03 14:28:01,247 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,273 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,277 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,281 - INFO - Unit windows created successfully.
+2025-09-03 14:28:01,281 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,281 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,281 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,281 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,281 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,281 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,282 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,282 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:01,282 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,283 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,283 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,283 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,283 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,283 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,283 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,283 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,283 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,284 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,284 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,284 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,290 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:01,292 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:01,342 - INFO - Players loaded. Proceeding with players initialization.
+2025-09-03 14:28:01,342 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,342 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,342 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,342 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,342 - INFO - Player 0 color: blue
+2025-09-03 14:28:01,343 - INFO - Player 0 country name: Americans
+2025-09-03 14:28:01,343 - INFO - Player 0 faction: Allied
+2025-09-03 14:28:01,343 - INFO - Player 0 name: Snark
+2025-09-03 14:28:01,343 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,343 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,343 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,343 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,343 - INFO - Player 3 color: orange
+2025-09-03 14:28:01,343 - INFO - Player 3 country name: Americans
+2025-09-03 14:28:01,344 - INFO - Player 3 faction: Allied
+2025-09-03 14:28:01,344 - INFO - Player 3 name: lazlo
+2025-09-03 14:28:01,344 - INFO - Number of valid players: 2
+2025-09-03 14:28:01,344 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:01,344 - INFO - Game started handler called
+2025-09-03 14:28:01,345 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,345 - INFO - Creating HUD for Snark with color blue
+2025-09-03 14:28:01,345 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,482 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,508 - INFO - Creating HUD for lazlo with color orange
+2025-09-03 14:28:01,508 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,539 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,544 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,545 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,548 - INFO - Unit windows created successfully.
+2025-09-03 14:28:01,549 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,549 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:01,550 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,550 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,550 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,550 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:01,550 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,550 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,550 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,550 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,551 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,551 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,551 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,551 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,551 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:01,551 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:01,551 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:01,551 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:01,557 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:01,560 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:02,295 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:02,295 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:02,296 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:02,296 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,296 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,296 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:02,296 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:02,296 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,296 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,297 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:02,297 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:02,297 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,297 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,297 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:02,298 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:02,298 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:02,298 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,298 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,298 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:02,298 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:02,299 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:02,299 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,299 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,302 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:02,304 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:02,557 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:02,557 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:02,557 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:02,557 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:02,558 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:02,558 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,558 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,559 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:02,559 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:02,559 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:02,559 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,559 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,560 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:02,560 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:02,560 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:02,560 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:02,560 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:02,565 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:02,569 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:03,310 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:03,310 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:03,311 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:03,311 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,311 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,311 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:03,311 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:03,311 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,311 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,311 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:03,312 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:03,312 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,312 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,312 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:03,312 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:03,312 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:03,312 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,312 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,313 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:03,313 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:03,314 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:03,314 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,314 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,317 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:03,320 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:03,571 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:03,571 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:03,572 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:03,572 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,572 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,572 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:03,572 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:03,572 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,572 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,573 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:03,573 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:03,573 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,573 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,573 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:03,574 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:03,574 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:03,574 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,574 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,574 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:03,574 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:03,575 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:03,575 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:03,575 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:03,580 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:03,584 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:04,324 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:04,324 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:04,325 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:04,325 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,325 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,325 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:04,325 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:04,325 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,325 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,325 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:04,325 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:04,326 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,326 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,326 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:04,326 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:04,326 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:04,326 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,326 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,327 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:04,327 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:04,327 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:04,327 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,327 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,331 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:04,333 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:04,586 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:04,587 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:04,587 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:04,587 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,587 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,587 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:04,587 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:04,588 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,588 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,588 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:04,588 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:04,588 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,588 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,588 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:04,588 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:04,588 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:04,589 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,589 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,590 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:04,590 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:04,590 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:04,590 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:04,590 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:04,593 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:04,597 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:05,338 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:05,338 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:05,339 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:05,339 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,339 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,339 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:05,339 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:05,339 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,339 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,339 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:05,339 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:05,340 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,340 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,340 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:05,340 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:05,340 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:05,340 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,340 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,341 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:05,341 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:05,341 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:05,341 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,341 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,344 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:05,346 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:05,599 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:05,599 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:05,600 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:05,600 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,600 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,600 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:05,600 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:05,600 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,600 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,600 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:05,600 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:05,601 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,601 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,601 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:05,601 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:05,601 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:05,602 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,602 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,602 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:05,602 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:05,602 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:05,602 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:05,602 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:05,605 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:05,608 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:06,353 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:06,354 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:06,354 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:06,354 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,354 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,355 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:06,355 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:06,355 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,355 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,355 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:06,355 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:06,355 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,355 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,356 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:06,356 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:06,356 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:06,356 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,356 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,356 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:06,357 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:06,357 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:06,357 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,357 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,361 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:06,363 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:06,615 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:06,615 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:06,616 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:06,616 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,616 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,616 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:06,616 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:06,616 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,616 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,616 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:06,617 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:06,617 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,617 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,617 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:06,617 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:06,618 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:06,618 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,618 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,618 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:06,618 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:06,619 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:06,619 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:06,619 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:06,622 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:06,625 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:07,368 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:07,368 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:07,368 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:07,368 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,368 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,368 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:07,368 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:07,369 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,369 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,369 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:07,369 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:07,369 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,369 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,369 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:07,369 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:07,369 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:07,370 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,370 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,371 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:07,371 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:07,371 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:07,371 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,371 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,374 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:07,377 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:07,629 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:07,630 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:07,630 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:07,630 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,630 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,630 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:07,630 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:07,630 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,630 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,630 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:07,631 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:07,631 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,631 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,631 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:07,631 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:07,632 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:07,632 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,632 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,632 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:07,632 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:07,632 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:07,632 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:07,633 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:07,636 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:07,638 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:08,383 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:08,383 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:08,384 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:08,384 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:08,384 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:08,384 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,385 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,385 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:08,385 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:08,385 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:08,385 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,385 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,385 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:08,386 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:08,386 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:08,386 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,386 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,390 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:08,392 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:08,644 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:08,645 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:08,645 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:08,645 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,645 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,645 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:08,645 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:08,645 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,646 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,646 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:08,646 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:08,646 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,646 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,646 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:08,647 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:08,647 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:08,647 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,647 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,647 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:08,647 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:08,648 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:08,648 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:08,648 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:08,651 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:08,653 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:09,397 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:09,397 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:09,398 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:09,398 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,398 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,398 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:09,398 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:09,398 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,398 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,398 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:09,399 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:09,399 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,399 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,399 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:09,399 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:09,400 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:09,400 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,400 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,400 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:09,400 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:09,400 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:09,400 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,401 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,403 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:09,405 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:09,659 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:09,659 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:09,659 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:09,659 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,660 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,660 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:09,660 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:09,660 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,661 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,661 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:09,661 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:09,661 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,661 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,661 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:09,661 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:09,661 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:09,661 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,661 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,662 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:09,662 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:09,662 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:09,662 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:09,662 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:09,665 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:09,667 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:10,412 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:10,412 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:10,413 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:10,413 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,413 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:10,414 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:10,414 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,414 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:10,414 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:10,415 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:10,415 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,415 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,415 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:10,415 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:10,415 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:10,415 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,416 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,418 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:10,421 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:10,673 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:10,674 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:10,674 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:10,674 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,675 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,675 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:10,675 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:10,675 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,675 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,675 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:10,675 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:10,675 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,676 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,676 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:10,676 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:10,676 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:10,676 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,676 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,676 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:10,677 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:10,677 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:10,677 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:10,677 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:10,680 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:10,682 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:11,426 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:11,426 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:11,426 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:11,426 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,426 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,426 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:11,427 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:11,427 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,427 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,427 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:11,427 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:11,427 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,427 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,427 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:11,427 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:11,427 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:11,428 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,428 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,429 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:11,429 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:11,429 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:11,429 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,429 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,432 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:11,434 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:11,686 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:11,686 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:11,687 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:11,687 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,687 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,687 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:11,687 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:11,687 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,687 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,687 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:11,688 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:11,688 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,688 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,688 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:11,688 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:11,688 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:11,688 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,688 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,689 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:11,689 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:11,689 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:11,689 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:11,690 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:11,692 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:11,694 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:12,438 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:12,438 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:12,438 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:12,438 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,438 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,438 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:12,438 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:12,439 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,439 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,439 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:12,439 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:12,439 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,439 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,439 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:12,439 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:12,439 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:12,439 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,440 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,440 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:12,440 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:12,440 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:12,440 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,440 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,443 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:12,446 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:12,698 - DEBUG - Updating dynamic data for player 1
+2025-09-03 14:28:12,698 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:12,699 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:12,699 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,699 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,699 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:12,699 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:12,699 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,699 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,699 - DEBUG - Initialized unit array pointer: 439747808
+2025-09-03 14:28:12,699 - DEBUG - Initialized building array pointer: 0
+2025-09-03 14:28:12,700 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,700 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,700 - DEBUG - Updating dynamic data for player 4
+2025-09-03 14:28:12,700 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:12,700 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:12,701 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,701 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,701 - DEBUG - Wrote oil count 8257536 to file oil counts\orange_oil_count.txt
+2025-09-03 14:28:12,701 - DEBUG - Initialized unit array pointer: 439747408
+2025-09-03 14:28:12,701 - DEBUG - Initialized building array pointer: 438387952
+2025-09-03 14:28:12,701 - DEBUG - Initialized infantry array pointer: 0
+2025-09-03 14:28:12,701 - DEBUG - Initialized aircraft array pointer: 0
+2025-09-03 14:28:12,704 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:12,707 - DEBUG - update_color: new_text_color: #00ff00
+2025-09-03 14:28:13,453 - INFO - Game process has ended.
+2025-09-03 14:28:13,454 - INFO - Emitted game_stopped signal.
+2025-09-03 14:28:13,454 - INFO - Game stopped handler called
+2025-09-03 14:28:13,454 - INFO - HUD positions saved successfully.
+2025-09-03 14:28:13,715 - INFO - Game process has ended.
+2025-09-03 14:28:13,715 - INFO - Emitted game_stopped signal.
+2025-09-03 14:28:13,715 - INFO - Game stopped handler called
+2025-09-03 14:28:13,716 - INFO - HUD positions saved successfully.
+2025-09-03 14:28:14,463 - INFO - Waiting for the game to start and players to load...
+2025-09-03 14:28:14,463 - INFO - Waiting for the game to start...
+2025-09-03 14:28:14,724 - INFO - Waiting for the game to start and players to load...
+2025-09-03 14:28:14,724 - INFO - Waiting for the game to start...
+2025-09-03 14:53:47,824 - INFO - Exiting application, stopping data update thread
+2025-09-03 14:53:51,849 - INFO - Exiting application, stopping data update thread
