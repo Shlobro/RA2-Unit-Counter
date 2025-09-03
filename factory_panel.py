@@ -78,7 +78,8 @@ class FactoryPanel(QWidget):
                 "container": container,
                 "layout": sub_layout,
                 "current_widget": current_widget,
-                "queue_placeholders": queue_placeholders
+                "queue_placeholders": queue_placeholders,
+                "queue_widgets": []
             }
 
     def update_labels(self):
