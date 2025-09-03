@@ -11,7 +11,8 @@
       "Bash(py --version)",
       "Bash(dir:*)",
       "Bash(venv/Scripts/python.exe:*)",
-      "Bash(./venv/Scripts/python.exe -m py_compile:*)"
+      "Bash(./venv/Scripts/python.exe -m py_compile:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

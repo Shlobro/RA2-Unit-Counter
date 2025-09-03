@@ -28,9 +28,7 @@ class ControlPanel(QMainWindow):
         self.create_unit_settings_tab()
         self.create_name_flag_money_tab()
         self.create_factory_settings_tab()
-        self.create_game_path_data_tab()
-        self.create_hud_mode_tab()
-        self.create_quit_tab()  # Optionally, you might put the Quit button elsewhere.
+        self.create_general_settings_tab()
 
         self.unit_selection_window = None
 
@@ -283,6 +281,40 @@ class ControlPanel(QMainWindow):
         flag_group.setLayout(flag_layout)
         layout.addWidget(flag_group)
 
+        # Money Settings
+        money_group = QGroupBox("Money Widget Settings")
+        money_layout = QFormLayout()
+        self.money_checkbox = QCheckBox("Show Money")
+        self.money_checkbox.setChecked(self.state.hud_positions.get('show_money', True))
+        self.money_checkbox.stateChanged.connect(self.toggle_money)
+        money_layout.addRow(self.money_checkbox)
+        money_size_label = QLabel("Money Widget Size:")
+        money_size = self.state.hud_positions.get('money_widget_size', 50)
+        self.money_size_spinbox = QSpinBox()
+        self.money_size_spinbox.setRange(5, 500)
+        self.money_size_spinbox.setValue(money_size)
+        self.money_size_spinbox.valueChanged.connect(self.update_money_widget_size)
+        money_layout.addRow(money_size_label, self.money_size_spinbox)
+        money_group.setLayout(money_layout)
+        layout.addWidget(money_group)
+
+        # Money Spent Settings
+        money_spent_group = QGroupBox("Money Spent Widget Settings")
+        money_spent_layout = QFormLayout()
+        self.money_spent_checkbox = QCheckBox("Show Money Spent")
+        self.money_spent_checkbox.setChecked(self.state.hud_positions.get('show_money_spent', True))
+        self.money_spent_checkbox.stateChanged.connect(self.toggle_money_spent)
+        money_spent_layout.addRow(self.money_spent_checkbox)
+        money_spent_size_label = QLabel("Money Spent Widget Size:")
+        money_spent_size = self.state.hud_positions.get('money_spent_widget_size', 50)
+        self.money_spent_size_spinbox = QSpinBox()
+        self.money_spent_size_spinbox.setRange(5, 500)
+        self.money_spent_size_spinbox.setValue(money_spent_size)
+        self.money_spent_size_spinbox.valueChanged.connect(self.update_money_spent_widget_size)
+        money_spent_layout.addRow(money_spent_size_label, self.money_spent_size_spinbox)
+        money_spent_group.setLayout(money_spent_layout)
+        layout.addWidget(money_spent_group)
+
     def update_distance_between_numbers(self):
         new_distance = self.distance_spinbox.value()
         self.state.hud_positions['distance_between_numbers'] = new_distance
@@ -482,7 +514,7 @@ class ControlPanel(QMainWindow):
                     combined_window.factory_panel.set_layout_type(layout_type)
                     combined_window.factory_panel.update_labels()
 
-    def create_game_path_data_tab(self):
+    def create_general_settings_tab(self):
         tab = QWidget()
         layout = QVBoxLayout()
 
@@ -500,6 +532,48 @@ class ControlPanel(QMainWindow):
         path_group.setLayout(path_layout)
         layout.addWidget(path_group)
 
+        # HUD Mode Settings
+        hud_mode_group = QGroupBox("HUD Mode Settings")
+        hud_mode_layout = QFormLayout()
+        self.combined_hud_checkbox = QCheckBox("Use Combined HUD Mode")
+        self.combined_hud_checkbox.setChecked(self.state.hud_positions.get('combined_hud', False))
+        self.combined_hud_checkbox.stateChanged.connect(self.toggle_combined_hud)
+        hud_mode_layout.addRow(self.combined_hud_checkbox)
+        hud_mode_group.setLayout(hud_mode_layout)
+        layout.addWidget(hud_mode_group)
+
+        # UI Element Visibility Settings
+        visibility_group = QGroupBox("UI Element Visibility")
+        visibility_layout = QFormLayout()
+        
+        self.show_names_checkbox = QCheckBox("Show Player Names")
+        self.show_names_checkbox.setChecked(self.state.hud_positions.get('show_name', True))
+        self.show_names_checkbox.stateChanged.connect(self.toggle_name)
+        visibility_layout.addRow(self.show_names_checkbox)
+        
+        self.show_flags_checkbox = QCheckBox("Show Player Flags")
+        self.show_flags_checkbox.setChecked(self.state.hud_positions.get('show_flag', True))
+        self.show_flags_checkbox.stateChanged.connect(self.toggle_flag)
+        visibility_layout.addRow(self.show_flags_checkbox)
+        
+        self.show_money_checkbox = QCheckBox("Show Money")
+        self.show_money_checkbox.setChecked(self.state.hud_positions.get('show_money', True))
+        self.show_money_checkbox.stateChanged.connect(self.toggle_money)
+        visibility_layout.addRow(self.show_money_checkbox)
+        
+        self.show_power_checkbox = QCheckBox("Show Power")
+        self.show_power_checkbox.setChecked(self.state.hud_positions.get('show_power', True))
+        self.show_power_checkbox.stateChanged.connect(self.toggle_power)
+        visibility_layout.addRow(self.show_power_checkbox)
+        
+        self.show_money_spent_checkbox = QCheckBox("Show Money Spent")
+        self.show_money_spent_checkbox.setChecked(self.state.hud_positions.get('show_money_spent', True))
+        self.show_money_spent_checkbox.stateChanged.connect(self.toggle_money_spent)
+        visibility_layout.addRow(self.show_money_spent_checkbox)
+        
+        visibility_group.setLayout(visibility_layout)
+        layout.addWidget(visibility_group)
+
         # Data Update Settings
         data_update_group = QGroupBox("Data Update Settings")
         data_update_layout = QFormLayout()
@@ -514,26 +588,7 @@ class ControlPanel(QMainWindow):
         layout.addWidget(data_update_group)
 
         tab.setLayout(layout)
-        self.tabs.addTab(tab, "Game Path & Data")
-
-    def create_hud_mode_tab(self):
-        tab = QWidget()
-        layout = QFormLayout()
-        self.combined_hud_checkbox = QCheckBox("Use Combined HUD Mode")
-        self.combined_hud_checkbox.setChecked(self.state.hud_positions.get('combined_hud', False))
-        self.combined_hud_checkbox.stateChanged.connect(self.toggle_combined_hud)
-        layout.addRow(self.combined_hud_checkbox)
-        tab.setLayout(layout)
-        self.tabs.addTab(tab, "HUD Mode")
-
-    def create_quit_tab(self):
-        tab = QWidget()
-        layout = QVBoxLayout()
-        quit_button = QPushButton("Quit")
-        quit_button.clicked.connect(self.on_quit)
-        layout.addWidget(quit_button)
-        tab.setLayout(layout)
-        self.tabs.addTab(tab, "Quit")
+        self.tabs.addTab(tab, "General Settings")
 
     def select_game_path(self):
         from PySide6.QtWidgets import QFileDialog
@@ -694,8 +749,9 @@ class ControlPanel(QMainWindow):
             index_mapping = {
                 'name_widget': 0,
                 'money_widget': 1,
-                'power_widget': 2,
-                'flag_widget': 3
+                'money_widget_spent': 2,
+                'power_widget': 3,
+                'flag_widget': 4
             }
             index = index_mapping.get(widget_name)
             if index is not None:
@@ -706,6 +762,12 @@ class ControlPanel(QMainWindow):
                     else:
                         window.hide()
 
+    def update_combined_widget(self, parent, target_widget, fixed_index, visible):
+        """Show or hide a widget in combined HUD mode."""
+        if visible:
+            target_widget.show()
+        else:
+            target_widget.hide()
 
     def open_unit_selection(self):
         from UnitSelectionWindow import UnitSelectionWindow
@@ -760,10 +822,6 @@ class ControlPanel(QMainWindow):
         self.close_all_counter_windows()
         super().closeEvent(event)
     
-    def on_quit(self):
-        self.close_all_counter_windows()
-        from app_manager import on_closing
-        on_closing(self.state)
 
 
 def save_selected_units(state):
