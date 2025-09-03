@@ -17,5 +17,57 @@
     "separate_unit_counters": false,
     "show_money_spent": false,
     "money_spent_widget_size": 50,
-    "game_path": "D:/ra2/Red Alert 2/Red Alert 2"
+    "game_path": "D:/ra2/Red Alert 2/Red Alert 2",
+    "blue": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "orange": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 130,
+            "y": 276
+        }
+    }
 }

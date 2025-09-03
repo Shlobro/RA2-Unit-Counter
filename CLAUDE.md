@@ -34,15 +34,19 @@ This is RA2-Viewer, a Python application that provides a real-time HUD overlay f
 
 ### Building Executable
 ```bash
-# Build standalone executable using PyInstaller
-make EXE.bat
-# Or directly:
+# Build standalone executable using the batch file
+"make EXE.bat"
+# Or directly with PyInstaller:
 pyinstaller --onefile --windowed main.py
+# Or using the spec file:
+pyinstaller Main.spec
 ```
 
 ### Running the Application
 ```bash
 python Main.py
+# Note: The application requires a valid Command & Conquer Red Alert 2 process to be running
+# The control panel will appear first to select the game executable path
 ```
 
 ## Memory Architecture Details
