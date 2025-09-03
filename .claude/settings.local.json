@@ -4,7 +4,10 @@
       "Bash(git checkout:*)",
       "Bash(git stash:*)",
       "Bash(git merge:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(grep:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

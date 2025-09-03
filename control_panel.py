@@ -752,7 +752,44 @@ class ControlPanel(QMainWindow):
                 return data
         return {'selected_units': {}}
 
+    def close_all_counter_windows(self):
+        """Close all HUD counter windows in both single and multiple window modes."""
+        # Close unit and resource windows
+        for unit_window, resource_window in self.state.hud_windows:
+            if unit_window:
+                if isinstance(unit_window, tuple):
+                    # Multiple separate windows mode
+                    for uw in unit_window:
+                        uw.close()
+                else:
+                    # Single window mode or combined HUD mode
+                    unit_window.close()
+            if resource_window:
+                if hasattr(resource_window, 'windows') and resource_window.windows:
+                    # Separate mode with individual resource windows
+                    for window in resource_window.windows:
+                        window.close()
+                else:
+                    # Single resource window
+                    resource_window.close()
+        
+        # Close factory windows if they exist
+        if hasattr(self.state, 'factory_windows'):
+            for factory_win in self.state.factory_windows:
+                factory_win.close()
+            self.state.factory_windows.clear()
+        
+        # Clear the hud_windows list
+        self.state.hud_windows.clear()
+        logging.info("All counter windows closed")
+    
+    def closeEvent(self, event):
+        """Handle window close event (X button clicked)."""
+        self.close_all_counter_windows()
+        super().closeEvent(event)
+    
     def on_quit(self):
+        self.close_all_counter_windows()
         from app_manager import on_closing
         on_closing(self.state)
 

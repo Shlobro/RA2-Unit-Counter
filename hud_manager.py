@@ -77,38 +77,128 @@ def save_hud_positions(state):
     try:
         if hasattr(state, 'control_panel') and state.control_panel:
             cp = state.control_panel
-            state.hud_positions['unit_counter_size'] = cp.counter_size_spinbox.value()
-            state.hud_positions['image_size'] = cp.image_size_spinbox.value()
-            state.hud_positions['number_size'] = cp.number_size_spinbox.value()
-            state.hud_positions['distance_between_numbers'] = cp.distance_spinbox.value()
-            state.hud_positions['name_widget_size'] = (
-                cp.name_size_spinbox.value() if hasattr(cp, 'name_size_spinbox')
-                else state.hud_positions.get('name_widget_size'))
-            state.hud_positions['money_widget_size'] = (
-                cp.money_size_spinbox.value() if hasattr(cp, 'money_size_spinbox')
-                else state.hud_positions.get('money_widget_size'))
-            state.hud_positions['power_widget_size'] = (
-                cp.power_size_spinbox.value() if hasattr(cp, 'power_size_spinbox')
-                else state.hud_positions.get('power_widget_size'))
-            state.hud_positions['show_name'] = cp.name_checkbox.isChecked()
-            state.hud_positions['show_money'] = cp.money_checkbox.isChecked()
-            state.hud_positions['show_power'] = cp.power_checkbox.isChecked()
-            state.hud_positions['unit_layout'] = cp.layout_combo.currentText()
-            state.hud_positions['show_unit_frames'] = cp.unit_frame_checkbox.isChecked()
-            state.hud_positions['money_color'] = cp.color_combo.currentText()
-            state.hud_positions['separate_unit_counters'] = cp.separate_units_checkbox.isChecked()
-            state.hud_positions['show_money_spent'] = cp.money_spent_checkbox.isChecked()
-            state.hud_positions['money_spent_widget_size'] = cp.money_spent_size_spinbox.value()
-            # --- New factory settings ---
-            state.hud_positions['factory_size'] = cp.factory_size_spinbox.value()
-            state.hud_positions['show_factory_frames'] = cp.factory_frame_checkbox.isChecked()
-            state.hud_positions['factory_layout'] = cp.factory_layout_combo.currentText()
-            # If you also added "Show Factory Window" checkbox:
+            
+            # Helper function to safely get widget values
+            def safe_widget_value(widget, method_name='value', default_value=None):
+                try:
+                    if hasattr(widget, method_name):
+                        method = getattr(widget, method_name)
+                        return method()
+                    return default_value
+                except RuntimeError:
+                    # Widget has been deleted
+                    return default_value
+            
+            # Safely access spinbox values
+            if hasattr(cp, 'counter_size_spinbox'):
+                value = safe_widget_value(cp.counter_size_spinbox, 'value', state.hud_positions.get('unit_counter_size', 75))
+                if value is not None:
+                    state.hud_positions['unit_counter_size'] = value
+                    
+            if hasattr(cp, 'image_size_spinbox'):
+                value = safe_widget_value(cp.image_size_spinbox, 'value', state.hud_positions.get('image_size', 75))
+                if value is not None:
+                    state.hud_positions['image_size'] = value
+                    
+            if hasattr(cp, 'number_size_spinbox'):
+                value = safe_widget_value(cp.number_size_spinbox, 'value', state.hud_positions.get('number_size', 75))
+                if value is not None:
+                    state.hud_positions['number_size'] = value
+                    
+            if hasattr(cp, 'distance_spinbox'):
+                value = safe_widget_value(cp.distance_spinbox, 'value', state.hud_positions.get('distance_between_numbers', 0))
+                if value is not None:
+                    state.hud_positions['distance_between_numbers'] = value
+                    
+            if hasattr(cp, 'name_size_spinbox'):
+                value = safe_widget_value(cp.name_size_spinbox, 'value', state.hud_positions.get('name_widget_size', 50))
+                if value is not None:
+                    state.hud_positions['name_widget_size'] = value
+                    
+            if hasattr(cp, 'money_size_spinbox'):
+                value = safe_widget_value(cp.money_size_spinbox, 'value', state.hud_positions.get('money_widget_size', 50))
+                if value is not None:
+                    state.hud_positions['money_widget_size'] = value
+                    
+            if hasattr(cp, 'power_size_spinbox'):
+                value = safe_widget_value(cp.power_size_spinbox, 'value', state.hud_positions.get('power_widget_size', 50))
+                if value is not None:
+                    state.hud_positions['power_widget_size'] = value
+            
+            # Safely access checkbox values
+            if hasattr(cp, 'name_checkbox'):
+                value = safe_widget_value(cp.name_checkbox, 'isChecked', state.hud_positions.get('show_name', True))
+                if value is not None:
+                    state.hud_positions['show_name'] = value
+                    
+            if hasattr(cp, 'money_checkbox'):
+                value = safe_widget_value(cp.money_checkbox, 'isChecked', state.hud_positions.get('show_money', True))
+                if value is not None:
+                    state.hud_positions['show_money'] = value
+                    
+            if hasattr(cp, 'power_checkbox'):
+                value = safe_widget_value(cp.power_checkbox, 'isChecked', state.hud_positions.get('show_power', True))
+                if value is not None:
+                    state.hud_positions['show_power'] = value
+                    
+            if hasattr(cp, 'unit_frame_checkbox'):
+                value = safe_widget_value(cp.unit_frame_checkbox, 'isChecked', state.hud_positions.get('show_unit_frames', True))
+                if value is not None:
+                    state.hud_positions['show_unit_frames'] = value
+                    
+            if hasattr(cp, 'separate_units_checkbox'):
+                value = safe_widget_value(cp.separate_units_checkbox, 'isChecked', state.hud_positions.get('separate_unit_counters', False))
+                if value is not None:
+                    state.hud_positions['separate_unit_counters'] = value
+                    
+            if hasattr(cp, 'money_spent_checkbox'):
+                value = safe_widget_value(cp.money_spent_checkbox, 'isChecked', state.hud_positions.get('show_money_spent', False))
+                if value is not None:
+                    state.hud_positions['show_money_spent'] = value
+                    
+            if hasattr(cp, 'factory_frame_checkbox'):
+                value = safe_widget_value(cp.factory_frame_checkbox, 'isChecked', state.hud_positions.get('show_factory_frames', True))
+                if value is not None:
+                    state.hud_positions['show_factory_frames'] = value
+            
+            # Safely access combo box values
+            if hasattr(cp, 'layout_combo'):
+                value = safe_widget_value(cp.layout_combo, 'currentText', state.hud_positions.get('unit_layout', 'Vertical'))
+                if value is not None:
+                    state.hud_positions['unit_layout'] = value
+                    
+            if hasattr(cp, 'color_combo'):
+                value = safe_widget_value(cp.color_combo, 'currentText', state.hud_positions.get('money_color', 'Use player color'))
+                if value is not None:
+                    state.hud_positions['money_color'] = value
+                    
+            if hasattr(cp, 'factory_layout_combo'):
+                value = safe_widget_value(cp.factory_layout_combo, 'currentText', state.hud_positions.get('factory_layout', 'Horizontal'))
+                if value is not None:
+                    state.hud_positions['factory_layout'] = value
+            
+            # Additional safe widget accesses
+            if hasattr(cp, 'money_spent_size_spinbox'):
+                value = safe_widget_value(cp.money_spent_size_spinbox, 'value', state.hud_positions.get('money_spent_widget_size', 50))
+                if value is not None:
+                    state.hud_positions['money_spent_widget_size'] = value
+                    
+            if hasattr(cp, 'factory_size_spinbox'):
+                value = safe_widget_value(cp.factory_size_spinbox, 'value', state.hud_positions.get('factory_size', 100))
+                if value is not None:
+                    state.hud_positions['factory_size'] = value
+                    
             if hasattr(cp, 'show_factory_checkbox'):
-                state.hud_positions['show_factory_window'] = cp.show_factory_checkbox.isChecked()
+                value = safe_widget_value(cp.show_factory_checkbox, 'isChecked', state.hud_positions.get('show_factory_window', True))
+                if value is not None:
+                    state.hud_positions['show_factory_window'] = value
 
         if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'path_edit'):
-            state.hud_positions['game_path'] = state.control_panel.path_edit.text()
+            try:
+                state.hud_positions['game_path'] = state.control_panel.path_edit.text()
+            except RuntimeError:
+                # path_edit widget has been deleted, skip saving game path
+                pass
 
         # Save positions for each player.
         for unit_window, resource_window in state.hud_windows:
