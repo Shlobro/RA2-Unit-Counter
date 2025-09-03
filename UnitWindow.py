@@ -386,19 +386,25 @@ class CombinedHudWindow(QWidget):
 
         # Now add a fresh unit section
         if separate:
-            # Two embedded widgets side-by-side
+            # Two embedded widgets - layout depends on unit_layout setting
             container = QWidget()
-            h_layout = QHBoxLayout()
-            h_layout.setContentsMargins(0, 0, 0, 0)
-            container.setLayout(h_layout)
+            unit_layout_type = self.hud_pos.get('unit_layout', 'Vertical')
+            if unit_layout_type == 'Horizontal':
+                # In horizontal mode: numbers below images
+                container_layout = QVBoxLayout()
+            else:
+                # In vertical mode: numbers to the right of images
+                container_layout = QHBoxLayout()
+            container_layout.setContentsMargins(0, 0, 0, 0)
+            container.setLayout(container_layout)
 
             self.unit_widget_images = UnitWindowImagesOnly(self.player, self.hud_pos, self.selected_units_dict)
             self.unit_widget_numbers = UnitWindowNumbersOnly(self.player, self.hud_pos, self.selected_units_dict)
             self.unit_widget_images.setWindowFlags(Qt.Widget)
             self.unit_widget_numbers.setWindowFlags(Qt.Widget)
 
-            h_layout.addWidget(self.unit_widget_images)
-            h_layout.addWidget(self.unit_widget_numbers)
+            container_layout.addWidget(self.unit_widget_images)
+            container_layout.addWidget(self.unit_widget_numbers)
             layout.addWidget(container)
         else:
             # Single combined unit widget
@@ -486,11 +492,19 @@ class CombinedHudWindow(QWidget):
         Update the layout of unit counters in Combined HUD mode.
         """
         if self.hud_pos.get('separate_unit_counters', False):
-            # Two embedded widgets - update both
+            # When separate unit counters are enabled, we need to rebuild the container
+            # with the appropriate layout (vertical for horizontal mode, horizontal for vertical mode)
+            
+            # First, properly clean up existing unit widgets
             if hasattr(self, 'unit_widget_images'):
-                self.unit_widget_images.update_layout(layout_type)
+                self.unit_widget_images.setParent(None)
+                delattr(self, 'unit_widget_images')
             if hasattr(self, 'unit_widget_numbers'):
-                self.unit_widget_numbers.update_layout(layout_type)
+                self.unit_widget_numbers.setParent(None) 
+                delattr(self, 'unit_widget_numbers')
+                
+            # Now rebuild with the new layout
+            self.update_unit_section(True)
         else:
             # Single combined unit widget
             if hasattr(self, 'unit_widget'):
