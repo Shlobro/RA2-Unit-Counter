@@ -524,7 +524,7 @@ class ControlPanel(QMainWindow):
         self.path_edit = QLineEdit()
         game_path_val = self.state.hud_positions.get('game_path', '')
         self.path_edit.setText(game_path_val)
-        self.path_edit.setPlaceholderText("Enter or select the game path")
+        self.path_edit.setPlaceholderText("Select the game folder")
         path_layout.addWidget(self.path_edit)
         self.path_button = QPushButton("Browse")
         self.path_button.clicked.connect(self.select_game_path)
@@ -591,11 +591,24 @@ class ControlPanel(QMainWindow):
         self.tabs.addTab(tab, "General Settings")
 
     def select_game_path(self):
-        from PySide6.QtWidgets import QFileDialog
+        from PySide6.QtWidgets import QFileDialog, QMessageBox
         game_path = QFileDialog.getExistingDirectory(self, "Select Game Folder")
         if game_path:
-            self.path_edit.setText(game_path)
-            self.state.hud_positions['game_path'] = game_path
+            # Validate that this is a valid game folder by checking for spawn.ini
+            spawn_ini_path = os.path.join(game_path, 'spawn.ini')
+            if os.path.exists(spawn_ini_path):
+                self.path_edit.setText(game_path)
+                self.state.hud_positions['game_path'] = game_path
+                self.state.game_path = game_path
+            else:
+                # Show error without mentioning spawn.ini
+                msg_box = QMessageBox()
+                msg_box.setWindowTitle("Invalid Game Path")
+                msg_box.setText("Invalid game path selected.")
+                msg_box.setInformativeText("Please select a valid game folder.")
+                msg_box.setIcon(QMessageBox.Icon.Warning)
+                msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msg_box.exec()
 
     def update_money_color(self, color):
         color = color.strip()

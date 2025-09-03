@@ -7,6 +7,8 @@ import traceback
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox, QWidget, QVBoxLayout
 
+from app_state import check_spectator_status
+
 from DataTracker import ResourceWindow
 from UnitWindow import (
     UnitWindowWithImages,
@@ -394,6 +396,22 @@ def game_started_handler(state):
         if not state.players:
             logging.info("No valid players found. HUD will not be displayed.")
             return
+        
+        # Check admin status and spectator status before creating unit windows
+        if not state.admin:
+            is_spectator = check_spectator_status(state)
+            if not is_spectator:
+                # Show warning dialog and prevent unit windows from spawning
+                msg_box = QMessageBox()
+                msg_box.setWindowTitle("Access Restricted")
+                msg_box.setText("Must be spectator to use the unit counter")
+                msg_box.setInformativeText("You must be in spectator mode or have admin privileges to use this application.")
+                msg_box.setIcon(QMessageBox.Icon.Warning)
+                msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msg_box.exec()
+                logging.warning("User is not admin and not spectator - preventing unit counter from starting")
+                return
+        
         create_hud_windows(state)
         # Show unit windows if needed (combined windows are already shown in create_hud_windows)
         for unit_window, resource_window in state.hud_windows:
