@@ -111,7 +111,7 @@ class UnitWindowBase(QMainWindow):
             is_locked = unit_info.get('locked', False)
             unit_faction = unit_info.get('faction', None)
             is_selected = unit_info.get('selected', False)
-            if (is_locked and is_selected and (unit_faction == self.player.faction or unit_faction == "Other")) or (0 < unit_count < 500):
+            if (is_selected and unit_count > 0) or (is_locked and is_selected and (unit_faction == self.player.faction or unit_faction == "Other")):
                 counter_widget.show()
             else:
                 counter_widget.hide()
