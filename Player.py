@@ -133,7 +133,7 @@ class Player:
                                 counts[name] = count
                             else:
                                 counts[name] = 0
-                    elif name == "Blitz oil (psychic sensor)" and 15 > count > 0:
+                    elif name == "Psychic Beacon" and 15 > count > 0:
                         counts[name] = count
                     elif name == "Oil":
                         counts[name] = count
