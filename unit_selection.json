@@ -7,28 +7,28 @@
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 0
                 },
                 "GGI": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 1
                 },
                 "Allied Engineer": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 3
                 },
                 "Chrono Legionnaire": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 4
                 },
                 "Spy": {
                     "selected": false,
@@ -75,25 +75,25 @@
             },
             "Structure": {
                 "Allied Power Plant": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 0
                 },
                 "Allied Barracks": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 1
                 },
                 "SpySat": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 3
                 },
                 "Allied Naval Yard": {
                     "selected": false,
@@ -196,25 +196,25 @@
                     "position": 3
                 },
                 "IFV": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 0
                 },
                 "Chrono Miner": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
                     "position": 1
                 },
                 "Battle Fortress": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 2
                 },
                 "Allied MCV": {
                     "selected": false,
@@ -235,7 +235,7 @@
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 4
                 },
                 "Tank Destroyer": {
                     "selected": false,
@@ -263,7 +263,12 @@
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 5
+                },
+                "Grizzly Battle Tank": {
+                    "selected": true,
+                    "unit_type": "Tank",
+                    "faction": "Allied"
                 }
             },
             "Naval": {
@@ -272,28 +277,28 @@
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 0
                 },
                 "Aircraft Carrier": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 1
                 },
                 "Destroyer": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 2
                 },
                 "Dolphin": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 3
                 },
                 "Allied Amphibious Transport": {
                     "selected": false,
@@ -305,7 +310,7 @@
             },
             "Aircraft": {
                 "Black Eagle": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Aircraft",
                     "faction": "Allied",
@@ -334,7 +339,7 @@
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 2
                 },
                 "Boris": {
                     "selected": false,
@@ -351,18 +356,18 @@
                     "position": -1
                 },
                 "Soviet Engineer": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 1
                 },
                 "Soviet Dog": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 4
                 },
                 "Ivan": {
                     "selected": false,
@@ -377,15 +382,29 @@
                     "unit_type": "Infantry",
                     "faction": "Soviet",
                     "position": -1
+                },
+                "Conscript": {
+                    "selected": true,
+                    "locked": true,
+                    "unit_type": "Infantry",
+                    "faction": "Soviet",
+                    "position": 0
+                },
+                "Attack Dog": {
+                    "selected": true,
+                    "locked": true,
+                    "unit_type": "Infantry",
+                    "faction": "Soviet",
+                    "position": 1
                 }
             },
             "Structure": {
                 "Soviet Barracks": {
-                    "selected": true,
-                    "locked": true,
+                    "selected": false,
+                    "locked": false,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 0
                 },
                 "Battle Bunker": {
                     "selected": false,
@@ -396,10 +415,10 @@
                 },
                 "Soviet War Factory": {
                     "selected": true,
-                    "locked": false,
+                    "locked": true,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 4
                 },
                 "Flak Cannon": {
                     "selected": false,
@@ -441,14 +460,14 @@
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 2
                 },
                 "Nuclear Reactor": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 3
                 },
                 "Tesla Reactor": {
                     "selected": false,
@@ -462,34 +481,77 @@
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 5
                 },
                 "Sov Naval Yard": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 6
                 },
                 "Soviet Tesla Reactor": {
-                    "selected": true,
+                    "selected": false,
                     "unit_type": "Structure",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 6,
+                    "locked": false
                 },
                 "Soviet Ore Refinery": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
-                    "position": -1,
+                    "position": 7,
                     "unit_type": "Structure",
                     "faction": "Soviet"
                 },
                 "Soviet Tesla Coil": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
-                    "position": -1,
+                    "position": 9,
                     "unit_type": "Structure",
                     "faction": "Soviet"
+                },
+                "Soviet Battle Bunker": {
+                    "selected": false,
+                    "position": 10,
+                    "unit_type": "Structure",
+                    "faction": "Soviet",
+                    "locked": false
+                },
+                "Soviet Flak Cannon": {
+                    "selected": false,
+                    "unit_type": "Structure",
+                    "faction": "Soviet",
+                    "position": -1,
+                    "locked": false
+                },
+                "Soviet Iron Curtain Device": {
+                    "selected": false,
+                    "position": 14,
+                    "unit_type": "Structure",
+                    "faction": "Soviet",
+                    "locked": false
+                },
+                "Soviet Sentry Gun": {
+                    "selected": false,
+                    "unit_type": "Structure",
+                    "faction": "Soviet",
+                    "position": -1,
+                    "locked": false
+                },
+                "Soviet Industrial Plant": {
+                    "selected": false,
+                    "unit_type": "Structure",
+                    "faction": "Soviet",
+                    "position": -1,
+                    "locked": false
+                },
+                "Soviet Nuclear Missile Silo": {
+                    "selected": false,
+                    "unit_type": "Structure",
+                    "faction": "Soviet",
+                    "position": -1,
+                    "locked": false
                 }
             },
             "Tank": {
@@ -508,7 +570,7 @@
                     "position": -1
                 },
                 "Terror Drone": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Soviet",
@@ -530,10 +592,10 @@
                 },
                 "War Miner": {
                     "selected": false,
-                    "locked": false,
+                    "locked": true,
                     "unit_type": "Tank",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 2
                 },
                 "V3 Rocket Launcher": {
                     "selected": false,
@@ -555,6 +617,32 @@
                     "unit_type": "Tank",
                     "faction": "Soviet",
                     "position": -1
+                },
+                "Rhino Heavy Tank": {
+                    "selected": true,
+                    "locked": true,
+                    "unit_type": "Tank",
+                    "faction": "Soviet",
+                    "position": 5
+                },
+                "Flak Track": {
+                    "locked": true,
+                    "selected": true,
+                    "position": 6,
+                    "unit_type": "Tank",
+                    "faction": "Soviet"
+                },
+                "Apocalypse": {
+                    "selected": false,
+                    "locked": false,
+                    "unit_type": "Tank",
+                    "faction": "Soviet",
+                    "position": -1
+                },
+                "Soviet Siege Chopper": {
+                    "selected": true,
+                    "unit_type": "Tank",
+                    "faction": "Soviet"
                 }
             },
             "Naval": {
@@ -631,7 +719,7 @@
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 0
                 }
             },
             "Structure": {
@@ -640,7 +728,7 @@
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 0
                 },
                 "Yuri Barracks": {
                     "selected": false,
@@ -717,7 +805,7 @@
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 1
                 },
                 "Yuri Naval Yard": {
                     "selected": false,
@@ -733,21 +821,21 @@
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 1
                 },
                 "Chaos Drone": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 2
                 },
                 "Disc": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 3
                 },
                 "Magnetron": {
                     "selected": true,
@@ -761,14 +849,14 @@
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 4
                 },
                 "Lasher": {
                     "selected": true,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 5
                 },
                 "Yuri Amphibious Transport": {
                     "selected": false,
@@ -791,7 +879,7 @@
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 0
                 },
                 "Yuri Amphibious Transport": {
                     "selected": false,
@@ -810,10 +898,9 @@
                     "locked": true,
                     "unit_type": "Structure",
                     "faction": "Other",
-                    "position": -1
+                    "position": 0
                 }
             }
         }
-    },
-    "units": {}
+    }
 }

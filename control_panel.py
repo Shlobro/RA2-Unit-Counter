@@ -832,7 +832,23 @@ class ControlPanel(QMainWindow):
     
     def closeEvent(self, event):
         """Handle window close event (X button clicked)."""
+        # Close unit selection window if it exists and is visible
+        if self.unit_selection_window is not None and self.unit_selection_window.isVisible():
+            logging.info("Closing unit selection window")
+            self.unit_selection_window.close()
+            
+        # Close all HUD counter windows
         self.close_all_counter_windows()
+        
+        # Save all settings before closing
+        try:
+            from hud_manager import save_hud_positions
+            save_selected_units(self.state)
+            save_hud_positions(self.state)
+            logging.info("Settings saved on control panel close")
+        except Exception as save_error:
+            logging.exception("Error saving settings on close: %s", save_error)
+            
         super().closeEvent(event)
     
 
