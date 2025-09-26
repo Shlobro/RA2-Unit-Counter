@@ -24,7 +24,7 @@
                     "position": 3
                 },
                 "Chrono Legionnaire": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
@@ -75,14 +75,14 @@
             },
             "Structure": {
                 "Allied Power Plant": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
                     "position": 0
                 },
                 "Allied Barracks": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Allied",
@@ -196,21 +196,21 @@
                     "position": 3
                 },
                 "IFV": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
                     "position": 0
                 },
                 "Chrono Miner": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
                     "position": 1
                 },
                 "Battle Fortress": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Allied",
@@ -264,6 +264,11 @@
                     "unit_type": "Tank",
                     "faction": "Allied",
                     "position": 5
+                },
+                "Grizzly Battle Tank": {
+                    "selected": true,
+                    "unit_type": "Tank",
+                    "faction": "Allied"
                 }
             },
             "Naval": {
@@ -275,21 +280,21 @@
                     "position": 0
                 },
                 "Aircraft Carrier": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
                     "position": 1
                 },
                 "Destroyer": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
                     "position": 2
                 },
                 "Dolphin": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Naval",
                     "faction": "Allied",
@@ -305,7 +310,7 @@
             },
             "Aircraft": {
                 "Black Eagle": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Aircraft",
                     "faction": "Allied",
@@ -565,7 +570,7 @@
                     "position": -1
                 },
                 "Terror Drone": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Soviet",
@@ -586,7 +591,7 @@
                     "position": -1
                 },
                 "War Miner": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
                     "unit_type": "Tank",
                     "faction": "Soviet",
@@ -633,6 +638,11 @@
                     "unit_type": "Tank",
                     "faction": "Soviet",
                     "position": -1
+                },
+                "Soviet Siege Chopper": {
+                    "selected": true,
+                    "unit_type": "Tank",
+                    "faction": "Soviet"
                 }
             },
             "Naval": {
@@ -884,7 +894,7 @@
         "Other": {
             "Structure": {
                 "Psychic Beacon": {
-                    "selected": false,
+                    "selected": true,
                     "locked": true,
                     "unit_type": "Structure",
                     "faction": "Other",
