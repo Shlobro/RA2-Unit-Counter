@@ -99,6 +99,7 @@ class FactoryWindow(QMainWindow):
 
             current_widget = FactoryWidget(
                 factory=factory_obj,
+                player=self.player,
                 color=self.player.color,
                 size=default_size,
                 show_frame=show_frames,
@@ -189,12 +190,17 @@ class FactoryWindow(QMainWindow):
                 continue
 
             c = Counter(queued_list)
+            prefer_vet = (
+                (factory_name == "Infantry" and self.player.barracks_infiltrated) or
+                (factory_name == "Vehicles" and self.player.war_factory_infiltrated)
+            )
             for unit_name, count in c.items():
                 item_widget = FactoryQueueItemWidget(
                     unit_name,
                     count,
                     color=self.player.color,
                     size=self.get_default_size() // 2,
+                    prefer_vet=prefer_vet,
                     parent=self
                 )
                 queue_widgets.append(item_widget)

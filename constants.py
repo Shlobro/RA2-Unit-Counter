@@ -1,4 +1,5 @@
 # constants.py
+import os
 
 # General constants
 MAXPLAYERS = 8
@@ -30,6 +31,10 @@ COLORSCHEMEOFFSET = 0x16054
 
 # offset for number of war factories
 NUMBEROFWFOFFSET = 0x160
+
+# Infiltration flags
+BARRACKS_INFILTRATED_OFFSET = 0x2bf
+WAR_FACTORY_INFILTRATED_OFFSET = 0x2c0
 
 #---------------------------------------------
 #all the new factory offsets here:
@@ -422,6 +427,32 @@ def get_display_image_name(unit_name):
 
 def name_to_path(name):
     return 'cameos/png/' + name + '.png'
+
+
+def find_vet_image_path(name):
+    candidates = [
+        os.path.join('cameos', 'png', f'{name} Vet.png'),
+        os.path.join('cameos', 'png', f'{name} vet.png'),
+        os.path.join('cameos', 'png', f'{name}_vet.png'),
+        os.path.join('cameos', 'png', f'{name.lower()}_vet.png'),
+        os.path.join('dist', 'cameos', 'png', f'{name} Vet.png'),
+        os.path.join('dist', 'cameos', 'png', f'{name} vet.png'),
+        os.path.join('dist', 'cameos', 'png', f'{name}_vet.png'),
+        os.path.join('dist', 'cameos', 'png', f'{name.lower()}_vet.png'),
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return None
+
+
+def resolve_factory_image_path(unit_name, prefer_vet=False):
+    image_name = get_display_image_name(unit_name)
+    if prefer_vet:
+        vet_path = find_vet_image_path(image_name)
+        if vet_path:
+            return vet_path
+    return name_to_path(image_name)
 
 
 def country_name_to_faction(country_name):

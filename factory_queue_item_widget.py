@@ -3,7 +3,7 @@ import logging
 from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont
 from PySide6.QtWidgets import QLabel
 from PySide6.QtCore import Qt
-from constants import get_display_image_name, name_to_path
+from constants import resolve_factory_image_path
 
 class FactoryQueueItemWidget(QLabel):
     """
@@ -11,19 +11,19 @@ class FactoryQueueItemWidget(QLabel):
       - The unit's image
       - If count > 1, show the count in the corner
     """
-    def __init__(self, unit_name, count, color, size=50, parent=None):
+    def __init__(self, unit_name, count, color, size=50, prefer_vet=False, parent=None):
         super().__init__(parent)
         self.unit_name = unit_name
         self.count = count
         self.color = color
         self.size = size
+        self.prefer_vet = prefer_vet
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.scaled_pixmap = QPixmap()
         self.build_pixmap()
 
     def build_pixmap(self):
-        from constants import name_to_path
-        path = name_to_path(get_display_image_name(self.unit_name))
+        path = resolve_factory_image_path(self.unit_name, prefer_vet=self.prefer_vet)
         pix = QPixmap(path)
         if pix.isNull():
             logging.warning(f"Image not found for queued unit: {self.unit_name}")

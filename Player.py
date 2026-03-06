@@ -11,7 +11,8 @@ from constants import (
     MAXPLAYERS, INVALIDCLASS, INFOFFSET, AIRCRAFTOFFSET, TANKOFFSET, BUILDINGOFFSET,
     CREDITSPENT_OFFSET, BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
     POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
-    infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets
+    infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets,
+    BARRACKS_INFILTRATED_OFFSET, WAR_FACTORY_INFILTRATED_OFFSET
 )
 from factory import QueuedFactory, BuildingFactory
 from memory_utils import read_process_memory
@@ -48,6 +49,8 @@ class Player:
         self.power_output = 0
         self.power_drain = 0
         self.power = 0
+        self.barracks_infiltrated = False
+        self.war_factory_infiltrated = False
 
         # Unit counts
         self.infantry_counts = {}
@@ -186,6 +189,15 @@ class Player:
                 self.power_output = int.from_bytes(power_data[0:4], byteorder='little')
                 self.power_drain = int.from_bytes(power_data[4:8], byteorder='little')
                 self.power = self.power_output - self.power_drain
+
+            infiltration_data = read_process_memory(
+                self.process_handle,
+                self.real_class_base + BARRACKS_INFILTRATED_OFFSET,
+                2
+            )
+            if infiltration_data and len(infiltration_data) >= 2:
+                self.barracks_infiltrated = bool(infiltration_data[0])
+                self.war_factory_infiltrated = bool(infiltration_data[1])
 
             if self.infantry_array_ptr == 0:
                 self.initialize_pointers()

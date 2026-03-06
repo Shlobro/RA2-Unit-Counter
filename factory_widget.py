@@ -2,10 +2,10 @@ import logging
 from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont
 from PySide6.QtCore import Qt
 from CounterWidget import CounterWidgetBase
-from constants import get_display_image_name, name_to_path
+from constants import resolve_factory_image_path
 
 class FactoryWidget(CounterWidgetBase):
-    def __init__(self, factory, color=Qt.red, size=100, show_frame=True, parent=None):
+    def __init__(self, factory, player, color=Qt.red, size=100, show_frame=True, parent=None):
         """
         A factory widget that mirrors your "CounterWidgetImagesAndNumber" style:
           - Draws a scaled image
@@ -16,6 +16,7 @@ class FactoryWidget(CounterWidgetBase):
         """
         super().__init__(color=color, size=size, parent=parent)
         self.factory = factory
+        self.player = player
         self.show_frame = show_frame
 
         # We'll store the current displayed text here, e.g. "40%" or "Ready"
@@ -41,7 +42,11 @@ class FactoryWidget(CounterWidgetBase):
 
         # 1) Scale the image
         unit_name = status.get("currently_building", "")
-        image_path = name_to_path(get_display_image_name(unit_name))
+        prefer_vet = (
+            (self.factory.factory_name == "Infantry" and self.player.barracks_infiltrated) or
+            (self.factory.factory_name == "Vehicles" and self.player.war_factory_infiltrated)
+        )
+        image_path = resolve_factory_image_path(unit_name, prefer_vet=prefer_vet)
         pixmap = QPixmap(image_path)
         if pixmap.isNull():
             logging.error(f"Image not found for unit: {unit_name}")

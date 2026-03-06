@@ -52,6 +52,13 @@ class CounterWidgetImageOnly(CounterWidgetBase):
         self.scaled_pixmap = pixmap.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setFixedSize(self.scaled_pixmap.size())
 
+    def update_image_path(self, new_image_path):
+        if self.image_path == new_image_path:
+            return
+        self.image_path = new_image_path
+        self.update_image_size()
+        self.repaint()
+
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.drawPixmap(0, 0, self.scaled_pixmap)
@@ -127,6 +134,13 @@ class CounterWidgetImagesAndNumber(CounterWidgetBase):
         pixmap = QPixmap(self.image_path)
         self.scaled_pixmap = pixmap.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setFixedSize(self.scaled_pixmap.size())
+
+    def update_image_path(self, new_image_path):
+        if self.image_path == new_image_path:
+            return
+        self.image_path = new_image_path
+        self.update_image_size()
+        self.repaint()
 
     def paintEvent(self, event):
         painter = QPainter(self)
