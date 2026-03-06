@@ -10,6 +10,10 @@ from PySide6.QtWidgets import QMessageBox, QWidget, QVBoxLayout
 from app_state import check_spectator_status
 
 from DataTracker import ResourceWindow
+from scoreboard_window import (
+    build_post_game_snapshot,
+    PostGameScoreboardWindow,
+)
 from UnitWindow import (
     UnitWindowWithImages,
     UnitWindowNumbersOnly,
@@ -64,6 +68,7 @@ def load_hud_positions(state):
         'factory_size': 100,
         'factory_layout': 'Horizontal',  # Could be Vertical as well.
         'show_factory_frames': True,
+        'show_post_game_scoreboard': True,
         # Toggle to show/hide the entire factory window
         'show_factory_window': True
     }
@@ -194,6 +199,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.show_factory_checkbox, 'isChecked', state.hud_positions.get('show_factory_window', True))
                 if value is not None:
                     state.hud_positions['show_factory_window'] = value
+
+            if hasattr(cp, 'post_game_scoreboard_checkbox'):
+                value = safe_widget_value(cp.post_game_scoreboard_checkbox, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))
+                if value is not None:
+                    state.hud_positions['show_post_game_scoreboard'] = value
 
         if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'path_edit'):
             try:
@@ -381,9 +391,36 @@ def update_huds(state):
         if hasattr(state, 'factory_windows'):
             for factory_win in state.factory_windows:
                 factory_win.update_labels()
+        maybe_show_post_game_scoreboard(state)
     except Exception as e:
         logging.error(f"Exception in update_huds: {e}")
         traceback.print_exc()
+
+
+def maybe_show_post_game_scoreboard(state):
+    if state.post_game_scoreboard_shown:
+        return
+    if not state.hud_positions.get('show_post_game_scoreboard', True):
+        return
+    if not state.players:
+        return
+
+    any_finished = any(player.is_winner or player.is_loser for player in state.players)
+    if not any_finished:
+        return
+
+    snapshot = build_post_game_snapshot(state.players)
+    if not snapshot["players"]:
+        return
+
+    if state.scoreboard_window is not None:
+        state.scoreboard_window.close()
+
+    state.scoreboard_window = PostGameScoreboardWindow(snapshot)
+    state.scoreboard_window.show()
+    state.scoreboard_window.raise_()
+    state.scoreboard_window.activateWindow()
+    state.post_game_scoreboard_shown = True
 
 
 # ---------------------------------------------------------------------------
@@ -393,6 +430,11 @@ def game_started_handler(state):
     """Handler to run when the game starts."""
     logging.info("Game started handler called")
     with state.data_lock:
+        state.post_game_scoreboard_shown = False
+        if state.scoreboard_window is not None:
+            state.scoreboard_window.close()
+            state.scoreboard_window = None
+
         if not state.players:
             logging.info("No valid players found. HUD will not be displayed.")
             return

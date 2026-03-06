@@ -33,6 +33,8 @@ class AppState:
         self.data_update_thread = None  # Reference to the DataUpdateThread instance
         self.game_path = ''         # Game path (empty string by default)
         self.admin = True
+        self.scoreboard_window = None
+        self.post_game_scoreboard_shown = False
         initialize_oil_count_files()
 
 

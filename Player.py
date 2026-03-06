@@ -12,7 +12,10 @@ from constants import (
     CREDITSPENT_OFFSET, BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
     POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
     infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets,
-    BARRACKS_INFILTRATED_OFFSET, WAR_FACTORY_INFILTRATED_OFFSET
+    BARRACKS_INFILTRATED_OFFSET, WAR_FACTORY_INFILTRATED_OFFSET,
+    BUILT_INFANTRY_TOTAL_OFFSETS, BUILT_UNIT_TOTAL_OFFSETS, BUILT_BUILDING_TOTAL_OFFSETS,
+    BUILT_AIRCRAFT_TOTAL_OFFSETS, LOST_INFANTRY_TOTAL_OFFSETS, LOST_UNIT_TOTAL_OFFSETS,
+    LOST_BUILDING_TOTAL_OFFSETS, LOST_AIRCRAFT_TOTAL_OFFSETS
 )
 from factory import QueuedFactory, BuildingFactory
 from memory_utils import read_process_memory
@@ -57,6 +60,14 @@ class Player:
         self.tank_counts = {}
         self.building_counts = {}
         self.aircraft_counts = {}
+        self.built_infantry_counts = {}
+        self.built_tank_counts = {}
+        self.built_building_counts = {}
+        self.built_aircraft_counts = {}
+        self.lost_infantry_counts = {}
+        self.lost_tank_counts = {}
+        self.lost_building_counts = {}
+        self.lost_aircraft_counts = {}
 
         # Pointers to arrays in memory
         self.unit_array_ptr = None
@@ -154,6 +165,77 @@ class Player:
             logging.error(f"Exception in read_and_store_inf_units_buildings for player {self.username.value}: {e}")
             traceback.print_exc()
 
+    def read_score_struct_counts(self, category_dict):
+        try:
+            if not category_dict:
+                return {}
+
+            counts = {}
+            offsets = sorted(category_dict.keys())
+            min_offset = offsets[0]
+            max_offset = offsets[-1]
+            chunk_size = max_offset - min_offset + 4
+            chunk_data = read_process_memory(self.process_handle, self.real_class_base + min_offset, chunk_size)
+            if not chunk_data:
+                logging.warning(f"Failed to read score struct chunk for player {self.username.value}")
+                return {}
+
+            for offset in offsets:
+                relative_index = offset - min_offset
+                count_bytes = chunk_data[relative_index:relative_index + 4]
+                if len(count_bytes) != 4:
+                    continue
+                count = int.from_bytes(count_bytes, byteorder='little')
+                if count > 0:
+                    counts[category_dict[offset]] = count
+            return counts
+        except ProcessExitedException:
+            raise
+        except Exception as e:
+            logging.error(f"Exception in read_score_struct_counts for player {self.username.value}: {e}")
+            traceback.print_exc()
+            return {}
+
+    @staticmethod
+    def merge_counts(*count_dicts):
+        merged = {}
+        for count_dict in count_dicts:
+            for unit_name, count in count_dict.items():
+                merged[unit_name] = merged.get(unit_name, 0) + count
+        return merged
+
+    def get_current_unit_totals(self):
+        return self.merge_counts(
+            self.infantry_counts,
+            self.tank_counts,
+            self.building_counts,
+            self.aircraft_counts
+        )
+
+    def get_built_unit_totals(self):
+        return self.merge_counts(
+            self.built_infantry_counts,
+            self.built_tank_counts,
+            self.built_building_counts,
+            self.built_aircraft_counts
+        )
+
+    def get_lost_unit_totals(self):
+        lost_totals = self.merge_counts(
+            self.lost_infantry_counts,
+            self.lost_tank_counts,
+            self.lost_building_counts
+        )
+
+        # The aircraft lost score struct is not mapped in offsets.py, so infer from built-current.
+        for aircraft_name, built_count in self.built_aircraft_counts.items():
+            current_count = self.aircraft_counts.get(aircraft_name, 0)
+            inferred_lost = max(built_count - current_count, 0)
+            if inferred_lost > 0:
+                lost_totals[aircraft_name] = lost_totals.get(aircraft_name, 0) + inferred_lost
+
+        return lost_totals
+
     def write_oil_count_to_file(self, oil_count):
         try:
             folder_name = "oil counts"
@@ -226,6 +308,18 @@ class Player:
                 self.aircraft_counts = self.read_and_store_inf_units_buildings(
                     aircraft_offsets, self.aircraft_array_ptr, "aircraft"
                 )
+
+            self.built_infantry_counts = self.read_score_struct_counts(BUILT_INFANTRY_TOTAL_OFFSETS)
+            self.built_tank_counts = self.read_score_struct_counts(BUILT_UNIT_TOTAL_OFFSETS)
+            built_buildings = self.read_score_struct_counts(BUILT_BUILDING_TOTAL_OFFSETS)
+            self.built_building_counts = built_buildings
+            self.built_aircraft_counts = self.read_score_struct_counts(BUILT_AIRCRAFT_TOTAL_OFFSETS)
+
+            self.lost_infantry_counts = self.read_score_struct_counts(LOST_INFANTRY_TOTAL_OFFSETS)
+            self.lost_tank_counts = self.read_score_struct_counts(LOST_UNIT_TOTAL_OFFSETS)
+            lost_buildings = self.read_score_struct_counts(LOST_BUILDING_TOTAL_OFFSETS)
+            self.lost_building_counts = lost_buildings
+            self.lost_aircraft_counts = self.read_score_struct_counts(LOST_AIRCRAFT_TOTAL_OFFSETS)
 
             # Update factory production data and log each factory's update status.
             self.update_factories()
