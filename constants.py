@@ -201,31 +201,36 @@ aircraft_offsets = {
 # Mapping of color scheme values to actual colors.
 from PySide6.QtGui import QColor
 
+# Single source of truth for player color schemes.
+# Qt does not recognize "pistachio" or "mint" as named colors, so explicit hex values are used.
+COLOR_SCHEMES = {
+    3: ("yellow", QColor("yellow")),
+    5: ("white", QColor("white")),
+    7: ("gray", QColor("gray")),
+    11: ("red", QColor("red")),
+    13: ("orange", QColor("orange")),
+    15: ("pink", QColor("pink")),
+    17: ("purple", QColor("purple")),
+    21: ("blue", QColor("blue")),
+    25: ("cyan", QColor("cyan")),
+    29: ("green", QColor("green")),
+    39: ("khaki", QColor("khaki")),
+    41: ("crimson", QColor("crimson")),
+    43: ("teal", QColor("teal")),
+    45: ("pistachio", QColor("#93C572")),
+    47: ("brown", QColor("brown")),
+    49: ("mint", QColor("#98FF98")),
+    51: ("magenta", QColor("magenta")),
+    53: ("lavender", QColor("lavender")),
+}
+
 COLOR_SCHEME_MAPPING = {
-    3: QColor("yellow"),
-    5: QColor("white"),
-    7: QColor("gray"),
-    11: QColor("red"),
-    13: QColor("orange"),
-    15: QColor("pink"),
-    17: QColor("purple"),
-    21: QColor("blue"),
-    25: QColor("cyan"),
-    29: QColor("green"),
+    scheme_id: color for scheme_id, (_, color) in COLOR_SCHEMES.items()
 }
 
 # Mapping of color scheme values to friendly color names.
 COLOR_NAME_MAPPING = {
-    3: "yellow",
-    5: "white",
-    7: "gray",
-    11: "red",
-    13: "orange",
-    15: "pink",
-    17: "purple",
-    21: "blue",
-    25: "cyan",
-    29: "green",
+    scheme_id: friendly_name for scheme_id, (friendly_name, _) in COLOR_SCHEMES.items()
 }
 
 # Additional game definitions
