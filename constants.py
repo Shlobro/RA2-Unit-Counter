@@ -24,6 +24,34 @@ ISLOSEROFFSET = 0x1f8
 POWEROUTPUTOFFSET = 0x53a4
 POWERDRAINOFFSET = 0x53a8
 
+# Offsets for superweapon charge tracking
+SUPERS_VECTOR_OFFSET = 0x254
+HOUSE_SUPERS_ITEMS_PTR_OFFSET = 0x258
+HOUSE_SUPERS_COUNT_OFFSET = 0x264
+SUPERS_DVC_ITEMS_PTR_OFFSET = 0x4
+SUPERS_DVC_COUNT_OFFSET = 0x10
+SUPERS_DVC_LEGACY_ITEMS_PTR_OFFSET = 0x0
+SUPERS_DVC_LEGACY_COUNT_OFFSET = 0x4
+SUPERCLASS_READINESS_OFFSET = 0x78
+SUPERCLASS_READINESS_CANDIDATE_OFFSETS = (0x78, 0x74, 0x7C)
+SUPERCLASS_NOT_OWNED = 0xffffffff
+SUPERCLASS_READY_VALUE = 53
+
+SUPERWEAPON_ORDER = [
+    "NukeSpecial",
+    "IronCurtainSpecial",
+    "LightningStormSpecial",
+    "ChronoSphereSpecial",
+    "ChronoWarpSpecial",
+    "ParaDropSpecial",
+    "AmericanParaDropSpecial",
+    "PsychicDominatorSpecial",
+    "SpyPlaneSpecial",
+    "GeneticConverterSpecial",
+    "ForceShieldSpecial",
+    "PsychicRevealSpecial",
+]
+
 # Offsets for country and house type strings
 HOUSETYPECLASSBASEOFFSET = 0x34
 COUNTRYSTRINGOFFSET = 0x24

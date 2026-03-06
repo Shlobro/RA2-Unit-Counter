@@ -15,7 +15,12 @@ from constants import (
     BARRACKS_INFILTRATED_OFFSET, WAR_FACTORY_INFILTRATED_OFFSET,
     BUILT_INFANTRY_TOTAL_OFFSETS, BUILT_UNIT_TOTAL_OFFSETS, BUILT_BUILDING_TOTAL_OFFSETS,
     BUILT_AIRCRAFT_TOTAL_OFFSETS, LOST_INFANTRY_TOTAL_OFFSETS, LOST_UNIT_TOTAL_OFFSETS,
-    LOST_BUILDING_TOTAL_OFFSETS, LOST_AIRCRAFT_TOTAL_OFFSETS
+    LOST_BUILDING_TOTAL_OFFSETS, LOST_AIRCRAFT_TOTAL_OFFSETS, SUPERS_VECTOR_OFFSET,
+    SUPERS_DVC_ITEMS_PTR_OFFSET, SUPERS_DVC_COUNT_OFFSET, SUPERCLASS_READINESS_OFFSET,
+    SUPERCLASS_NOT_OWNED, SUPERCLASS_READY_VALUE, SUPERWEAPON_ORDER,
+    SUPERS_DVC_LEGACY_ITEMS_PTR_OFFSET, SUPERS_DVC_LEGACY_COUNT_OFFSET,
+    SUPERCLASS_READINESS_CANDIDATE_OFFSETS, HOUSE_SUPERS_ITEMS_PTR_OFFSET,
+    HOUSE_SUPERS_COUNT_OFFSET
 )
 from factory import QueuedFactory, BuildingFactory
 from memory_utils import read_process_memory
@@ -54,6 +59,11 @@ class Player:
         self.power = 0
         self.barracks_infiltrated = False
         self.war_factory_infiltrated = False
+        self.superweapon_order = list(SUPERWEAPON_ORDER)
+        self.superweapon_timers = {
+            name: {"owned": False, "raw_value": SUPERCLASS_NOT_OWNED, "percent": 0}
+            for name in self.superweapon_order
+        }
 
         # Unit counts
         self.infantry_counts = {}
@@ -320,6 +330,7 @@ class Player:
             lost_buildings = self.read_score_struct_counts(LOST_BUILDING_TOTAL_OFFSETS)
             self.lost_building_counts = lost_buildings
             self.lost_aircraft_counts = self.read_score_struct_counts(LOST_AIRCRAFT_TOTAL_OFFSETS)
+            self.update_superweapon_timers()
 
             # Update factory production data and log each factory's update status.
             self.update_factories()
@@ -328,6 +339,139 @@ class Player:
             raise
         except Exception as e:
             logging.error(f"Exception in update_dynamic_data for player {self.username.value}: {e}")
+            traceback.print_exc()
+
+    def update_superweapon_timers(self):
+        try:
+            results = {
+                name: {"owned": False, "raw_value": SUPERCLASS_NOT_OWNED, "percent": 0}
+                for name in self.superweapon_order
+            }
+
+            direct_header = read_process_memory(
+                self.process_handle,
+                self.real_class_base + HOUSE_SUPERS_ITEMS_PTR_OFFSET,
+                8
+            )
+            items_ptr = 0
+            super_count = 0
+            if direct_header and len(direct_header) >= 8:
+                items_ptr = int.from_bytes(direct_header[0:4], byteorder='little')
+                super_count = int.from_bytes(direct_header[4:8], byteorder='little')
+
+            if (
+                items_ptr in (0, INVALIDCLASS)
+                or super_count <= 0
+                or super_count > len(self.superweapon_order)
+            ):
+                count_data = read_process_memory(
+                    self.process_handle,
+                    self.real_class_base + HOUSE_SUPERS_COUNT_OFFSET,
+                    4
+                )
+                if count_data and len(count_data) >= 4:
+                    super_count = int.from_bytes(count_data, byteorder='little')
+
+            vector_size = max(
+                SUPERS_DVC_ITEMS_PTR_OFFSET + 4,
+                SUPERS_DVC_COUNT_OFFSET + 4,
+                SUPERS_DVC_LEGACY_ITEMS_PTR_OFFSET + 4,
+                SUPERS_DVC_LEGACY_COUNT_OFFSET + 4
+            )
+            vector_data = read_process_memory(
+                self.process_handle,
+                self.real_class_base + SUPERS_VECTOR_OFFSET,
+                vector_size
+            )
+            if not vector_data or len(vector_data) < vector_size:
+                return
+
+            items_ptr = int.from_bytes(
+                vector_data[SUPERS_DVC_ITEMS_PTR_OFFSET:SUPERS_DVC_ITEMS_PTR_OFFSET + 4],
+                byteorder='little'
+            )
+            super_count = int.from_bytes(
+                vector_data[SUPERS_DVC_COUNT_OFFSET:SUPERS_DVC_COUNT_OFFSET + 4],
+                byteorder='little'
+            )
+            legacy_items_ptr = int.from_bytes(
+                vector_data[SUPERS_DVC_LEGACY_ITEMS_PTR_OFFSET:SUPERS_DVC_LEGACY_ITEMS_PTR_OFFSET + 4],
+                byteorder='little'
+            )
+            legacy_super_count = int.from_bytes(
+                vector_data[SUPERS_DVC_LEGACY_COUNT_OFFSET:SUPERS_DVC_LEGACY_COUNT_OFFSET + 4],
+                byteorder='little'
+            )
+
+            if (
+                items_ptr in (0, INVALIDCLASS)
+                or super_count <= 0
+                or super_count > len(self.superweapon_order)
+            ):
+                items_ptr = legacy_items_ptr
+                super_count = legacy_super_count
+
+            if (
+                items_ptr in (0, INVALIDCLASS)
+                or super_count <= 0
+                or super_count > len(self.superweapon_order)
+            ):
+                # The superweapon list is fixed-size in practice; use the full known order
+                # if the count field is unreliable but the items array pointer is valid.
+                if items_ptr not in (0, INVALIDCLASS):
+                    super_count = len(self.superweapon_order)
+                else:
+                    self.superweapon_timers = results
+                    return
+
+            array_size = min(super_count, len(self.superweapon_order)) * 4
+            pointer_data = read_process_memory(self.process_handle, items_ptr, array_size)
+            if not pointer_data or len(pointer_data) < array_size:
+                self.superweapon_timers = results
+                return
+
+            for index, name in enumerate(self.superweapon_order):
+                if index * 4 + 4 > len(pointer_data):
+                    break
+
+                super_ptr = int.from_bytes(pointer_data[index * 4:index * 4 + 4], byteorder='little')
+                if super_ptr in (0, INVALIDCLASS):
+                    continue
+
+                raw_value = None
+                for readiness_offset in SUPERCLASS_READINESS_CANDIDATE_OFFSETS:
+                    readiness_data = read_process_memory(
+                        self.process_handle,
+                        super_ptr + readiness_offset,
+                        4
+                    )
+                    if not readiness_data or len(readiness_data) < 4:
+                        continue
+
+                    candidate = int.from_bytes(readiness_data, byteorder='little')
+                    if candidate == SUPERCLASS_NOT_OWNED or 0 <= candidate <= SUPERCLASS_READY_VALUE:
+                        raw_value = candidate
+                        break
+
+                if raw_value is None:
+                    continue
+
+                if raw_value == SUPERCLASS_NOT_OWNED:
+                    continue
+
+                clamped_value = max(0, min(raw_value, SUPERCLASS_READY_VALUE))
+                percent = round((clamped_value / SUPERCLASS_READY_VALUE) * 100)
+                results[name] = {
+                    "owned": True,
+                    "raw_value": raw_value,
+                    "percent": percent,
+                }
+
+            self.superweapon_timers = results
+        except ProcessExitedException:
+            raise
+        except Exception as e:
+            logging.error(f"Exception in update_superweapon_timers for player {self.username.value}: {e}")
             traceback.print_exc()
 
     def update_factories(self):

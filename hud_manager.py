@@ -58,8 +58,12 @@ def load_hud_positions(state):
         'name_widget_size': 50,
         'money_widget_size': 50,
         'power_widget_size': 50,
+        'superweapon_widget_size': 100,
         'separate_unit_counters': False,
         'show_money_spent': False,
+        'show_superweapons': True,
+        'show_superweapon_frames': True,
+        'superweapon_layout': 'Horizontal',
         'money_spent_widget_size': 50,
         'combined_hud': False,    # False: separate HUD; True: combined HUD.
         # --- New defaults for factory windows ---
@@ -131,6 +135,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.power_size_spinbox, 'value', state.hud_positions.get('power_widget_size', 50))
                 if value is not None:
                     state.hud_positions['power_widget_size'] = value
+
+            if hasattr(cp, 'superweapon_size_spinbox'):
+                value = safe_widget_value(cp.superweapon_size_spinbox, 'value', state.hud_positions.get('superweapon_widget_size', 50))
+                if value is not None:
+                    state.hud_positions['superweapon_widget_size'] = value
             
             # Safely access checkbox values
             if hasattr(cp, 'name_checkbox'):
@@ -162,6 +171,21 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.money_spent_checkbox, 'isChecked', state.hud_positions.get('show_money_spent', False))
                 if value is not None:
                     state.hud_positions['show_money_spent'] = value
+
+            if hasattr(cp, 'show_superweapons_checkbox'):
+                value = safe_widget_value(cp.show_superweapons_checkbox, 'isChecked', state.hud_positions.get('show_superweapons', True))
+                if value is not None:
+                    state.hud_positions['show_superweapons'] = value
+
+            if hasattr(cp, 'superweapon_frame_checkbox'):
+                value = safe_widget_value(cp.superweapon_frame_checkbox, 'isChecked', state.hud_positions.get('show_superweapon_frames', True))
+                if value is not None:
+                    state.hud_positions['show_superweapon_frames'] = value
+
+            if hasattr(cp, 'superweapon_layout_combo'):
+                value = safe_widget_value(cp.superweapon_layout_combo, 'currentText', state.hud_positions.get('superweapon_layout', 'Horizontal'))
+                if value is not None:
+                    state.hud_positions['superweapon_layout'] = value
                     
             if hasattr(cp, 'factory_frame_checkbox'):
                 value = safe_widget_value(cp.factory_frame_checkbox, 'isChecked', state.hud_positions.get('show_factory_frames', True))
@@ -230,11 +254,13 @@ def save_hud_positions(state):
                     money_spent = resource_window.windows[2].pos()
                     power_pos = resource_window.windows[3].pos()
                     flag_pos = resource_window.windows[4].pos()
+                    superweapon_pos = resource_window.windows[5].pos()
                     state.hud_positions[player_id]['flag'] = {"x": flag_pos.x(), "y": flag_pos.y()}
                     state.hud_positions[player_id]['name'] = {"x": name_pos.x(), "y": name_pos.y()}
                     state.hud_positions[player_id]['money'] = {"x": money_pos.x(), "y": money_pos.y()}
                     state.hud_positions[player_id]['power'] = {"x": power_pos.x(), "y": power_pos.y()}
                     state.hud_positions[player_id]['money_spent'] = {"x": money_spent.x(), "y": money_spent.y()}
+                    state.hud_positions[player_id]['superweapons'] = {"x": superweapon_pos.x(), "y": superweapon_pos.y()}
         # Save factory window positions if available.
         if hasattr(state, 'factory_windows'):
             for factory_win in state.factory_windows:
@@ -385,7 +411,7 @@ def update_huds(state):
                         uw.update_labels()
                 else:
                     unit_window.update_labels()
-            elif resource_window is not None:
+            if resource_window is not None:
                 resource_window.update_labels()
         # Update factory windows as well.
         if hasattr(state, 'factory_windows'):

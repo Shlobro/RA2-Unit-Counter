@@ -31,6 +31,7 @@ class ControlPanel(QMainWindow):
         self.create_unit_settings_tab()
         self.create_name_flag_money_tab()
         self.create_factory_settings_tab()
+        self.create_superweapon_settings_tab()
         self.create_general_settings_tab()
 
         self.unit_selection_window = None
@@ -447,6 +448,41 @@ class ControlPanel(QMainWindow):
         tab.setLayout(layout)
         self.tabs.addTab(tab, "Factory Settings")
 
+    def create_superweapon_settings_tab(self):
+        tab = QWidget()
+        layout = QFormLayout()
+
+        self.show_superweapon_panel_checkbox = QCheckBox("Show Superweapon Window")
+        show_superweapons = self.state.hud_positions.get("show_superweapons", True)
+        self.show_superweapon_panel_checkbox.setChecked(show_superweapons)
+        self.show_superweapon_panel_checkbox.stateChanged.connect(self.toggle_superweapons)
+        layout.addRow(self.show_superweapon_panel_checkbox)
+
+        superweapon_size_label = QLabel("Superweapon Widget Size:")
+        superweapon_size = self.state.hud_positions.get('superweapon_widget_size', 100)
+        self.superweapon_size_spinbox = QSpinBox()
+        self.superweapon_size_spinbox.setRange(5, 250)
+        self.superweapon_size_spinbox.setValue(superweapon_size)
+        self.superweapon_size_spinbox.valueChanged.connect(self.update_superweapon_widget_size)
+        layout.addRow(superweapon_size_label, self.superweapon_size_spinbox)
+
+        superweapon_frame_label = QLabel("Show Superweapon Frames:")
+        self.superweapon_frame_checkbox = QCheckBox()
+        self.superweapon_frame_checkbox.setChecked(self.state.hud_positions.get('show_superweapon_frames', True))
+        self.superweapon_frame_checkbox.stateChanged.connect(self.toggle_superweapon_frames)
+        layout.addRow(superweapon_frame_label, self.superweapon_frame_checkbox)
+
+        superweapon_layout_label = QLabel("Select Superweapon Layout:")
+        self.superweapon_layout_combo = QComboBox()
+        self.superweapon_layout_combo.addItems(["Vertical", "Horizontal"])
+        superweapon_layout_type = self.state.hud_positions.get('superweapon_layout', 'Horizontal')
+        self.superweapon_layout_combo.setCurrentText(superweapon_layout_type)
+        self.superweapon_layout_combo.currentTextChanged.connect(self.update_superweapon_layout)
+        layout.addRow(superweapon_layout_label, self.superweapon_layout_combo)
+
+        tab.setLayout(layout)
+        self.tabs.addTab(tab, "Superweapon Settings")
+
     def toggle_factory_queue(self, state_val):
         show_queue = (state_val != 0)
         self.state.hud_positions["show_factory_queue"] = show_queue
@@ -581,6 +617,11 @@ class ControlPanel(QMainWindow):
         self.show_money_spent_checkbox.setChecked(self.state.hud_positions.get('show_money_spent', True))
         self.show_money_spent_checkbox.stateChanged.connect(self.toggle_money_spent)
         visibility_layout.addRow(self.show_money_spent_checkbox)
+
+        self.show_superweapons_checkbox = QCheckBox("Show Superweapons")
+        self.show_superweapons_checkbox.setChecked(self.state.hud_positions.get('show_superweapons', True))
+        self.show_superweapons_checkbox.stateChanged.connect(self.toggle_superweapons)
+        visibility_layout.addRow(self.show_superweapons_checkbox)
 
         self.post_game_scoreboard_checkbox = QCheckBox("Show Post-Game Scoreboard")
         self.post_game_scoreboard_checkbox.setChecked(self.state.hud_positions.get('show_post_game_scoreboard', True))
@@ -720,6 +761,17 @@ class ControlPanel(QMainWindow):
             for _, resource_window in self.state.hud_windows:
                 resource_window.power_widget.update_data_size(new_size)
 
+    def update_superweapon_widget_size(self):
+        new_size = self.superweapon_size_spinbox.value()
+        self.state.hud_positions['superweapon_widget_size'] = new_size
+        logging.info(f"Updated superweapon widget size: {new_size}")
+        if self.state.hud_positions.get('combined_hud', False):
+            for combined_window, _ in self.state.hud_windows:
+                combined_window.resource_widget.superweapon_widget.set_size_for_all(new_size)
+        else:
+            for _, resource_window in self.state.hud_windows:
+                resource_window.superweapon_widget.set_size_for_all(new_size)
+
     def toggle_name(self, state_val):
         self.toggle_hud_element('show_name', 'name_widget', state_val)
 
@@ -731,6 +783,41 @@ class ControlPanel(QMainWindow):
 
     def toggle_power(self, state_val):
         self.toggle_hud_element('show_power', 'power_widget', state_val)
+
+    def toggle_superweapons(self, state_val):
+        enabled = (state_val == 2)
+        if hasattr(self, 'show_superweapons_checkbox'):
+            self.show_superweapons_checkbox.blockSignals(True)
+            self.show_superweapons_checkbox.setChecked(enabled)
+            self.show_superweapons_checkbox.blockSignals(False)
+        if hasattr(self, 'show_superweapon_panel_checkbox'):
+            self.show_superweapon_panel_checkbox.blockSignals(True)
+            self.show_superweapon_panel_checkbox.setChecked(enabled)
+            self.show_superweapon_panel_checkbox.blockSignals(False)
+        self.toggle_hud_element('show_superweapons', 'superweapon_widget', state_val)
+
+    def toggle_superweapon_frames(self, state_val):
+        show = (state_val != 0)
+        self.state.hud_positions['show_superweapon_frames'] = show
+        logging.info(f"Toggled show_superweapon_frames to: {show}")
+        if self.state.hud_positions.get('combined_hud', False):
+            for combined_window, _ in self.state.hud_windows:
+                combined_window.resource_widget.superweapon_widget.set_show_frames_for_all(show)
+        else:
+            for _, resource_window in self.state.hud_windows:
+                resource_window.superweapon_widget.set_show_frames_for_all(show)
+
+    def update_superweapon_layout(self, layout_type):
+        self.state.hud_positions['superweapon_layout'] = layout_type
+        logging.info(f"Updated superweapon layout to: {layout_type}")
+        if self.state.hud_positions.get('combined_hud', False):
+            for combined_window, _ in self.state.hud_windows:
+                combined_window.resource_widget.superweapon_widget.set_layout_type(layout_type)
+                combined_window.resource_widget.superweapon_widget.update_labels()
+        else:
+            for _, resource_window in self.state.hud_windows:
+                resource_window.superweapon_widget.set_layout_type(layout_type)
+                resource_window.superweapon_widget.update_labels()
 
     def update_data_update_frequency(self):
         new_freq = self.update_frequency_spinbox.value()
@@ -774,7 +861,8 @@ class ControlPanel(QMainWindow):
             'money_widget': 2,
             'money_widget_spent': 3,
             'power_widget': 4,
-            'unit_widget': 5
+            'superweapon_widget': 5,
+            'unit_widget': 6
         }
         fixed_index = fixed_positions.get(widget_name, None)
         if fixed_index is None:
@@ -796,6 +884,8 @@ class ControlPanel(QMainWindow):
                         target_widget = combined_window.resource_widget.money_spent_widget
                     elif widget_name == 'power_widget':
                         target_widget = combined_window.resource_widget.power_widget
+                    elif widget_name == 'superweapon_widget':
+                        target_widget = combined_window.resource_widget.superweapon_widget
                     else:
                         continue
                 self.update_combined_widget(parent, target_widget, fixed_index, state_val == 2)
@@ -805,7 +895,8 @@ class ControlPanel(QMainWindow):
                 'money_widget': 1,
                 'money_widget_spent': 2,
                 'power_widget': 3,
-                'flag_widget': 4
+                'flag_widget': 4,
+                'superweapon_widget': 5
             }
             index = index_mapping.get(widget_name)
             if index is not None:

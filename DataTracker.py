@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 
 # Import the new widget classes
 from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget, MoneySpentWidget
+from superweapon_panel import SuperweaponTimerPanel
 
 faction_to_flag = {
     "British": "RA2_Flag_Britain.png",
@@ -36,6 +37,7 @@ class ResourceWindow(QMainWindow):
         power_widget_size = self.hud_positions.get('power_widget_size', 50)
         flag_widget_size = self.hud_positions.get('flag_widget_size', 50)
         money_spent_widget_size = self.hud_positions.get('money_spent_widget_size', 50)
+        superweapon_widget_size = self.hud_positions.get('superweapon_widget_size', 100)
 
         # Load fonts
         font_id = QFontDatabase.addApplicationFont("Other/Futured.ttf")
@@ -86,6 +88,11 @@ class ResourceWindow(QMainWindow):
             size=money_spent_widget_size,
             font=money_font
         )
+        self.superweapon_widget = SuperweaponTimerPanel(
+            player=self.player,
+            hud_positions=self.hud_positions
+        )
+        self.superweapon_widget.update_size(superweapon_widget_size)
 
         if self.combined_mode:
             # Combined mode: Create one composite widget for all resource widgets.
@@ -105,6 +112,8 @@ class ResourceWindow(QMainWindow):
                 layout.addWidget(self.money_spent_widget)
             if self.hud_positions.get('show_power', True):
                 layout.addWidget(self.power_widget)
+            if self.hud_positions.get('show_superweapons', True):
+                layout.addWidget(self.superweapon_widget)
 
             self.setCentralWidget(central_widget)
         else:
@@ -150,12 +159,25 @@ class ResourceWindow(QMainWindow):
             else:
                 self.money_spent_window.hide()
 
+            self.superweapon_window = self.create_window_with_widget(
+                f"Player {player_index} Superweapons",
+                self.superweapon_widget,
+                player_count,
+                'superweapons',
+                self.player.color_name
+            )
+            if self.hud_positions.get('show_superweapons', True):
+                self.superweapon_window.show()
+            else:
+                self.superweapon_window.hide()
+
             self.windows = [
                 self.name_window,
                 self.money_window,
                 self.money_spent_window,
                 self.power_window,
-                self.flag_window
+                self.flag_window,
+                self.superweapon_window,
             ]
 
     def create_window_with_widget(self, title, widget, player_count, hud_type, player_color):
@@ -225,6 +247,7 @@ class ResourceWindow(QMainWindow):
         self.money_widget.update_data(self.player.balance)
         self.money_spent_widget.update_data(self.player.spent_credit)
         self.power_widget.update_data(self.player.power)
+        self.superweapon_widget.update_labels()
         if self.player.power < 0:
             self.power_widget.update_color(new_image_color=Qt.red, new_text_color=Qt.red)
         else:
