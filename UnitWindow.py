@@ -3,7 +3,13 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout
 
 from CounterWidget import (CounterWidgetImagesAndNumber, CounterWidgetNumberOnly, CounterWidgetImageOnly)
-from constants import name_to_path, country_name_to_faction
+from constants import (
+    name_to_path,
+    country_name_to_faction,
+    canonicalize_unit_name,
+    SLAVE_MINER_CANONICAL_NAME,
+    get_display_image_name,
+)
 from DataTracker import ResourceWindow
 from factory_panel import FactoryPanel
 
@@ -21,9 +27,12 @@ class UnitWindowBase(QMainWindow):
         for faction, unit_types in self.selected_units.items():
             for unit_type, units in unit_types.items():
                 for unit_name, unit_info in units.items():
+                    canonical_name = canonicalize_unit_name(unit_name)
                     unit_info['unit_type'] = unit_type
-                    self.unit_info_by_name[unit_name] = unit_info
                     unit_info['faction'] = faction
+                    existing_info = self.unit_info_by_name.get(canonical_name)
+                    if existing_info is None or unit_info.get('selected', False):
+                        self.unit_info_by_name[canonical_name] = unit_info
         self.layout_type = hud_pos.get('unit_layout', 'Vertical')
         self.size = self.get_default_size()
         self.show_unit_frames = hud_pos.get('show_unit_frames', True)
@@ -79,12 +88,17 @@ class UnitWindowBase(QMainWindow):
     def load_selected_units_and_create_counters(self):
         # First pass: collect all selected units with their positions
         selected_units_with_positions = []
+        seen_units = set()
         for unit_name, unit_info in self.unit_info_by_name.items():
+            canonical_name = canonicalize_unit_name(unit_name)
+            if canonical_name in seen_units:
+                continue
             is_selected = unit_info.get('selected', False)
             if is_selected:
                 position = unit_info.get('position', -1)
                 unit_type = unit_info.get('unit_type')
-                selected_units_with_positions.append((unit_name, unit_info, unit_type, position))
+                selected_units_with_positions.append((canonical_name, unit_info, unit_type, position))
+                seen_units.add(canonical_name)
         
         # Sort by position: numbered positions first (0,1,2...), then -1 positions at end
         selected_units_with_positions.sort(key=lambda x: (x[3] == -1, x[3] if x[3] != -1 else float('inf')))
@@ -122,15 +136,17 @@ class UnitWindowBase(QMainWindow):
             logging.warning("Player is None while retrieving unit count.")
             return 0
         try:
+            if canonicalize_unit_name(unit_name) == SLAVE_MINER_CANONICAL_NAME:
+                return (self.player.building_counts.get('Yuri Ore Refinery', 0) +
+                        self.player.building_counts.get('Slave Miner Deployed', 0) +
+                        self.player.tank_counts.get('Slave miner', 0) +
+                        self.player.tank_counts.get('Slave miner undeployed', 0))
             if unit_type == 'Infantry':
                 return self.player.infantry_counts.get(unit_name, 0)
             elif unit_type in ('Tank', 'Naval'):
                 return self.player.tank_counts.get(unit_name, 0)
             elif unit_type == 'Structure':
-                if unit_name in ('Slave Miner Deployed', 'Slave miner undeployed'):
-                    return (self.player.building_counts.get('Slave Miner Deployed', 0) +
-                            self.player.tank_counts.get('Slave miner undeployed', 0))
-                elif unit_name == 'Allied AFC':
+                if unit_name == 'Allied AFC':
                     return (self.player.building_counts.get('Allied AFC', 0) +
                             self.player.building_counts.get('American AFC', 0))
                 else:
@@ -190,6 +206,7 @@ class UnitWindowBase(QMainWindow):
 
     def update_selected_widgets(self, faction, unit_type, unit_name, new_state):
         """Update counters when units are selected/deselected from UnitSelectionWindow."""
+        unit_name = canonicalize_unit_name(unit_name)
         if new_state:
             # Unit was selected - add counter widget if not already present
             if unit_name not in self.counters:
@@ -249,6 +266,7 @@ class UnitWindowBase(QMainWindow):
 
     def update_position_widgets(self, faction, unit_type, unit_name):
         """Update counter position when changed from UnitSelectionWindow."""
+        unit_name = canonicalize_unit_name(unit_name)
         if unit_name in self.counters:
             counter_widget, _ = self.counters[unit_name]
             unit_info = self.unit_info_by_name.get(unit_name, {})
@@ -309,7 +327,7 @@ class UnitWindowWithImages(UnitWindowBase):
     def get_hud_type(self):
         return 'unit_counter_combined'
     def create_counter_widget(self, unit_name, unit_count, unit_type):
-        unit_image_path = name_to_path(unit_name)
+        unit_image_path = name_to_path(get_display_image_name(unit_name))
         return CounterWidgetImagesAndNumber(
             count=unit_count,
             image_path=unit_image_path,
@@ -333,7 +351,7 @@ class UnitWindowImagesOnly(UnitWindowBase):
     def get_hud_type(self):
         return 'unit_counter_images'
     def create_counter_widget(self, unit_name, unit_count, unit_type):
-        unit_image_path = name_to_path(unit_name)
+        unit_image_path = name_to_path(get_display_image_name(unit_name))
         return CounterWidgetImageOnly(
             image_path=unit_image_path,
             color=self.player.color,

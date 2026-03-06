@@ -3,7 +3,7 @@
         "Allied": {
             "Infantry": {
                 "GI": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Allied",
@@ -63,7 +63,7 @@
                     "unit_type": "Infantry",
                     "faction": "Allied",
                     "position": 2,
-                    "selected": true
+                    "selected": false
                 },
                 "Guardian GI": {
                     "selected": false,
@@ -268,7 +268,9 @@
                 "Grizzly Battle Tank": {
                     "selected": true,
                     "unit_type": "Tank",
-                    "faction": "Allied"
+                    "faction": "Allied",
+                    "position": 0,
+                    "locked": false
                 }
             },
             "Naval": {
@@ -314,7 +316,7 @@
                     "locked": false,
                     "unit_type": "Aircraft",
                     "faction": "Allied",
-                    "position": -1
+                    "position": 0
                 },
                 "Harrier": {
                     "selected": false,
@@ -574,7 +576,7 @@
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 0
                 },
                 "Siege Chopper": {
                     "selected": false,
@@ -642,7 +644,9 @@
                 "Soviet Siege Chopper": {
                     "selected": true,
                     "unit_type": "Tank",
-                    "faction": "Soviet"
+                    "faction": "Soviet",
+                    "position": 1,
+                    "locked": false
                 }
             },
             "Naval": {
@@ -724,7 +728,7 @@
             },
             "Structure": {
                 "Yuri War Factory": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Structure",
                     "faction": "Yuri",
@@ -800,13 +804,6 @@
                     "faction": "Yuri",
                     "position": -1
                 },
-                "Slave Miner Deployed": {
-                    "selected": true,
-                    "locked": false,
-                    "unit_type": "Structure",
-                    "faction": "Yuri",
-                    "position": 1
-                },
                 "Yuri Naval Yard": {
                     "selected": false,
                     "locked": false,
@@ -817,14 +814,14 @@
             },
             "Tank": {
                 "Gattling Tank": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
                     "position": 1
                 },
                 "Chaos Drone": {
-                    "selected": true,
+                    "selected": false,
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
@@ -838,7 +835,7 @@
                     "position": 3
                 },
                 "Magnetron": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
                     "unit_type": "Tank",
                     "faction": "Yuri",
@@ -871,6 +868,13 @@
                     "unit_type": "Tank",
                     "faction": "Yuri",
                     "position": -1
+                },
+                "Slave miner": {
+                    "selected": true,
+                    "locked": false,
+                    "unit_type": "Tank",
+                    "faction": "Yuri",
+                    "position": -1
                 }
             },
             "Naval": {
@@ -894,7 +898,7 @@
         "Other": {
             "Structure": {
                 "Psychic Beacon": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
                     "unit_type": "Structure",
                     "faction": "Other",

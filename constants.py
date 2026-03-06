@@ -368,11 +368,12 @@ names = {
             "Yuri Grinder",  # was "Grinder"
             "Yuri Genetic Mutator Device",  # was "Genetic Mutator"
             "Yuri Tank Bunker",  # was "Tank Bunker"
-            "Yuri Ore Refinery",  # added based on top dict
             "Yuri Puppet Master"
-            # Removed "Psychic dominator" (now "Yuri Puppet Master") and "Slave Miner Deployed"
+            # Removed "Psychic dominator" (now "Yuri Puppet Master"), "Slave Miner Deployed",
+            # and "Yuri Ore Refinery" from unit selection because Slave Miner is a single counter exception.
         ],
         "Tank": [
+            "Slave miner",
             "Gattling Tank",
             "Chaos Drone",
             "Floating Disk",  # was "Disc"
@@ -400,6 +401,23 @@ names = {
 
 factions = ['Allied', 'Soviet', 'Yuri', 'Other']
 unit_types = ['Infantry', 'Structure', 'Tank', 'Naval', 'Aircraft']
+
+SLAVE_MINER_CANONICAL_NAME = "Slave miner"
+SLAVE_MINER_ALIASES = {
+    "Slave miner",
+    "Slave miner undeployed",
+    "Slave Miner Deployed",
+}
+
+
+def canonicalize_unit_name(unit_name):
+    if unit_name in SLAVE_MINER_ALIASES:
+        return SLAVE_MINER_CANONICAL_NAME
+    return unit_name
+
+
+def get_display_image_name(unit_name):
+    return canonicalize_unit_name(unit_name)
 
 
 def name_to_path(name):

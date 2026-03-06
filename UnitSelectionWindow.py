@@ -8,7 +8,13 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QTabWidget, QVBoxLayout, QGr
 from PySide6.QtCore import Qt
 
 # Import immutable definitions from constants
-from constants import factions, unit_types, names, name_to_path
+from constants import (
+    factions,
+    unit_types,
+    names,
+    name_to_path,
+    SLAVE_MINER_CANONICAL_NAME,
+)
 
 
 class UnitSelectionWindow(QMainWindow):
@@ -117,6 +123,7 @@ class UnitSelectionWindow(QMainWindow):
         return unit_info.get('locked', False)
 
     def migrate_units_data(self):
+        self.migrate_slave_miner_selection()
         for faction, unit_types_data in self.units_data.items():
             for unit_type, units in unit_types_data.items():
                 for unit_name, unit_info in units.items():
@@ -126,6 +133,55 @@ class UnitSelectionWindow(QMainWindow):
                     else:
                         if 'position' not in unit_info:
                             unit_info['position'] = -1
+
+    def migrate_slave_miner_selection(self):
+        yuri_units = self.units_data.setdefault('Yuri', {})
+        tank_units = yuri_units.setdefault('Tank', {})
+        structure_units = yuri_units.setdefault('Structure', {})
+
+        canonical_info = tank_units.get(SLAVE_MINER_CANONICAL_NAME)
+        merged_info = self._normalize_unit_info(canonical_info)
+
+        for legacy_name in ('Slave miner undeployed', 'Slave Miner Deployed', 'Yuri Ore Refinery'):
+            legacy_group = tank_units if legacy_name == 'Slave miner undeployed' else structure_units
+            legacy_info = legacy_group.pop(legacy_name, None)
+            if legacy_info is not None:
+                merged_info = self._merge_unit_info(merged_info, self._normalize_unit_info(legacy_info))
+
+        if merged_info:
+            merged_info['unit_type'] = 'Tank'
+            merged_info['faction'] = 'Yuri'
+            tank_units[SLAVE_MINER_CANONICAL_NAME] = merged_info
+
+    def _normalize_unit_info(self, unit_info):
+        if unit_info is None:
+            return None
+        if isinstance(unit_info, bool):
+            return {'selected': unit_info, 'locked': False, 'position': -1}
+        normalized = dict(unit_info)
+        normalized.setdefault('selected', False)
+        normalized.setdefault('locked', False)
+        normalized.setdefault('position', -1)
+        return normalized
+
+    def _merge_unit_info(self, base_info, incoming_info):
+        if base_info is None:
+            return incoming_info
+        if incoming_info is None:
+            return base_info
+        merged = dict(base_info)
+        merged['selected'] = base_info.get('selected', False) or incoming_info.get('selected', False)
+        merged['locked'] = base_info.get('locked', False) or incoming_info.get('locked', False)
+
+        base_position = base_info.get('position', -1)
+        incoming_position = incoming_info.get('position', -1)
+        if base_position == -1:
+            merged['position'] = incoming_position
+        elif incoming_position == -1:
+            merged['position'] = base_position
+        else:
+            merged['position'] = min(base_position, incoming_position)
+        return merged
 
     def unit_image_mousePressEvent(self, event, faction, unit_type, unit_name, label):
         if event.button() == Qt.LeftButton:
