@@ -1,7 +1,7 @@
 import os
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QFont, QFontDatabase
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QColor, QFont, QFontDatabase, QPixmap, QIcon
 from PySide6.QtWidgets import (
     QFrame,
     QGridLayout,
@@ -11,11 +11,28 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QScrollArea,
     QSizePolicy,
+    QSpacerItem,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
 )
+
+from constants import resolve_factory_image_path
+
+
+COUNTRY_TO_FLAG = {
+    "British": "RA2_Flag_Britain.png",
+    "Confederation": "RA2_Flag_Cuba.png",
+    "Germans": "RA2_Flag_Germany.png",
+    "Arabs": "RA2_Flag_Iraq.png",
+    "French": "RA2_Flag_France.png",
+    "Alliance": "RA2_Flag_Korea.png",
+    "Africans": "RA2_Flag_Libya.png",
+    "Russians": "RA2_Flag_Russia.png",
+    "Americans": "RA2_Flag_USA.png",
+    "YuriCountry": "RA2_Yuricountry.png",
+}
 
 
 def _load_ra_font(point_size, weight=QFont.Bold, fallback_family="Arial"):
@@ -34,6 +51,22 @@ def _color_to_hex(color_value):
 
 def _format_money(value):
     return f"${value:,}"
+
+
+def _load_pixmap(path, width, height):
+    if not path or not os.path.exists(path):
+        return None
+    pixmap = QPixmap(path)
+    if pixmap.isNull():
+        return None
+    return pixmap.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+
+
+def _country_flag_path(country_name):
+    flag_name = COUNTRY_TO_FLAG.get(country_name)
+    if not flag_name:
+        return None
+    return os.path.join("Flags", "PNG", flag_name)
 
 
 def _sort_units(unit_counts):
@@ -86,7 +119,7 @@ class StatTable(QTableWidget):
     def __init__(self, title, rows):
         super().__init__(0, 2)
         self._title = title
-        self.setHorizontalHeaderLabels([title, "Count"])
+        self.setHorizontalHeaderLabels(["Unit", "Count"])
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setStretchLastSection(False)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
@@ -96,6 +129,7 @@ class StatTable(QTableWidget):
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.setAlternatingRowColors(True)
         self.setShowGrid(False)
+        self.setIconSize(QSize(36, 28))
         self.setMinimumHeight(150)
         self.setMaximumHeight(220)
         self.populate(rows)
@@ -105,6 +139,10 @@ class StatTable(QTableWidget):
         self.setRowCount(len(table_rows))
         for row_index, (unit_name, count) in enumerate(table_rows):
             unit_item = QTableWidgetItem(unit_name)
+            icon_path = resolve_factory_image_path(unit_name)
+            pixmap = _load_pixmap(icon_path, 34, 26)
+            if pixmap is not None:
+                unit_item.setIcon(QIcon(pixmap))
             count_item = QTableWidgetItem(f"{count:,}")
             count_item.setTextAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
             self.setItem(row_index, 0, unit_item)
@@ -125,6 +163,19 @@ class PlayerReportCard(QFrame):
         layout.setSpacing(12)
 
         header = QHBoxLayout()
+        identity = QHBoxLayout()
+        identity.setSpacing(12)
+
+        flag_label = QLabel()
+        flag_label.setObjectName("flagBadge")
+        flag_pixmap = _load_pixmap(_country_flag_path(self.player_snapshot["country"]), 56, 38)
+        if flag_pixmap is not None:
+            flag_label.setPixmap(flag_pixmap)
+        else:
+            flag_label.setText(self.player_snapshot["faction"][:2].upper())
+            flag_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        identity.addWidget(flag_label)
+
         title_block = QVBoxLayout()
         title = QLabel(self.player_snapshot["username"])
         title.setObjectName("playerName")
@@ -133,7 +184,8 @@ class PlayerReportCard(QFrame):
         subtitle = QLabel(f'{self.player_snapshot["result"]} | {self.player_snapshot["faction"]} | {self.player_snapshot["color_name"]}')
         subtitle.setObjectName("playerMeta")
         title_block.addWidget(subtitle)
-        header.addLayout(title_block)
+        identity.addLayout(title_block)
+        header.addLayout(identity)
         header.addStretch()
 
         badge = QLabel(self.player_snapshot["result"])
@@ -141,6 +193,8 @@ class PlayerReportCard(QFrame):
         badge.setProperty("result", self.player_snapshot["result"])
         header.addWidget(badge)
         layout.addLayout(header)
+
+        layout.addWidget(self._make_highlight_strip())
 
         metrics = QGridLayout()
         metrics.setHorizontalSpacing(12)
@@ -192,6 +246,78 @@ class PlayerReportCard(QFrame):
         layout.addWidget(label)
         layout.addWidget(value)
         return cell
+
+    def _make_highlight_strip(self):
+        strip = QFrame()
+        strip.setObjectName("highlightStrip")
+        layout = QHBoxLayout(strip)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+
+        sections = [
+            ("Production Peak", self.player_snapshot["units_made"][:3]),
+            ("Losses", self.player_snapshot["units_lost"][:3]),
+            ("Fielded", self.player_snapshot["units_remaining"][:3]),
+        ]
+
+        for title, rows in sections:
+            layout.addWidget(self._make_icon_group(title, rows))
+
+        return strip
+
+    def _make_icon_group(self, title, rows):
+        block = QFrame()
+        block.setObjectName("iconGroup")
+        layout = QVBoxLayout(block)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(6)
+
+        title_label = QLabel(title)
+        title_label.setObjectName("iconGroupTitle")
+        layout.addWidget(title_label)
+
+        row_layout = QHBoxLayout()
+        row_layout.setSpacing(8)
+        if rows:
+            for unit_name, count in rows:
+                row_layout.addWidget(self._make_unit_chip(unit_name, count))
+        else:
+            row_layout.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+            none_label = QLabel("No data")
+            none_label.setObjectName("emptyChip")
+            row_layout.addWidget(none_label)
+            row_layout.addSpacerItem(QSpacerItem(10, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
+        layout.addLayout(row_layout)
+        return block
+
+    def _make_unit_chip(self, unit_name, count):
+        chip = QFrame()
+        chip.setObjectName("unitChip")
+        layout = QVBoxLayout(chip)
+        layout.setContentsMargins(6, 6, 6, 6)
+        layout.setSpacing(4)
+
+        icon_label = QLabel()
+        icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 58, 42)
+        if pixmap is not None:
+            icon_label.setPixmap(pixmap)
+        else:
+            icon_label.setText(unit_name[:2].upper())
+            icon_label.setObjectName("fallbackIcon")
+        layout.addWidget(icon_label)
+
+        name_label = QLabel(unit_name)
+        name_label.setObjectName("unitChipName")
+        name_label.setWordWrap(True)
+        name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(name_label)
+
+        count_label = QLabel(f"x{count:,}")
+        count_label.setObjectName("unitChipCount")
+        count_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(count_label)
+        return chip
 
     def _make_table_block(self, title, rows):
         block = QFrame()
@@ -281,6 +407,15 @@ class PostGameScoreboardWindow(QMainWindow):
             QLabel#subTitle {
                 color: #d7b59a;
             }
+            QLabel#flagBadge {
+                min-width: 64px;
+                min-height: 44px;
+                background-color: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(216, 143, 63, 0.55);
+                border-radius: 8px;
+                color: #ffe7a8;
+                font-weight: 800;
+            }
             QLabel#playerName {
                 color: #ffe7a8;
                 font-size: 22px;
@@ -318,6 +453,45 @@ class PostGameScoreboardWindow(QMainWindow):
                 border: 1px solid rgba(216, 143, 63, 0.35);
                 border-radius: 10px;
             }
+            QFrame#highlightStrip {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 rgba(255, 196, 80, 0.10),
+                    stop:0.5 rgba(255, 120, 84, 0.08),
+                    stop:1 rgba(255, 196, 80, 0.10));
+                border: 1px solid rgba(216, 143, 63, 0.35);
+                border-radius: 10px;
+            }
+            QFrame#iconGroup {
+                background-color: rgba(0, 0, 0, 0.12);
+                border: 1px solid rgba(216, 143, 63, 0.25);
+                border-radius: 10px;
+            }
+            QLabel#iconGroupTitle {
+                color: #ffcf76;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            QFrame#unitChip {
+                background-color: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(216, 143, 63, 0.30);
+                border-radius: 8px;
+                min-width: 86px;
+                max-width: 100px;
+            }
+            QLabel#unitChipName {
+                color: #f4d6ba;
+                font-size: 10px;
+            }
+            QLabel#unitChipCount {
+                color: #fff3c6;
+                font-size: 12px;
+                font-weight: 800;
+            }
+            QLabel#emptyChip, QLabel#fallbackIcon {
+                color: #f0d0a6;
+                font-weight: 700;
+            }
             QLabel#metricLabel {
                 color: #d3ac8b;
                 font-size: 10px;
@@ -348,6 +522,7 @@ class PostGameScoreboardWindow(QMainWindow):
                 border-radius: 8px;
                 gridline-color: transparent;
                 color: #f7e4d0;
+                padding: 4px;
             }
             QTableWidget::item {
                 padding: 4px;
