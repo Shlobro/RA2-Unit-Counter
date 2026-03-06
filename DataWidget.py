@@ -1,6 +1,6 @@
 # DataWidget.py
 import logging
-from PySide6.QtCore import Qt, QPropertyAnimation
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QColor, QPainter, QFont, QFontMetrics
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
@@ -113,12 +113,7 @@ class BaseDataWidget(QWidget):
         Smoothly update the displayed data using QPropertyAnimation.
         """
         try:
-            self.animation = QPropertyAnimation(self, b"value")
-            self.animation.setDuration(500)
-            self.animation.setStartValue(self.value)
-            self.animation.setEndValue(new_data)
-            self.animation.valueChanged.connect(self.on_value_changed)
-            self.animation.start()
+            self.on_value_changed(new_data)
         except Exception as e:
             logging.exception("Error updating data with animation: %s", e)
 

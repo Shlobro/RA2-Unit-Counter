@@ -1,6 +1,8 @@
 # constants.py
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # General constants
 MAXPLAYERS = 8
 INVALIDCLASS = 0xffffffff
@@ -414,6 +416,68 @@ SLAVE_MINER_ALIASES = {
     "Slave Miner Deployed",
 }
 
+DISPLAY_IMAGE_ALIASES = {
+    "Armored Transport": "Landing Craft",
+    "GGI": "Guardian GI",
+    "Allied Engineer": "Engineer",
+    "Navy Seal": "SEAL",
+    "SpySat": "Allied SpySat Uplink",
+    "Allied Naval Yard": "Allied Shipyard",
+    "Chronoshpere": "Allied Chrono Sphere",
+    "Gap Generator": "Allied Gap Generator",
+    "Grand Cannon": "Allied Grand Cannon",
+    "Ore Purifier": "Allied Ore Processor",
+    "Allied AFC": "Allied Airforce Command Headquarters",
+    "PillBox": "Allied Pill Box",
+    "Robot Control Center": "Allied Robot Control Center",
+    "Weather Controller": "Allied Weather Controller",
+    "Grizzly": "Grizzly Battle Tank",
+    "Allied MCV": "Allied Construction Vehicle",
+    "Allied Amphibious Transport": "Landing Craft",
+    "NightHawk Transport": "BlackHawk Transport",
+    "Agis Cruiser": "Aegis Cruiser",
+    "Harrier": "Intruder",
+    "Soviet Dog": "Attack Dog",
+    "Ivan": "Crazy Ivan",
+    "Battle Bunker": "Soviet Battle Bunker",
+    "Flak Cannon": "Soviet Flak Cannon",
+    "Iron Curtain": "Soviet Iron Curtain Device",
+    "Sentry Gun": "Soviet Sentry Gun",
+    "Industrial Plant": "Soviet Industrial Plant",
+    "Nuclear Missile Launcher": "Soviet Nuclear Missile Silo",
+    "Sov Radar": "Soviet Radar Tower",
+    "Nuclear Reactor": "Soviet Nuclear Reactor",
+    "Tesla Reactor": "Soviet Tesla Reactor",
+    "Sov Service Depot": "Soviet Service Depot",
+    "Sov Naval Yard": "Soviet Shipyard",
+    "Rhino Tank": "Rhino Heavy Tank",
+    "Apoc": "Apocalypse",
+    "Siege Chopper": "Soviet Siege Chopper",
+    "Kirov": "Kirov Airship",
+    "V3 Rocket Launcher": "V3 Launcher",
+    "Soviet MCV": "Soviet Construction Vehicle",
+    "Demolition truck": "Demolitions Truck",
+    "Squid": "Giant Squid",
+    "Initiate": "Yuri Initiate",
+    "Virus": "Yuri Virus",
+    "Brute": "Yuri Brute",
+    "Cloning Vats": "Yuri Cloning Vats",
+    "Tank Bunker": "Yuri Tank Bunker",
+    "Gattling Cannon": "Yuri Gattling Cannon",
+    "Grinder": "Yuri Grinder",
+    "Yuri Radar": "Yuri Psychic Sensor",
+    "Psychic Tower": "Yuri Psychic Tower",
+    "Psychic dominator": "Yuri Puppet Master",
+    "Bio Reactor": "Yuri Bio Reactor",
+    "Yuri Naval Yard": "Yuri Submarine Pen",
+    "Disc": "Floating Disk",
+    "Mastermind": "Master Mind",
+    "Lasher": "Lasher Light Tank",
+    "Yuri Amphibious Transport": "Hover Transport Yuri",
+    "Yuri MCV": "Yuri Construction Vehicle",
+    "Boomer Sub": "Yuri Boomer",
+}
+
 
 def canonicalize_unit_name(unit_name):
     if unit_name in SLAVE_MINER_ALIASES:
@@ -422,23 +486,31 @@ def canonicalize_unit_name(unit_name):
 
 
 def get_display_image_name(unit_name):
-    return canonicalize_unit_name(unit_name)
+    canonical_name = canonicalize_unit_name(unit_name)
+    return DISPLAY_IMAGE_ALIASES.get(canonical_name, canonical_name)
 
 
 def name_to_path(name):
-    return 'cameos/png/' + name + '.png'
+    candidates = [
+        os.path.join(BASE_DIR, 'cameos', 'png', f'{name}.png'),
+        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name}.png'),
+    ]
+    for path in candidates:
+        if os.path.exists(path):
+            return path
+    return None
 
 
 def find_vet_image_path(name):
     candidates = [
-        os.path.join('cameos', 'png', f'{name} Vet.png'),
-        os.path.join('cameos', 'png', f'{name} vet.png'),
-        os.path.join('cameos', 'png', f'{name}_vet.png'),
-        os.path.join('cameos', 'png', f'{name.lower()}_vet.png'),
-        os.path.join('dist', 'cameos', 'png', f'{name} Vet.png'),
-        os.path.join('dist', 'cameos', 'png', f'{name} vet.png'),
-        os.path.join('dist', 'cameos', 'png', f'{name}_vet.png'),
-        os.path.join('dist', 'cameos', 'png', f'{name.lower()}_vet.png'),
+        os.path.join(BASE_DIR, 'cameos', 'png', f'{name} Vet.png'),
+        os.path.join(BASE_DIR, 'cameos', 'png', f'{name} vet.png'),
+        os.path.join(BASE_DIR, 'cameos', 'png', f'{name}_vet.png'),
+        os.path.join(BASE_DIR, 'cameos', 'png', f'{name.lower()}_vet.png'),
+        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name} Vet.png'),
+        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name} vet.png'),
+        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name}_vet.png'),
+        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name.lower()}_vet.png'),
     ]
     for path in candidates:
         if os.path.exists(path):

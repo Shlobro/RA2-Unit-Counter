@@ -1,4 +1,5 @@
 #CounterWidget.py
+import logging
 
 from PySide6.QtGui import QColor, QPixmap, QPainter, QPen, QFontDatabase, QFont, QFontMetrics
 from PySide6.QtWidgets import QLabel, QSizePolicy
@@ -48,7 +49,17 @@ class CounterWidgetImageOnly(CounterWidgetBase):
         self.update_image_size()
 
     def update_image_size(self):
+        if not self.image_path:
+            logging.warning("No counter image path resolved for image-only widget")
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            return
         pixmap = QPixmap(self.image_path)
+        if pixmap.isNull():
+            logging.warning("Counter image failed to load from path '%s'", self.image_path)
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            return
         self.scaled_pixmap = pixmap.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setFixedSize(self.scaled_pixmap.size())
 
@@ -61,6 +72,8 @@ class CounterWidgetImageOnly(CounterWidgetBase):
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        if self.scaled_pixmap.isNull():
+            return
         painter.drawPixmap(0, 0, self.scaled_pixmap)
         if self.show_frame:
             pen = QPen(self.color)
@@ -131,7 +144,17 @@ class CounterWidgetImagesAndNumber(CounterWidgetBase):
         self.update_image_size()
 
     def update_image_size(self):
+        if not self.image_path:
+            logging.warning("No counter image path resolved for image+number widget")
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            return
         pixmap = QPixmap(self.image_path)
+        if pixmap.isNull():
+            logging.warning("Counter image failed to load from path '%s'", self.image_path)
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            return
         self.scaled_pixmap = pixmap.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setFixedSize(self.scaled_pixmap.size())
 
@@ -144,6 +167,8 @@ class CounterWidgetImagesAndNumber(CounterWidgetBase):
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        if self.scaled_pixmap.isNull():
+            return
         painter.drawPixmap(0, 0, self.scaled_pixmap)
         font_size = int(self.size / 3)
         font_id = QFontDatabase.addApplicationFont("Other/Futured.ttf")

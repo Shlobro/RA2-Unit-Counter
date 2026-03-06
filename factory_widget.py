@@ -47,9 +47,21 @@ class FactoryWidget(CounterWidgetBase):
             (self.factory.factory_name == "Vehicles" and self.player.war_factory_infiltrated)
         )
         image_path = resolve_factory_image_path(unit_name, prefer_vet=prefer_vet)
+        if not image_path:
+            logging.warning("No factory image resolved for unit: %s", unit_name)
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            self.update()
+            return
+
         pixmap = QPixmap(image_path)
         if pixmap.isNull():
-            logging.error(f"Image not found for unit: {unit_name}")
+            logging.warning("Factory image failed to load for unit '%s' from path '%s'", unit_name, image_path)
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            self.update()
+            return
+
         self.scaled_pixmap = pixmap.scaled(
             self.size, self.size,
             Qt.KeepAspectRatio,
@@ -76,6 +88,8 @@ class FactoryWidget(CounterWidgetBase):
         and a white fill. Finally, draw a colored frame if show_frame is True.
         """
         painter = QPainter(self)
+        if self.scaled_pixmap.isNull():
+            return
         painter.drawPixmap(0, 0, self.scaled_pixmap)
 
         # 1) Use half the old font size: size/6 instead of size/3

@@ -24,15 +24,25 @@ class FactoryQueueItemWidget(QLabel):
 
     def build_pixmap(self):
         path = resolve_factory_image_path(self.unit_name, prefer_vet=self.prefer_vet)
+        if not path:
+            logging.warning("No queue image resolved for unit: %s", self.unit_name)
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            return
         pix = QPixmap(path)
         if pix.isNull():
-            logging.warning(f"Image not found for queued unit: {self.unit_name}")
+            logging.warning("Queue image failed to load for unit '%s' from path '%s'", self.unit_name, path)
+            self.scaled_pixmap = QPixmap()
+            self.setFixedSize(0, 0)
+            return
         pix = pix.scaled(self.size, self.size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.scaled_pixmap = pix
         self.setFixedSize(self.scaled_pixmap.size())
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        if self.scaled_pixmap.isNull():
+            return
         painter.drawPixmap(0, 0, self.scaled_pixmap)
 
         if self.count > 1:

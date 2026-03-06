@@ -79,7 +79,7 @@ class UnitSelectionWindow(QMainWindow):
                 image_label = QLabel()
                 image_path = name_to_path(unit)
                 image_label.setProperty("image_path", image_path)
-                pixmap = QPixmap(image_path)
+                pixmap = QPixmap(image_path) if image_path else QPixmap()
                 if not pixmap.isNull():
                     image_label.setPixmap(pixmap.scaled(50, 50, Qt.KeepAspectRatio))
 
