@@ -329,12 +329,12 @@
         },
         "Soviet": {
             "Infantry": {
-                "Desolator": {
-                    "selected": false,
+                "Desolater": {
+                    "selected": true,
                     "locked": false,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
-                    "position": -1
+                    "position": 0
                 },
                 "conscript": {
                     "selected": true,
@@ -386,14 +386,14 @@
                     "position": -1
                 },
                 "Conscript": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
                     "position": 0
                 },
                 "Attack Dog": {
-                    "selected": true,
+                    "selected": false,
                     "locked": true,
                     "unit_type": "Infantry",
                     "faction": "Soviet",
@@ -874,7 +874,7 @@
                     "locked": false,
                     "unit_type": "Tank",
                     "faction": "Yuri",
-                    "position": -1
+                    "position": 0
                 }
             },
             "Naval": {

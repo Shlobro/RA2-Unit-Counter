@@ -2,7 +2,7 @@ import logging
 from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont
 from PySide6.QtCore import Qt
 from CounterWidget import CounterWidgetBase
-from constants import name_to_path
+from constants import get_display_image_name, name_to_path
 
 class FactoryWidget(CounterWidgetBase):
     def __init__(self, factory, color=Qt.red, size=100, show_frame=True, parent=None):
@@ -41,7 +41,7 @@ class FactoryWidget(CounterWidgetBase):
 
         # 1) Scale the image
         unit_name = status.get("currently_building", "")
-        image_path = name_to_path(unit_name)
+        image_path = name_to_path(get_display_image_name(unit_name))
         pixmap = QPixmap(image_path)
         if pixmap.isNull():
             logging.error(f"Image not found for unit: {unit_name}")

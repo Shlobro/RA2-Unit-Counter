@@ -3,7 +3,7 @@ import logging
 from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont
 from PySide6.QtWidgets import QLabel
 from PySide6.QtCore import Qt
-from constants import name_to_path
+from constants import get_display_image_name, name_to_path
 
 class FactoryQueueItemWidget(QLabel):
     """
@@ -23,7 +23,7 @@ class FactoryQueueItemWidget(QLabel):
 
     def build_pixmap(self):
         from constants import name_to_path
-        path = name_to_path(self.unit_name)
+        path = name_to_path(get_display_image_name(self.unit_name))
         pix = QPixmap(path)
         if pix.isNull():
             logging.warning(f"Image not found for queued unit: {self.unit_name}")

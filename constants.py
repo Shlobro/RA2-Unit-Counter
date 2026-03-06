@@ -298,7 +298,7 @@ names = {
     "Soviet": {
         "Infantry": [
             "Conscript",
-            "Desolator",
+            "Desolater",
             "Boris",
             "Attack Dog",  # was "Soviet Dog"
             "Soviet Engineer",
