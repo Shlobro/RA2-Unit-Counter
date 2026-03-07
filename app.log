@@ -23051,3 +23051,35 @@
 2025-03-13 01:38:13,709 - INFO - Saving selected units and HUD positions
 2025-03-13 01:38:13,711 - INFO - Saved selected units.
 2025-03-13 01:38:13,713 - INFO - HUD positions saved successfully.
+2026-03-07 02:18:09,142 - INFO - Logging setup complete
+2026-03-07 02:18:09,201 - INFO - Starting Resource HUD Application
+2026-03-07 02:18:09,220 - INFO - Loading HUD positions
+2026-03-07 02:18:09,221 - INFO - HUD positions loaded successfully.
+2026-03-07 02:18:09,221 - INFO - Creating control panel
+2026-03-07 02:18:09,310 - INFO - Waiting for a valid game path to be selected
+2026-03-07 02:18:09,310 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-07 02:18:09,310 - INFO - Starting data update thread
+2026-03-07 02:18:09,310 - INFO - Entering application event loop
+2026-03-07 02:18:09,311 - INFO - Waiting for the game to start and players to load...
+2026-03-07 02:18:09,311 - INFO - Waiting for the game to start...
+2026-03-07 02:18:10,312 - INFO - Game detected
+2026-03-07 02:18:10,312 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-07 02:18:10,313 - INFO - Player 0 color: yellow
+2026-03-07 02:18:10,313 - INFO - Player 0 country name: YuriCountry
+2026-03-07 02:18:10,313 - INFO - Player 0 faction: Yuri
+2026-03-07 02:18:10,313 - INFO - Player 0 name: Snark
+2026-03-07 02:18:10,314 - INFO - Number of valid players: 1
+2026-03-07 02:18:10,316 - INFO - Game started handler called
+2026-03-07 02:18:10,316 - INFO - Creating ResourceWindow for Snark with color yellow
+2026-03-07 02:18:10,427 - INFO - Creating FactoryWindow for Snark with color yellow
+2026-03-07 02:18:10,450 - INFO - Unit windows created successfully.
+2026-03-07 02:18:20,641 - INFO - All counter windows closed
+2026-03-07 02:18:20,643 - INFO - Saved selected units.
+2026-03-07 02:18:20,644 - INFO - HUD positions saved successfully.
+2026-03-07 02:18:20,645 - INFO - Settings saved on control panel close
+2026-03-07 02:18:20,649 - INFO - Exiting application, stopping data update thread
+2026-03-07 02:18:21,383 - INFO - Emitted game_stopped signal.
+2026-03-07 02:18:22,384 - INFO - Data update thread has exited.
+2026-03-07 02:18:22,385 - INFO - Saving selected units and HUD positions
+2026-03-07 02:18:22,387 - INFO - Saved selected units.
+2026-03-07 02:18:22,388 - INFO - HUD positions saved successfully.

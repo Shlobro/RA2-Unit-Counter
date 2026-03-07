@@ -3,6 +3,29 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+def _iter_asset_base_dirs():
+    cwd = os.path.abspath(os.getcwd())
+    seen = set()
+    for path in (
+        cwd,
+        BASE_DIR,
+        os.path.join(cwd, 'dist'),
+        os.path.join(BASE_DIR, 'dist'),
+    ):
+        normalized_path = os.path.normpath(path)
+        if normalized_path in seen:
+            continue
+        seen.add(normalized_path)
+        yield normalized_path
+
+
+def _existing_asset_paths(*parts):
+    for base_dir in _iter_asset_base_dirs():
+        candidate = os.path.join(base_dir, *parts)
+        if os.path.exists(candidate):
+            yield candidate
+
+
 # General constants
 MAXPLAYERS = 8
 INVALIDCLASS = 0xffffffff
@@ -776,29 +799,19 @@ def get_display_image_name(unit_name):
 
 
 def name_to_path(name):
-    candidates = [
-        os.path.join(BASE_DIR, 'cameos', 'png', f'{name}.png'),
-        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name}.png'),
-    ]
-    for path in candidates:
-        if os.path.exists(path):
-            return path
+    for path in _existing_asset_paths('cameos', 'png', f'{name}.png'):
+        return path
     return None
 
 
 def find_vet_image_path(name):
-    candidates = [
-        os.path.join(BASE_DIR, 'cameos', 'png', f'{name} Vet.png'),
-        os.path.join(BASE_DIR, 'cameos', 'png', f'{name} vet.png'),
-        os.path.join(BASE_DIR, 'cameos', 'png', f'{name}_vet.png'),
-        os.path.join(BASE_DIR, 'cameos', 'png', f'{name.lower()}_vet.png'),
-        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name} Vet.png'),
-        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name} vet.png'),
-        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name}_vet.png'),
-        os.path.join(BASE_DIR, 'dist', 'cameos', 'png', f'{name.lower()}_vet.png'),
-    ]
-    for path in candidates:
-        if os.path.exists(path):
+    for filename in (
+        f'{name} Vet.png',
+        f'{name} vet.png',
+        f'{name}_vet.png',
+        f'{name.lower()}_vet.png',
+    ):
+        for path in _existing_asset_paths('cameos', 'png', filename):
             return path
     return None
 

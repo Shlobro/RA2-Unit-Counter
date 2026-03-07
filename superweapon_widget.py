@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QFontDatabase, QPainter, QPen, QPixmap
 
 from CounterWidget import CounterWidgetBase
+from constants import name_to_path
 
 
 class SuperweaponWidget(CounterWidgetBase):
@@ -10,7 +11,7 @@ class SuperweaponWidget(CounterWidgetBase):
         self.superweapon_name = superweapon_name
         self.show_frame = show_frame
         self.progress_text = ""
-        self.image_path = f"cameos/png/{superweapon_name}.png"
+        self.image_path = name_to_path(superweapon_name)
         self.scaled_pixmap = QPixmap()
         self.hide()
 

@@ -1,0 +1,29 @@
+{
+    "selected_units": {
+        "Allied": {
+            "Infantry": {
+                "GI": {
+                    "selected": true,
+                    "position": -1,
+                    "unit_type": "Infantry",
+                    "faction": "Allied"
+                },
+                "GGI": {
+                    "selected": true,
+                    "position": -1,
+                    "unit_type": "Infantry",
+                    "faction": "Allied"
+                }
+            },
+            "Structure": {
+                "Allied Power Plant": {
+                    "selected": true,
+                    "locked": true,
+                    "position": -1,
+                    "unit_type": "Structure",
+                    "faction": "Allied"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,152 @@
+{
+    "unit_counter_size": 75,
+    "image_size": 75,
+    "number_size": 75,
+    "distance_between_numbers": 0,
+    "show_name": true,
+    "show_money": true,
+    "show_power": true,
+    "unit_layout": "Vertical",
+    "money_color": "Use player color",
+    "show_flag": true,
+    "flag_widget_size": 50,
+    "show_unit_frames": true,
+    "name_widget_size": 50,
+    "money_widget_size": 50,
+    "power_widget_size": 50,
+    "separate_unit_counters": false,
+    "show_money_spent": false,
+    "money_spent_widget_size": 50,
+    "game_path": "D:/ra2/Red Alert 2/Red Alert 2",
+    "blue": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "orange": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 359,
+            "y": 131
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 215,
+            "y": 174
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 130,
+            "y": 276
+        },
+        "combined": {
+            "x": 130,
+            "y": 276
+        },
+        "factory": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "distance_between_images": 0,
+    "combined_hud": false,
+    "show_factory_window": true,
+    "show_factory_queue": true,
+    "factory_size": 100,
+    "factory_layout": "Horizontal",
+    "show_factory_frames": true,
+    "green": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "combined": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "factory": {
+        "x": 100,
+        "y": 100
+    },
+    "purple": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        }
+    }
+}
