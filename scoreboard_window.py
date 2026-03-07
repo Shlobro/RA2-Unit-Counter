@@ -1,9 +1,11 @@
 import os
 
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QColor, QFont, QFontDatabase, QPixmap, QIcon
+from PySide6.QtCore import Qt, QSize, QPropertyAnimation, QEasingCurve, QTimer, QSequentialAnimationGroup, QParallelAnimationGroup, QPoint, QRect
+from PySide6.QtGui import QColor, QFont, QFontDatabase, QPixmap, QIcon, QPainter, QLinearGradient, QPen, QBrush, QRadialGradient
 from PySide6.QtWidgets import (
     QFrame,
+    QGraphicsDropShadowEffect,
+    QGraphicsOpacityEffect,
     QGridLayout,
     QHeaderView,
     QHBoxLayout,
@@ -76,9 +78,13 @@ def _load_pixmap(path, width, height):
 
 
 def _scoreboard_background_path():
-    candidate = os.path.join("Other", "post_game_background.png")
-    if os.path.exists(candidate):
-        return candidate.replace("\\", "/")
+    candidates = [
+        os.path.join("Other", "scoreboardbackground.png"),
+        os.path.join("Other", "post_game_background.png"),
+    ]
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            return candidate.replace("\\", "/")
     return None
 
 
@@ -111,8 +117,6 @@ def build_post_game_snapshot(players):
         built_units = player.get_built_unit_totals()
         killed_units = player.get_killed_unit_totals()
         current_units = player.get_current_unit_totals()
-        total_cash_seen = player.balance + player.spent_credit
-
         result = "ACTIVE"
         if player.is_winner:
             result = "WINNER"
@@ -128,13 +132,7 @@ def build_post_game_snapshot(players):
             "result": result,
             "result_label": RESULT_LABELS.get(result, result.title()),
             "money_spent": player.spent_credit,
-            "money_mined": player.harvested_credits,
-            "money_from_captures": player.captured_building_credits,
-            "total_cash_seen": total_cash_seen,
             "current_balance": player.balance,
-            "total_units_made": sum(built_units.values()),
-            "total_units_killed": sum(killed_units.values()),
-            "total_units_remaining": sum(current_units.values()),
             "infantry_built": sum(player.built_infantry_counts.values()),
             "vehicles_built": sum(player.built_tank_counts.values()),
             "buildings_built": sum(player.built_building_counts.values()),
@@ -167,8 +165,8 @@ class StatTable(QTableWidget):
         self.setAlternatingRowColors(True)
         self.setShowGrid(False)
         self.setIconSize(QSize(36, 28))
-        self.setMinimumHeight(150)
-        self.setMaximumHeight(220)
+        self.setMinimumHeight(160)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.populate(rows)
 
     def populate(self, rows):
@@ -186,96 +184,164 @@ class StatTable(QTableWidget):
             self.setItem(row_index, 1, count_item)
 
 
+class WinnerBadge(QLabel):
+    """Animated winner badge with glow pulse effect."""
+    def __init__(self, parent=None):
+        super().__init__("VICTORY", parent)
+        self.setObjectName("winnerBadge")
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._glow_effect = QGraphicsDropShadowEffect(self)
+        self._glow_effect.setColor(QColor(255, 215, 0, 200))
+        self._glow_effect.setBlurRadius(18)
+        self._glow_effect.setOffset(0, 0)
+        self.setGraphicsEffect(self._glow_effect)
+        self._start_pulse()
+
+    def _start_pulse(self):
+        self._pulse_up = True
+        self._timer = QTimer(self)
+        self._timer.timeout.connect(self._pulse_step)
+        self._timer.start(40)
+        self._radius = 18
+
+    def _pulse_step(self):
+        if self._pulse_up:
+            self._radius += 2
+            if self._radius >= 36:
+                self._pulse_up = False
+        else:
+            self._radius -= 2
+            if self._radius <= 10:
+                self._pulse_up = True
+        self._glow_effect.setBlurRadius(self._radius)
+
+
 class PlayerReportCard(QFrame):
-    def __init__(self, player_snapshot):
+    def __init__(self, player_snapshot, anim_delay_ms=0):
         super().__init__()
         self.player_snapshot = player_snapshot
+        self._anim_delay = anim_delay_ms
         self.setObjectName("playerCard")
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self._build_ui()
+        self._setup_entry_animation()
+
+    def _setup_entry_animation(self):
+        self._opacity_effect = QGraphicsOpacityEffect(self)
+        self._opacity_effect.setOpacity(0.0)
+        self.setGraphicsEffect(self._opacity_effect)
+
+        self._fade_anim = QPropertyAnimation(self._opacity_effect, b"opacity", self)
+        self._fade_anim.setDuration(600)
+        self._fade_anim.setStartValue(0.0)
+        self._fade_anim.setEndValue(1.0)
+        self._fade_anim.setEasingCurve(QEasingCurve.Type.OutCubic)
+
+        QTimer.singleShot(self._anim_delay, self._fade_anim.start)
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(18, 18, 18, 18)
-        layout.setSpacing(12)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(14)
+        is_winner = self.player_snapshot["result"] == "WINNER"
 
+        # Header row
         header = QHBoxLayout()
-        identity = QHBoxLayout()
-        identity.setSpacing(12)
+        header.setSpacing(14)
 
         flag_label = QLabel()
         flag_label.setObjectName("flagBadge")
-        flag_pixmap = _load_pixmap(_country_flag_path(self.player_snapshot["country"]), 56, 38)
+        flag_pixmap = _load_pixmap(_country_flag_path(self.player_snapshot["country"]), 64, 44)
         if flag_pixmap is not None:
             flag_label.setPixmap(flag_pixmap)
         else:
             flag_label.setText(self.player_snapshot["faction"][:2].upper())
             flag_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        identity.addWidget(flag_label)
+        flag_shadow = QGraphicsDropShadowEffect(flag_label)
+        flag_shadow.setBlurRadius(10)
+        flag_shadow.setColor(QColor(0, 0, 0, 160))
+        flag_shadow.setOffset(2, 2)
+        flag_label.setGraphicsEffect(flag_shadow)
+        header.addWidget(flag_label)
 
         title_block = QVBoxLayout()
+        title_block.setSpacing(2)
         title = QLabel(self.player_snapshot["username"])
         title.setObjectName("playerName")
         title.setStyleSheet(f'color: {self.player_snapshot["accent_color"]};')
+        faction_label = QLabel(self.player_snapshot["country"] or self.player_snapshot["faction"])
+        faction_label.setObjectName("playerMeta")
         title_block.addWidget(title)
-
-        subtitle = QLabel(
-            f'{self.player_snapshot["result_label"]} | {self.player_snapshot["faction"]} | {self.player_snapshot["color_name"]}'
-        )
-        subtitle.setObjectName("playerMeta")
-        title_block.addWidget(subtitle)
-        identity.addLayout(title_block)
-        header.addLayout(identity)
+        title_block.addWidget(faction_label)
+        header.addLayout(title_block)
         header.addStretch()
 
-        if self.player_snapshot["result"] != "ACTIVE":
+        if self.player_snapshot["result"] == "WINNER":
+            badge = WinnerBadge()
+            header.addWidget(badge)
+        elif self.player_snapshot["result"] != "ACTIVE":
             badge = QLabel(self.player_snapshot["result_label"])
             badge.setObjectName("resultBadge")
             badge.setProperty("result", self.player_snapshot["result"])
             header.addWidget(badge)
         layout.addLayout(header)
 
-        layout.addWidget(self._make_highlight_strip())
+        # Divider
+        divider = QFrame()
+        divider.setObjectName("cardDivider")
+        divider.setFixedHeight(1)
+        layout.addWidget(divider)
 
-        metrics = QGridLayout()
-        metrics.setHorizontalSpacing(12)
-        metrics.setVerticalSpacing(10)
+        # Money metrics row
+        metrics = QHBoxLayout()
+        metrics.setSpacing(10)
         summary_items = [
-            ("Money mined", _format_money(self.player_snapshot["money_mined"])),
-            ("Money from captures", _format_money(self.player_snapshot["money_from_captures"])),
-            ("Money spent", _format_money(self.player_snapshot["money_spent"])),
-            ("Cash left", _format_money(self.player_snapshot["current_balance"])),
-            ("Total cash seen", _format_money(self.player_snapshot["total_cash_seen"])),
-            ("Built", f'{self.player_snapshot["total_units_made"]:,}'),
-            ("Destroyed", f'{self.player_snapshot["total_units_killed"]:,}'),
-            ("Still alive", f'{self.player_snapshot["total_units_remaining"]:,}'),
-            ("Country", self.player_snapshot["country"] or "Unknown"),
+            ("Money Spent", _format_money(self.player_snapshot["money_spent"])),
+            ("Cash Left", _format_money(self.player_snapshot["current_balance"])),
         ]
-        for index, (label_text, value_text) in enumerate(summary_items):
-            cell = self._make_metric_cell(label_text, value_text)
-            metrics.addWidget(cell, index // 3, index % 3)
+        for label_text, value_text in summary_items:
+            metrics.addWidget(self._make_metric_cell(label_text, value_text))
+        metrics.addStretch()
         layout.addLayout(metrics)
+
+        # Category breakdown
         layout.addWidget(self._make_category_breakdown())
 
-        tables_layout = QHBoxLayout()
-        tables_layout.setSpacing(12)
+        # Highlight icon strip
+        layout.addWidget(self._make_highlight_strip(is_winner))
+
+        # Unit tables — stretch to fill remaining card space
+        tables_container = QFrame()
+        tables_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        tables_layout = QHBoxLayout(tables_container)
+        tables_layout.setSpacing(10)
+        tables_layout.setContentsMargins(0, 0, 0, 0)
         tables_layout.addWidget(self._make_table_block("Built", self.player_snapshot["units_made"]))
         tables_layout.addWidget(self._make_table_block("Destroyed", self.player_snapshot["units_killed"]))
-        tables_layout.addWidget(self._make_table_block("Still Alive", self.player_snapshot["units_remaining"]))
-        layout.addLayout(tables_layout)
+        if is_winner:
+            tables_layout.addWidget(self._make_table_block("Surviving", self.player_snapshot["units_remaining"]))
+        layout.addWidget(tables_container, stretch=1)
 
         accent = self.player_snapshot["accent_color"]
+        border_color = "#ffd700" if is_winner else accent
+        bg_alpha = "50" if is_winner else "40"
         self.setStyleSheet(
             f"""
             QFrame#playerCard {{
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 rgba(34, 7, 7, 235),
-                    stop:1 rgba(13, 7, 7, 245));
-                border: 2px solid {accent};
-                border-radius: 14px;
+                background: rgba(8, 6, 6, 0.{bg_alpha});
+                border: 2px solid {border_color};
+                border-radius: 16px;
             }}
             """
         )
+
+        if is_winner:
+            glow = QGraphicsDropShadowEffect(self)
+            glow.setColor(QColor(255, 215, 0, 80))
+            glow.setBlurRadius(30)
+            glow.setOffset(0, 0)
+            # Note: can't combine with opacity effect, apply after fade-in is done
+            QTimer.singleShot(self._anim_delay + 650, lambda: self.setGraphicsEffect(glow))
 
     def _make_metric_cell(self, label_text, value_text):
         cell = QFrame()
@@ -292,7 +358,7 @@ class PlayerReportCard(QFrame):
         layout.addWidget(value)
         return cell
 
-    def _make_highlight_strip(self):
+    def _make_highlight_strip(self, show_remaining):
         strip = QFrame()
         strip.setObjectName("highlightStrip")
         layout = QHBoxLayout(strip)
@@ -302,8 +368,9 @@ class PlayerReportCard(QFrame):
         sections = [
             ("Built the most", self.player_snapshot["units_made"][:3]),
             ("Destroyed the most", self.player_snapshot["units_killed"][:3]),
-            ("Still had", self.player_snapshot["units_remaining"][:3]),
         ]
+        if show_remaining:
+            sections.append(("Still had", self.player_snapshot["units_remaining"][:3]))
 
         for title, rows in sections:
             layout.addWidget(self._make_icon_group(title, rows))
@@ -399,14 +466,16 @@ class PlayerReportCard(QFrame):
     def _make_table_block(self, title, rows):
         block = QFrame()
         block.setObjectName("tableBlock")
+        block.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout = QVBoxLayout(block)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(8, 8, 8, 8)
         layout.setSpacing(6)
 
         title_label = QLabel(title)
         title_label.setObjectName("tableTitle")
         layout.addWidget(title_label)
-        layout.addWidget(StatTable(title, rows))
+        table = StatTable(title, rows)
+        layout.addWidget(table, stretch=1)
         return block
 
 
@@ -417,212 +486,265 @@ class PostGameScoreboardWindow(QMainWindow):
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1600, 920)
         self._build_ui()
+        self.showMaximized()
 
     def _build_ui(self):
-        title_font = _load_ra_font(24)
-        heading_font = _load_ra_font(12)
-        body_font = QFont("Segoe UI", 10)
+        title_font = _load_ra_font(32)
+        heading_font = _load_ra_font(13)
         background_path = _scoreboard_background_path()
 
         central = QWidget()
         central.setObjectName("scoreboardCentral")
         self.setCentralWidget(central)
         root = QVBoxLayout(central)
-        root.setContentsMargins(18, 18, 18, 18)
-        root.setSpacing(14)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(0)
 
+        # Top banner
         banner = QFrame()
         banner.setObjectName("banner")
-        banner_layout = QVBoxLayout(banner)
-        banner_layout.setContentsMargins(18, 14, 18, 14)
-        banner_layout.setSpacing(4)
+        banner_layout = QHBoxLayout(banner)
+        banner_layout.setContentsMargins(32, 16, 32, 16)
 
         title = QLabel("MATCH SUMMARY")
         title.setFont(title_font)
         title.setObjectName("mainTitle")
+        title_shadow = QGraphicsDropShadowEffect(title)
+        title_shadow.setColor(QColor(196, 109, 50, 200))
+        title_shadow.setBlurRadius(16)
+        title_shadow.setOffset(0, 0)
+        title.setGraphicsEffect(title_shadow)
         banner_layout.addWidget(title)
-
-        subtitle = QLabel("")
-        subtitle.setObjectName("subTitle")
-        subtitle.setFont(body_font)
-        banner_layout.addWidget(subtitle)
+        banner_layout.addStretch()
         root.addWidget(banner)
 
+        # Scroll area fills remaining space
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setObjectName("scoreboardScroll")
 
         content = QWidget()
+        content.setObjectName("scoreboardContent")
         grid = QGridLayout(content)
-        grid.setContentsMargins(0, 0, 0, 0)
-        grid.setSpacing(14)
+        grid.setContentsMargins(16, 16, 16, 16)
+        grid.setSpacing(16)
 
+        num_players = len(self.snapshot["players"])
+        cols = 2 if num_players > 1 else 1
         for index, player_snapshot in enumerate(self.snapshot["players"]):
-            card = PlayerReportCard(player_snapshot)
-            grid.addWidget(card, index // 2, index % 2)
+            delay = index * 120
+            card = PlayerReportCard(player_snapshot, anim_delay_ms=delay)
+            grid.addWidget(card, index // cols, index % cols)
+
+        # Make columns and rows fill the window equally
+        for col in range(cols):
+            grid.setColumnStretch(col, 1)
+        num_rows = (num_players + cols - 1) // cols
+        for row in range(num_rows):
+            grid.setRowStretch(row, 1)
 
         scroll.setWidget(content)
         root.addWidget(scroll)
 
+        # Animate the banner fading in
+        self._banner_opacity = QGraphicsOpacityEffect(banner)
+        self._banner_opacity.setOpacity(0.0)
+        banner.setGraphicsEffect(self._banner_opacity)
+        self._banner_anim = QPropertyAnimation(self._banner_opacity, b"opacity", self)
+        self._banner_anim.setDuration(700)
+        self._banner_anim.setStartValue(0.0)
+        self._banner_anim.setEndValue(1.0)
+        self._banner_anim.setEasingCurve(QEasingCurve.Type.OutCubic)
+        self._banner_anim.start()
+
         self.setStyleSheet(
             f"""
-            QMainWindow, QWidget {{
-                background-color: #090707;
-                color: #f6dcc2;
+            QMainWindow {{
+                background-color: #050404;
+                color: #f2e1cd;
             }}
             QWidget#scoreboardCentral {{
-                background-image: {"none" if not background_path else f"url({background_path})"};
-                background-position: center;
-                background-repeat: no-repeat;
+                border-image: {"none" if not background_path else f"url({background_path}) 0 0 0 0 stretch stretch"};
+            }}
+            QWidget#scoreboardContent, QScrollArea#scoreboardScroll, QScrollArea#scoreboardScroll > QWidget > QWidget {{
+                background: transparent;
             }}
             QFrame#banner {{
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 #2b0909,
-                    stop:0.5 #5c120f,
-                    stop:1 #210707);
-                border: 2px solid #d88f3f;
-                border-radius: 16px;
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 rgba(6, 4, 4, 210),
+                    stop:1 rgba(6, 4, 4, 140));
+                border-bottom: 1px solid rgba(196, 109, 50, 0.6);
             }}
             QLabel#mainTitle {{
-                color: #ffd486;
-                letter-spacing: 2px;
-            }}
-            QLabel#subTitle {{
-                color: #d7b59a;
+                color: #f7d29d;
+                letter-spacing: 4px;
             }}
             QLabel#flagBadge {{
-                min-width: 64px;
-                min-height: 44px;
-                background-color: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(216, 143, 63, 0.55);
+                min-width: 70px;
+                min-height: 48px;
+                background-color: rgba(10, 8, 8, 0.5);
+                border: 1px solid rgba(201, 112, 50, 0.5);
                 border-radius: 8px;
                 color: #ffe7a8;
                 font-weight: 800;
             }}
             QLabel#playerName {{
                 color: #ffe7a8;
-                font-size: 22px;
+                font-size: 26px;
                 font-weight: 700;
             }}
             QLabel#playerMeta {{
-                color: #d0aaa0;
-                font-size: 11px;
-                text-transform: uppercase;
+                color: rgba(208, 170, 160, 0.8);
+                font-size: 14px;
+                letter-spacing: 1px;
+            }}
+            QLabel#winnerBadge {{
+                padding: 10px 22px;
+                border-radius: 12px;
+                font-weight: 900;
+                font-size: 16px;
+                letter-spacing: 2px;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 rgba(120, 90, 0, 0.9),
+                    stop:0.5 rgba(200, 160, 20, 0.95),
+                    stop:1 rgba(120, 90, 0, 0.9));
+                color: #fff8dc;
+                border: 2px solid #ffd700;
+                min-width: 120px;
             }}
             QLabel#resultBadge {{
-                padding: 8px 12px;
+                padding: 10px 18px;
                 border-radius: 10px;
                 font-weight: 800;
-                min-width: 88px;
-                text-align: center;
-            }}
-            QLabel#resultBadge[result="WINNER"] {{
-                background-color: #214d21;
-                color: #aff0a7;
-                border: 1px solid #66c766;
+                font-size: 15px;
+                min-width: 100px;
+                letter-spacing: 1px;
             }}
             QLabel#resultBadge[result="DEFEATED"] {{
-                background-color: #5a1111;
-                color: #ffb0a4;
-                border: 1px solid #ff6f61;
+                background-color: rgba(70, 10, 10, 0.85);
+                color: #ffb4a8;
+                border: 1px solid rgba(220, 80, 60, 0.8);
             }}
             QLabel#resultBadge[result="ACTIVE"] {{
-                background-color: #40351a;
+                background-color: rgba(50, 40, 10, 0.85);
                 color: #f7df9a;
-                border: 1px solid #d8b65c;
+                border: 1px solid rgba(200, 170, 60, 0.8);
             }}
-            QFrame#metricCell, QFrame#tableBlock {{
-                background-color: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(216, 143, 63, 0.35);
+            QFrame#cardDivider {{
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 transparent,
+                    stop:0.1 rgba(201, 112, 50, 0.9),
+                    stop:0.9 rgba(201, 112, 50, 0.9),
+                    stop:1 transparent);
+            }}
+            QFrame#metricCell {{
+                background-color: rgba(5, 4, 4, 0.65);
+                border: 1px solid rgba(201, 112, 50, 0.7);
+                border-radius: 10px;
+            }}
+            QFrame#tableBlock {{
+                background-color: rgba(5, 4, 4, 0.65);
+                border: 1px solid rgba(201, 112, 50, 0.7);
                 border-radius: 10px;
             }}
             QFrame#highlightStrip {{
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 rgba(255, 196, 80, 0.10),
-                    stop:0.5 rgba(255, 120, 84, 0.08),
-                    stop:1 rgba(255, 196, 80, 0.10));
-                border: 1px solid rgba(216, 143, 63, 0.35);
+                background: rgba(20, 10, 8, 0.55);
+                border: 1px solid rgba(201, 112, 50, 0.6);
                 border-radius: 10px;
             }}
             QFrame#iconGroup {{
-                background-color: rgba(0, 0, 0, 0.12);
-                border: 1px solid rgba(216, 143, 63, 0.25);
-                border-radius: 10px;
+                background-color: rgba(8, 6, 6, 0.55);
+                border: 1px solid rgba(201, 112, 50, 0.55);
+                border-radius: 8px;
             }}
             QLabel#iconGroupTitle {{
-                color: #ffcf76;
-                font-size: 11px;
+                color: rgba(255, 207, 118, 0.85);
+                font-size: 13px;
                 font-weight: 700;
-                text-transform: uppercase;
+                letter-spacing: 1px;
             }}
             QFrame#unitChip {{
-                background-color: rgba(255, 255, 255, 0.04);
-                border: 1px solid rgba(216, 143, 63, 0.30);
+                background-color: rgba(6, 5, 5, 0.65);
+                border: 1px solid rgba(201, 112, 50, 0.65);
                 border-radius: 8px;
-                min-width: 86px;
-                max-width: 100px;
+                min-width: 92px;
+                max-width: 116px;
             }}
             QLabel#unitChipName {{
                 color: #f4d6ba;
-                font-size: 10px;
+                font-size: 12px;
             }}
             QLabel#unitChipCount {{
                 color: #fff3c6;
-                font-size: 12px;
+                font-size: 14px;
                 font-weight: 800;
             }}
             QLabel#emptyChip, QLabel#fallbackIcon {{
                 color: #f0d0a6;
                 font-weight: 700;
+                font-size: 13px;
             }}
             QLabel#metricLabel {{
-                color: #d3ac8b;
-                font-size: 10px;
-                text-transform: uppercase;
+                color: rgba(211, 172, 139, 0.75);
+                font-size: 12px;
+                letter-spacing: 1px;
             }}
             QLabel#metricValue {{
                 color: #fff3c6;
-                font-size: 16px;
+                font-size: 18px;
                 font-weight: 700;
             }}
             QLabel#tableTitle {{
-                color: #ffcf76;
-                font-size: 12px;
+                color: rgba(255, 207, 118, 0.9);
+                font-size: 14px;
                 font-weight: 700;
+                letter-spacing: 1px;
                 padding-left: 2px;
             }}
             QHeaderView::section {{
-                background-color: #5b140f;
+                background-color: rgba(60, 20, 10, 0.85);
                 color: #ffd486;
                 border: none;
-                padding: 6px;
+                padding: 7px 10px;
                 font-weight: 700;
+                letter-spacing: 1px;
+                font-size: 13px;
             }}
             QTableWidget {{
-                background-color: rgba(0, 0, 0, 0.15);
-                alternate-background-color: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(216, 143, 63, 0.25);
+                background-color: rgba(5, 4, 4, 0.55);
+                alternate-background-color: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(201, 112, 50, 0.6);
                 border-radius: 8px;
                 gridline-color: transparent;
                 color: #f7e4d0;
-                padding: 4px;
+                font-size: 13px;
+                padding: 2px;
             }}
             QTableWidget::item {{
-                padding: 4px;
+                padding: 5px 8px;
+                background: transparent;
             }}
             QScrollArea#scoreboardScroll {{
                 background: transparent;
+                border: none;
+            }}
+            QScrollArea#scoreboardScroll QWidget {{
+                background: transparent;
             }}
             QScrollBar:vertical {{
-                background: #1a0b0b;
-                width: 12px;
+                background: rgba(10, 4, 4, 0.6);
+                width: 8px;
                 margin: 0;
+                border-radius: 4px;
             }}
             QScrollBar::handle:vertical {{
-                background: #7f2318;
+                background: rgba(127, 35, 24, 0.8);
                 min-height: 30px;
-                border-radius: 6px;
+                border-radius: 4px;
+            }}
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+                height: 0;
             }}
             """
         )

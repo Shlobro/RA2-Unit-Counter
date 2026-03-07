@@ -435,8 +435,9 @@ def maybe_show_post_game_scoreboard(state):
     if not state.players:
         return
 
+    game_over = any(getattr(player, 'post_game_triggered', False) for player in state.players)
     any_finished = any(player.is_winner or player.is_loser for player in state.players)
-    if not any_finished:
+    if not game_over or not any_finished:
         state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players)
         return
 

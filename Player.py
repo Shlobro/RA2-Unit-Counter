@@ -10,7 +10,8 @@ from constants import (
     QUEUED_FACTORIES_OFFSETS, BUILDING_FACTORIES_OFFSETS,
     MAXPLAYERS, INVALIDCLASS, INFOFFSET, AIRCRAFTOFFSET, TANKOFFSET, BUILDINGOFFSET,
     CREDITSPENT_OFFSET, HARVESTED_CREDITS_OFFSET, CAPTURED_BUILDING_CREDITS_OFFSET,
-    BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
+    BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET, ISLOSEROFFSET,
+    POST_GAME_TRIGGER_WIN_OFFSET, POST_GAME_TRIGGER_LOSS_OFFSET,
     POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
     infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets,
     BARRACKS_INFILTRATED_OFFSET, WAR_FACTORY_INFILTRATED_OFFSET,
@@ -52,6 +53,7 @@ class Player:
 
         self.is_winner = False
         self.is_loser = False
+        self.post_game_triggered = False
 
         self.balance = 0
         self.spent_credit = 0
@@ -285,10 +287,28 @@ class Player:
             if balance_data:
                 self.balance = int.from_bytes(balance_data, byteorder='little')
 
-            winners_data = read_process_memory(self.process_handle, self.real_class_base + ISWINNEROFFSET, 2)
-            if winners_data and len(winners_data) >= 2:
-                self.is_winner = bool(winners_data[0])
-                self.is_loser = bool(winners_data[1])
+            winner_data = read_process_memory(self.process_handle, self.real_class_base + ISWINNEROFFSET, 1)
+            if winner_data and len(winner_data) >= 1:
+                self.is_winner = bool(winner_data[0])
+
+            loser_data = read_process_memory(self.process_handle, self.real_class_base + ISLOSEROFFSET, 1)
+            if loser_data and len(loser_data) >= 1:
+                self.is_loser = bool(loser_data[0])
+
+            post_game_trigger_data = read_process_memory(
+                self.process_handle,
+                self.real_class_base + POST_GAME_TRIGGER_WIN_OFFSET,
+                2
+            )
+            if post_game_trigger_data and len(post_game_trigger_data) >= 2:
+                win_trigger = bool(post_game_trigger_data[0])
+                loss_trigger = bool(post_game_trigger_data[1])
+                self.post_game_triggered = win_trigger or loss_trigger
+                # Use trigger offsets as authoritative source for win/loss
+                # since ISWINNEROFFSET/ISLOSEROFFSET are unreliable
+                if win_trigger or loss_trigger:
+                    self.is_winner = win_trigger
+                    self.is_loser = loss_trigger
 
             power_data = read_process_memory(self.process_handle, self.real_class_base + POWEROUTPUTOFFSET, 8)
             if power_data and len(power_data) >= 8:
