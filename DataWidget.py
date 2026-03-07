@@ -1,6 +1,6 @@
 # DataWidget.py
 import logging
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap, QColor, QPainter, QFont, QFontMetrics
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
@@ -121,16 +121,52 @@ class BaseDataWidget(QWidget):
 class MoneyWidget(BaseDataWidget):
     def __init__(self, data=None, text_color=Qt.white, size=16, font=None, parent=None):
         super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=True, max_digits=10, parent=parent)
+        self.target_value = int(self.value)
+        self.animation_timer = QTimer(self)
+        self.animation_timer.setInterval(16)
+        self.animation_timer.timeout.connect(self._animate_step)
         self.update_data_label()
 
     def on_value_changed(self, value):
         try:
-            self.value = value
+            self.value = int(value)
+            self.target_value = self.value
             self.update_data_label()
             self.data_label.adjustSize()
             self.adjust_size()
         except Exception as e:
             logging.exception("Error in MoneyWidget.on_value_changed: %s", e)
+
+    def update_data(self, new_data):
+        try:
+            self.target_value = int(new_data)
+            if not self.animation_timer.isActive():
+                self.animation_timer.start()
+        except Exception as e:
+            logging.exception("Error updating money data: %s", e)
+
+    def _animate_step(self):
+        try:
+            current_value = int(self.value)
+            target_value = int(self.target_value)
+            delta = target_value - current_value
+
+            if delta == 0:
+                self.animation_timer.stop()
+                return
+
+            step = max(1, abs(delta) // 5)
+            if delta > 0:
+                self.value = min(current_value + step, target_value)
+            else:
+                self.value = max(current_value - step, target_value)
+
+            self.update_data_label()
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            self.animation_timer.stop()
+            logging.exception("Error animating money widget: %s", e)
 
     def update_data_label(self):
         try:
