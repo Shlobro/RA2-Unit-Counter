@@ -32,7 +32,7 @@ class AppState:
         self.control_panel = None   # Reference to the ControlPanel instance
         self.data_update_thread = None  # Reference to the DataUpdateThread instance
         self.game_path = ''         # Game path (empty string by default)
-        self.admin = True
+        self.admin = False
         self.scoreboard_window = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
