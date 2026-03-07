@@ -60,8 +60,85 @@
         }
     },
     "factory": {
-        "x": 100,
-        "y": 100
+        "x": 475,
+        "y": 77
     },
-    "game_path": ""
+    "game_path": "",
+    "brown": {
+        "name": {
+            "x": 107,
+            "y": 219
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 163,
+            "y": 87
+        },
+        "power": {
+            "x": 91,
+            "y": 140
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 897,
+            "y": 45
+        },
+        "unit_counter_combined": {
+            "x": 120,
+            "y": 313
+        },
+        "combined": {
+            "x": 120,
+            "y": 313
+        },
+        "factory": {
+            "x": 475,
+            "y": 77
+        }
+    },
+    "data_update_frequency": 100,
+    "teal": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 131,
+            "y": 221
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "combined": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 475,
+            "y": 77
+        }
+    }
 }

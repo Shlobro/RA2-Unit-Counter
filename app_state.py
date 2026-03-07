@@ -35,6 +35,7 @@ class AppState:
         self.admin = True
         self.scoreboard_window = None
         self.post_game_scoreboard_shown = False
+        self.last_live_scoreboard_snapshot = None
         initialize_oil_count_files()
 
 

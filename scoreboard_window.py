@@ -34,6 +34,19 @@ COUNTRY_TO_FLAG = {
     "YuriCountry": "RA2_Yuricountry.png",
 }
 
+RESULT_LABELS = {
+    "WINNER": "Won",
+    "DEFEATED": "Lost",
+    "ACTIVE": "Still alive",
+}
+
+DISPLAY_NAME_ALIASES = {
+    "BlackHawk Transport": "Night Hawk Transport",
+    "Slave miner": "Slave Miner",
+    "Master Mind": "Mastermind",
+    "Desolater": "Desolator",
+}
+
 
 def _load_ra_font(point_size, weight=QFont.Bold, fallback_family="Arial"):
     font_id = QFontDatabase.addApplicationFont(os.path.join("Other", "Futured.ttf"))
@@ -62,6 +75,13 @@ def _load_pixmap(path, width, height):
     return pixmap.scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
 
 
+def _scoreboard_background_path():
+    candidate = os.path.join("Other", "post_game_background.png")
+    if os.path.exists(candidate):
+        return candidate.replace("\\", "/")
+    return None
+
+
 def _country_flag_path(country_name):
     flag_name = COUNTRY_TO_FLAG.get(country_name)
     if not flag_name:
@@ -71,6 +91,10 @@ def _country_flag_path(country_name):
 
 def _sort_units(unit_counts):
     return sorted(unit_counts.items(), key=lambda item: (-item[1], item[0]))
+
+
+def _display_name(name):
+    return DISPLAY_NAME_ALIASES.get(name, name)
 
 
 def _result_rank(result):
@@ -85,8 +109,9 @@ def build_post_game_snapshot(players):
     snapshot_players = []
     for player in players:
         built_units = player.get_built_unit_totals()
-        lost_units = player.get_lost_unit_totals()
+        killed_units = player.get_killed_unit_totals()
         current_units = player.get_current_unit_totals()
+        total_cash_seen = player.balance + player.spent_credit
 
         result = "ACTIVE"
         if player.is_winner:
@@ -101,13 +126,25 @@ def build_post_game_snapshot(players):
             "color_name": player.color_name if isinstance(player.color_name, str) else player.color_name.name(),
             "accent_color": _color_to_hex(player.color),
             "result": result,
+            "result_label": RESULT_LABELS.get(result, result.title()),
             "money_spent": player.spent_credit,
-            "money_earned": player.balance + player.spent_credit,
+            "money_mined": player.harvested_credits,
+            "money_from_captures": player.captured_building_credits,
+            "total_cash_seen": total_cash_seen,
             "current_balance": player.balance,
             "total_units_made": sum(built_units.values()),
-            "total_units_lost": sum(lost_units.values()),
+            "total_units_killed": sum(killed_units.values()),
+            "total_units_remaining": sum(current_units.values()),
+            "infantry_built": sum(player.built_infantry_counts.values()),
+            "vehicles_built": sum(player.built_tank_counts.values()),
+            "buildings_built": sum(player.built_building_counts.values()),
+            "aircraft_built": sum(player.built_aircraft_counts.values()),
+            "infantry_killed": sum(player.lost_infantry_counts.values()),
+            "vehicles_killed": sum(player.lost_tank_counts.values()),
+            "buildings_killed": sum(player.lost_building_counts.values()),
+            "aircraft_killed": sum(player.lost_aircraft_counts.values()),
             "units_made": _sort_units(built_units),
-            "units_lost": _sort_units(lost_units),
+            "units_killed": _sort_units(killed_units),
             "units_remaining": _sort_units({name: count for name, count in current_units.items() if count > 0}),
         })
 
@@ -138,7 +175,7 @@ class StatTable(QTableWidget):
         table_rows = rows or [("None", 0)]
         self.setRowCount(len(table_rows))
         for row_index, (unit_name, count) in enumerate(table_rows):
-            unit_item = QTableWidgetItem(unit_name)
+            unit_item = QTableWidgetItem(_display_name(unit_name))
             icon_path = resolve_factory_image_path(unit_name)
             pixmap = _load_pixmap(icon_path, 34, 26)
             if pixmap is not None:
@@ -179,19 +216,23 @@ class PlayerReportCard(QFrame):
         title_block = QVBoxLayout()
         title = QLabel(self.player_snapshot["username"])
         title.setObjectName("playerName")
+        title.setStyleSheet(f'color: {self.player_snapshot["accent_color"]};')
         title_block.addWidget(title)
 
-        subtitle = QLabel(f'{self.player_snapshot["result"]} | {self.player_snapshot["faction"]} | {self.player_snapshot["color_name"]}')
+        subtitle = QLabel(
+            f'{self.player_snapshot["result_label"]} | {self.player_snapshot["faction"]} | {self.player_snapshot["color_name"]}'
+        )
         subtitle.setObjectName("playerMeta")
         title_block.addWidget(subtitle)
         identity.addLayout(title_block)
         header.addLayout(identity)
         header.addStretch()
 
-        badge = QLabel(self.player_snapshot["result"])
-        badge.setObjectName("resultBadge")
-        badge.setProperty("result", self.player_snapshot["result"])
-        header.addWidget(badge)
+        if self.player_snapshot["result"] != "ACTIVE":
+            badge = QLabel(self.player_snapshot["result_label"])
+            badge.setObjectName("resultBadge")
+            badge.setProperty("result", self.player_snapshot["result"])
+            header.addWidget(badge)
         layout.addLayout(header)
 
         layout.addWidget(self._make_highlight_strip())
@@ -200,23 +241,27 @@ class PlayerReportCard(QFrame):
         metrics.setHorizontalSpacing(12)
         metrics.setVerticalSpacing(10)
         summary_items = [
-            ("Credits Earned", _format_money(self.player_snapshot["money_earned"])),
-            ("Credits Spent", _format_money(self.player_snapshot["money_spent"])),
-            ("Bankroll", _format_money(self.player_snapshot["current_balance"])),
-            ("Units Made", f'{self.player_snapshot["total_units_made"]:,}'),
-            ("Units Lost", f'{self.player_snapshot["total_units_lost"]:,}'),
+            ("Money mined", _format_money(self.player_snapshot["money_mined"])),
+            ("Money from captures", _format_money(self.player_snapshot["money_from_captures"])),
+            ("Money spent", _format_money(self.player_snapshot["money_spent"])),
+            ("Cash left", _format_money(self.player_snapshot["current_balance"])),
+            ("Total cash seen", _format_money(self.player_snapshot["total_cash_seen"])),
+            ("Built", f'{self.player_snapshot["total_units_made"]:,}'),
+            ("Destroyed", f'{self.player_snapshot["total_units_killed"]:,}'),
+            ("Still alive", f'{self.player_snapshot["total_units_remaining"]:,}'),
             ("Country", self.player_snapshot["country"] or "Unknown"),
         ]
         for index, (label_text, value_text) in enumerate(summary_items):
             cell = self._make_metric_cell(label_text, value_text)
             metrics.addWidget(cell, index // 3, index % 3)
         layout.addLayout(metrics)
+        layout.addWidget(self._make_category_breakdown())
 
         tables_layout = QHBoxLayout()
         tables_layout.setSpacing(12)
-        tables_layout.addWidget(self._make_table_block("Units Made", self.player_snapshot["units_made"]))
-        tables_layout.addWidget(self._make_table_block("Units Lost", self.player_snapshot["units_lost"]))
-        tables_layout.addWidget(self._make_table_block("Units Remaining", self.player_snapshot["units_remaining"]))
+        tables_layout.addWidget(self._make_table_block("Built", self.player_snapshot["units_made"]))
+        tables_layout.addWidget(self._make_table_block("Destroyed", self.player_snapshot["units_killed"]))
+        tables_layout.addWidget(self._make_table_block("Still Alive", self.player_snapshot["units_remaining"]))
         layout.addLayout(tables_layout)
 
         accent = self.player_snapshot["accent_color"]
@@ -255,13 +300,45 @@ class PlayerReportCard(QFrame):
         layout.setSpacing(10)
 
         sections = [
-            ("Production Peak", self.player_snapshot["units_made"][:3]),
-            ("Losses", self.player_snapshot["units_lost"][:3]),
-            ("Fielded", self.player_snapshot["units_remaining"][:3]),
+            ("Built the most", self.player_snapshot["units_made"][:3]),
+            ("Destroyed the most", self.player_snapshot["units_killed"][:3]),
+            ("Still had", self.player_snapshot["units_remaining"][:3]),
         ]
 
         for title, rows in sections:
             layout.addWidget(self._make_icon_group(title, rows))
+
+        return strip
+
+    def _make_category_breakdown(self):
+        strip = QFrame()
+        strip.setObjectName("highlightStrip")
+        layout = QHBoxLayout(strip)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+
+        categories = [
+            ("Infantry", self.player_snapshot["infantry_built"], self.player_snapshot["infantry_killed"]),
+            ("Vehicles", self.player_snapshot["vehicles_built"], self.player_snapshot["vehicles_killed"]),
+            ("Buildings", self.player_snapshot["buildings_built"], self.player_snapshot["buildings_killed"]),
+            ("Aircraft", self.player_snapshot["aircraft_built"], self.player_snapshot["aircraft_killed"]),
+        ]
+
+        for title, built_count, killed_count in categories:
+            block = QFrame()
+            block.setObjectName("iconGroup")
+            block_layout = QVBoxLayout(block)
+            block_layout.setContentsMargins(8, 8, 8, 8)
+            block_layout.setSpacing(4)
+
+            title_label = QLabel(title)
+            title_label.setObjectName("iconGroupTitle")
+            block_layout.addWidget(title_label)
+
+            value_label = QLabel(f"Built {built_count:,} | Destroyed {killed_count:,}")
+            value_label.setObjectName("metricValue")
+            block_layout.addWidget(value_label)
+            layout.addWidget(block)
 
         return strip
 
@@ -307,7 +384,7 @@ class PlayerReportCard(QFrame):
             icon_label.setObjectName("fallbackIcon")
         layout.addWidget(icon_label)
 
-        name_label = QLabel(unit_name)
+        name_label = QLabel(_display_name(unit_name))
         name_label.setObjectName("unitChipName")
         name_label.setWordWrap(True)
         name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -345,8 +422,10 @@ class PostGameScoreboardWindow(QMainWindow):
         title_font = _load_ra_font(24)
         heading_font = _load_ra_font(12)
         body_font = QFont("Segoe UI", 10)
+        background_path = _scoreboard_background_path()
 
         central = QWidget()
+        central.setObjectName("scoreboardCentral")
         self.setCentralWidget(central)
         root = QVBoxLayout(central)
         root.setContentsMargins(18, 18, 18, 18)
@@ -358,12 +437,12 @@ class PostGameScoreboardWindow(QMainWindow):
         banner_layout.setContentsMargins(18, 14, 18, 14)
         banner_layout.setSpacing(4)
 
-        title = QLabel("BATTLEFIELD AFTER-ACTION REPORT")
+        title = QLabel("MATCH SUMMARY")
         title.setFont(title_font)
         title.setObjectName("mainTitle")
         banner_layout.addWidget(title)
 
-        subtitle = QLabel("Post-game scoreboard triggered from the live end-state flags.")
+        subtitle = QLabel("")
         subtitle.setObjectName("subTitle")
         subtitle.setFont(body_font)
         banner_layout.addWidget(subtitle)
@@ -387,27 +466,32 @@ class PostGameScoreboardWindow(QMainWindow):
         root.addWidget(scroll)
 
         self.setStyleSheet(
-            """
-            QMainWindow, QWidget {
+            f"""
+            QMainWindow, QWidget {{
                 background-color: #090707;
                 color: #f6dcc2;
-            }
-            QFrame#banner {
+            }}
+            QWidget#scoreboardCentral {{
+                background-image: {"none" if not background_path else f"url({background_path})"};
+                background-position: center;
+                background-repeat: no-repeat;
+            }}
+            QFrame#banner {{
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
                     stop:0 #2b0909,
                     stop:0.5 #5c120f,
                     stop:1 #210707);
                 border: 2px solid #d88f3f;
                 border-radius: 16px;
-            }
-            QLabel#mainTitle {
+            }}
+            QLabel#mainTitle {{
                 color: #ffd486;
                 letter-spacing: 2px;
-            }
-            QLabel#subTitle {
+            }}
+            QLabel#subTitle {{
                 color: #d7b59a;
-            }
-            QLabel#flagBadge {
+            }}
+            QLabel#flagBadge {{
                 min-width: 64px;
                 min-height: 44px;
                 background-color: rgba(255, 255, 255, 0.04);
@@ -415,107 +499,107 @@ class PostGameScoreboardWindow(QMainWindow):
                 border-radius: 8px;
                 color: #ffe7a8;
                 font-weight: 800;
-            }
-            QLabel#playerName {
+            }}
+            QLabel#playerName {{
                 color: #ffe7a8;
                 font-size: 22px;
                 font-weight: 700;
-            }
-            QLabel#playerMeta {
+            }}
+            QLabel#playerMeta {{
                 color: #d0aaa0;
                 font-size: 11px;
                 text-transform: uppercase;
-            }
-            QLabel#resultBadge {
+            }}
+            QLabel#resultBadge {{
                 padding: 8px 12px;
                 border-radius: 10px;
                 font-weight: 800;
                 min-width: 88px;
                 text-align: center;
-            }
-            QLabel#resultBadge[result="WINNER"] {
+            }}
+            QLabel#resultBadge[result="WINNER"] {{
                 background-color: #214d21;
                 color: #aff0a7;
                 border: 1px solid #66c766;
-            }
-            QLabel#resultBadge[result="DEFEATED"] {
+            }}
+            QLabel#resultBadge[result="DEFEATED"] {{
                 background-color: #5a1111;
                 color: #ffb0a4;
                 border: 1px solid #ff6f61;
-            }
-            QLabel#resultBadge[result="ACTIVE"] {
+            }}
+            QLabel#resultBadge[result="ACTIVE"] {{
                 background-color: #40351a;
                 color: #f7df9a;
                 border: 1px solid #d8b65c;
-            }
-            QFrame#metricCell, QFrame#tableBlock {
+            }}
+            QFrame#metricCell, QFrame#tableBlock {{
                 background-color: rgba(255, 255, 255, 0.04);
                 border: 1px solid rgba(216, 143, 63, 0.35);
                 border-radius: 10px;
-            }
-            QFrame#highlightStrip {
+            }}
+            QFrame#highlightStrip {{
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
                     stop:0 rgba(255, 196, 80, 0.10),
                     stop:0.5 rgba(255, 120, 84, 0.08),
                     stop:1 rgba(255, 196, 80, 0.10));
                 border: 1px solid rgba(216, 143, 63, 0.35);
                 border-radius: 10px;
-            }
-            QFrame#iconGroup {
+            }}
+            QFrame#iconGroup {{
                 background-color: rgba(0, 0, 0, 0.12);
                 border: 1px solid rgba(216, 143, 63, 0.25);
                 border-radius: 10px;
-            }
-            QLabel#iconGroupTitle {
+            }}
+            QLabel#iconGroupTitle {{
                 color: #ffcf76;
                 font-size: 11px;
                 font-weight: 700;
                 text-transform: uppercase;
-            }
-            QFrame#unitChip {
+            }}
+            QFrame#unitChip {{
                 background-color: rgba(255, 255, 255, 0.04);
                 border: 1px solid rgba(216, 143, 63, 0.30);
                 border-radius: 8px;
                 min-width: 86px;
                 max-width: 100px;
-            }
-            QLabel#unitChipName {
+            }}
+            QLabel#unitChipName {{
                 color: #f4d6ba;
                 font-size: 10px;
-            }
-            QLabel#unitChipCount {
+            }}
+            QLabel#unitChipCount {{
                 color: #fff3c6;
                 font-size: 12px;
                 font-weight: 800;
-            }
-            QLabel#emptyChip, QLabel#fallbackIcon {
+            }}
+            QLabel#emptyChip, QLabel#fallbackIcon {{
                 color: #f0d0a6;
                 font-weight: 700;
-            }
-            QLabel#metricLabel {
+            }}
+            QLabel#metricLabel {{
                 color: #d3ac8b;
                 font-size: 10px;
                 text-transform: uppercase;
-            }
-            QLabel#metricValue {
+            }}
+            QLabel#metricValue {{
                 color: #fff3c6;
                 font-size: 16px;
                 font-weight: 700;
-            }
-            QLabel#tableTitle {
+            }}
+            QLabel#tableTitle {{
                 color: #ffcf76;
                 font-size: 12px;
                 font-weight: 700;
                 padding-left: 2px;
-            }
-            QHeaderView::section {
+            }}
+            QHeaderView::section {{
                 background-color: #5b140f;
                 color: #ffd486;
                 border: none;
                 padding: 6px;
                 font-weight: 700;
-            }
-            QTableWidget {
+            }}
+            QTableWidget {{
                 background-color: rgba(0, 0, 0, 0.15);
                 alternate-background-color: rgba(255, 255, 255, 0.03);
                 border: 1px solid rgba(216, 143, 63, 0.25);
@@ -523,23 +607,23 @@ class PostGameScoreboardWindow(QMainWindow):
                 gridline-color: transparent;
                 color: #f7e4d0;
                 padding: 4px;
-            }
-            QTableWidget::item {
+            }}
+            QTableWidget::item {{
                 padding: 4px;
-            }
-            QScrollArea#scoreboardScroll {
+            }}
+            QScrollArea#scoreboardScroll {{
                 background: transparent;
-            }
-            QScrollBar:vertical {
+            }}
+            QScrollBar:vertical {{
                 background: #1a0b0b;
                 width: 12px;
                 margin: 0;
-            }
-            QScrollBar::handle:vertical {
+            }}
+            QScrollBar::handle:vertical {{
                 background: #7f2318;
                 min-height: 30px;
                 border-radius: 6px;
-            }
+            }}
             """
         )
 

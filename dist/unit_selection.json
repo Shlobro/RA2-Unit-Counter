@@ -1,7 +1,15 @@
 {
     "selected_units": {
         "Yuri": {
-            "Tank": {},
+            "Tank": {
+                "Slave miner": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "unit_type": "Tank",
+                    "faction": "Yuri"
+                }
+            },
             "Structure": {}
         }
     }

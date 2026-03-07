@@ -9,7 +9,8 @@ from constants import (
     country_name_to_faction, COLOR_NAME_MAPPING, NUMBEROFWFOFFSET,
     QUEUED_FACTORIES_OFFSETS, BUILDING_FACTORIES_OFFSETS,
     MAXPLAYERS, INVALIDCLASS, INFOFFSET, AIRCRAFTOFFSET, TANKOFFSET, BUILDINGOFFSET,
-    CREDITSPENT_OFFSET, BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
+    CREDITSPENT_OFFSET, HARVESTED_CREDITS_OFFSET, CAPTURED_BUILDING_CREDITS_OFFSET,
+    BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET,
     POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
     infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets,
     BARRACKS_INFILTRATED_OFFSET, WAR_FACTORY_INFILTRATED_OFFSET,
@@ -54,6 +55,8 @@ class Player:
 
         self.balance = 0
         self.spent_credit = 0
+        self.harvested_credits = 0
+        self.captured_building_credits = 0
         self.power_output = 0
         self.power_drain = 0
         self.power = 0
@@ -230,21 +233,16 @@ class Player:
             self.built_aircraft_counts
         )
 
-    def get_lost_unit_totals(self):
-        lost_totals = self.merge_counts(
+    def get_killed_unit_totals(self):
+        return self.merge_counts(
             self.lost_infantry_counts,
             self.lost_tank_counts,
-            self.lost_building_counts
+            self.lost_building_counts,
+            self.lost_aircraft_counts
         )
 
-        # The aircraft lost score struct is not mapped in offsets.py, so infer from built-current.
-        for aircraft_name, built_count in self.built_aircraft_counts.items():
-            current_count = self.aircraft_counts.get(aircraft_name, 0)
-            inferred_lost = max(built_count - current_count, 0)
-            if inferred_lost > 0:
-                lost_totals[aircraft_name] = lost_totals.get(aircraft_name, 0) + inferred_lost
-
-        return lost_totals
+    def get_lost_unit_totals(self):
+        return self.get_killed_unit_totals()
 
     def write_oil_count_to_file(self, oil_count):
         try:
@@ -261,15 +259,31 @@ class Player:
         try:
             logging.debug(f"Updating dynamic data for player {self.index}")
 
+            resource_start = CREDITSPENT_OFFSET
+            resource_size = CAPTURED_BUILDING_CREDITS_OFFSET - CREDITSPENT_OFFSET + 4
+            resource_data = read_process_memory(
+                self.process_handle,
+                self.real_class_base + resource_start,
+                resource_size
+            )
+            if resource_data and len(resource_data) >= resource_size:
+                spent_index = CREDITSPENT_OFFSET - resource_start
+                harvested_index = HARVESTED_CREDITS_OFFSET - resource_start
+                captured_index = CAPTURED_BUILDING_CREDITS_OFFSET - resource_start
+                self.spent_credit = int.from_bytes(resource_data[spent_index:spent_index + 4], byteorder='little')
+                self.harvested_credits = int.from_bytes(
+                    resource_data[harvested_index:harvested_index + 4],
+                    byteorder='little'
+                )
+                self.captured_building_credits = int.from_bytes(
+                    resource_data[captured_index:captured_index + 4],
+                    byteorder='little'
+                )
+
             balance_ptr = self.real_class_base + BALANCEOFFSET
             balance_data = read_process_memory(self.process_handle, balance_ptr, 4)
             if balance_data:
                 self.balance = int.from_bytes(balance_data, byteorder='little')
-
-            spent_credit_ptr = self.real_class_base + CREDITSPENT_OFFSET
-            spent_credit_data = read_process_memory(self.process_handle, spent_credit_ptr, 4)
-            if spent_credit_data:
-                self.spent_credit = int.from_bytes(spent_credit_data, byteorder='little')
 
             winners_data = read_process_memory(self.process_handle, self.real_class_base + ISWINNEROFFSET, 2)
             if winners_data and len(winners_data) >= 2:

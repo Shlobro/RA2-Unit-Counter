@@ -433,9 +433,10 @@ def maybe_show_post_game_scoreboard(state):
 
     any_finished = any(player.is_winner or player.is_loser for player in state.players)
     if not any_finished:
+        state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players)
         return
 
-    snapshot = build_post_game_snapshot(state.players)
+    snapshot = state.last_live_scoreboard_snapshot or build_post_game_snapshot(state.players)
     if not snapshot["players"]:
         return
 
@@ -457,6 +458,7 @@ def game_started_handler(state):
     logging.info("Game started handler called")
     with state.data_lock:
         state.post_game_scoreboard_shown = False
+        state.last_live_scoreboard_snapshot = None
         if state.scoreboard_window is not None:
             state.scoreboard_window.close()
             state.scoreboard_window = None

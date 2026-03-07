@@ -31,3 +31,269 @@
 2026-03-07 02:27:39,331 - INFO - Saving selected units and HUD positions
 2026-03-07 02:27:39,332 - INFO - Saved selected units.
 2026-03-07 02:27:39,332 - INFO - HUD positions saved successfully.
+2026-03-07 02:29:08,359 - INFO - Logging setup complete
+2026-03-07 02:29:08,409 - INFO - Starting Resource HUD Application
+2026-03-07 02:29:08,432 - INFO - Loading HUD positions
+2026-03-07 02:29:08,433 - INFO - HUD positions loaded successfully.
+2026-03-07 02:29:08,433 - INFO - Creating control panel
+2026-03-07 02:29:08,515 - INFO - Waiting for a valid game path to be selected
+2026-03-07 02:29:08,515 - INFO - No game path set, user needs to select one in the control panel
+2026-03-07 02:29:10,092 - INFO - Starting data update thread
+2026-03-07 02:29:10,092 - INFO - Entering application event loop
+2026-03-07 02:29:10,093 - INFO - Waiting for the game to start and players to load...
+2026-03-07 02:29:10,093 - INFO - Waiting for the game to start...
+2026-03-07 02:29:11,061 - INFO - Game detected
+2026-03-07 02:29:11,062 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-07 02:29:11,062 - INFO - Player 0 color: brown
+2026-03-07 02:29:11,062 - INFO - Player 0 country name: YuriCountry
+2026-03-07 02:29:11,062 - INFO - Player 0 faction: Yuri
+2026-03-07 02:29:11,062 - INFO - Player 0 name: Snark
+2026-03-07 02:29:11,063 - INFO - Number of valid players: 1
+2026-03-07 02:29:11,063 - INFO - Game started handler called
+2026-03-07 02:29:11,063 - INFO - Creating ResourceWindow for Snark with color brown
+2026-03-07 02:29:11,147 - INFO - Creating FactoryWindow for Snark with color brown
+2026-03-07 02:29:11,157 - INFO - Unit windows created successfully.
+2026-03-07 02:29:38,808 - INFO - Opening Unit Selection window
+2026-03-07 02:29:58,948 - INFO - Opening Unit Selection window
+2026-03-07 02:30:10,495 - INFO - All counter windows closed
+2026-03-07 02:30:10,495 - INFO - Saved selected units.
+2026-03-07 02:30:10,496 - INFO - HUD positions saved successfully.
+2026-03-07 02:30:10,496 - INFO - Settings saved on control panel close
+2026-03-07 02:30:10,499 - INFO - Exiting application, stopping data update thread
+2026-03-07 02:30:10,643 - INFO - Emitted game_stopped signal.
+2026-03-07 02:30:11,646 - INFO - Data update thread has exited.
+2026-03-07 02:30:11,647 - INFO - Saving selected units and HUD positions
+2026-03-07 02:30:11,648 - INFO - Saved selected units.
+2026-03-07 02:30:11,648 - INFO - HUD positions saved successfully.
+2026-03-07 02:30:14,165 - INFO - Logging setup complete
+2026-03-07 02:30:14,213 - INFO - Starting Resource HUD Application
+2026-03-07 02:30:14,234 - INFO - Loading HUD positions
+2026-03-07 02:30:14,234 - INFO - HUD positions loaded successfully.
+2026-03-07 02:30:14,234 - INFO - Creating control panel
+2026-03-07 02:30:14,310 - INFO - Waiting for a valid game path to be selected
+2026-03-07 02:30:14,310 - INFO - No game path set, user needs to select one in the control panel
+2026-03-07 02:30:15,751 - INFO - Starting data update thread
+2026-03-07 02:30:15,751 - INFO - Entering application event loop
+2026-03-07 02:30:15,751 - INFO - Waiting for the game to start and players to load...
+2026-03-07 02:30:15,752 - INFO - Waiting for the game to start...
+2026-03-07 02:30:16,598 - INFO - Game detected
+2026-03-07 02:30:16,598 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-07 02:30:16,599 - INFO - Player 0 color: brown
+2026-03-07 02:30:16,599 - INFO - Player 0 country name: YuriCountry
+2026-03-07 02:30:16,599 - INFO - Player 0 faction: Yuri
+2026-03-07 02:30:16,599 - INFO - Player 0 name: Snark
+2026-03-07 02:30:16,600 - INFO - Number of valid players: 1
+2026-03-07 02:30:16,600 - INFO - Game started handler called
+2026-03-07 02:30:16,600 - INFO - Creating ResourceWindow for Snark with color brown
+2026-03-07 02:30:16,682 - INFO - Creating FactoryWindow for Snark with color brown
+2026-03-07 02:30:16,691 - INFO - Unit windows created successfully.
+2026-03-07 02:30:51,113 - INFO - Update frequency set to: 999 ms
+2026-03-07 02:30:51,319 - INFO - Update frequency set to: 998 ms
+2026-03-07 02:30:51,472 - INFO - Update frequency set to: 997 ms
+2026-03-07 02:30:51,619 - INFO - Update frequency set to: 996 ms
+2026-03-07 02:30:51,756 - INFO - Update frequency set to: 995 ms
+2026-03-07 02:30:51,978 - INFO - Update frequency set to: 994 ms
+2026-03-07 02:30:52,035 - INFO - Update frequency set to: 993 ms
+2026-03-07 02:30:52,083 - INFO - Update frequency set to: 992 ms
+2026-03-07 02:30:52,130 - INFO - Update frequency set to: 991 ms
+2026-03-07 02:30:52,193 - INFO - Update frequency set to: 990 ms
+2026-03-07 02:30:52,239 - INFO - Update frequency set to: 989 ms
+2026-03-07 02:30:52,286 - INFO - Update frequency set to: 988 ms
+2026-03-07 02:30:52,334 - INFO - Update frequency set to: 987 ms
+2026-03-07 02:30:52,381 - INFO - Update frequency set to: 986 ms
+2026-03-07 02:30:52,443 - INFO - Update frequency set to: 985 ms
+2026-03-07 02:30:52,491 - INFO - Update frequency set to: 984 ms
+2026-03-07 02:30:52,539 - INFO - Update frequency set to: 983 ms
+2026-03-07 02:30:52,586 - INFO - Update frequency set to: 982 ms
+2026-03-07 02:30:52,634 - INFO - Update frequency set to: 981 ms
+2026-03-07 02:30:52,681 - INFO - Update frequency set to: 980 ms
+2026-03-07 02:30:52,745 - INFO - Update frequency set to: 979 ms
+2026-03-07 02:30:52,791 - INFO - Update frequency set to: 978 ms
+2026-03-07 02:30:52,839 - INFO - Update frequency set to: 977 ms
+2026-03-07 02:30:52,887 - INFO - Update frequency set to: 976 ms
+2026-03-07 02:30:52,934 - INFO - Update frequency set to: 975 ms
+2026-03-07 02:30:54,937 - INFO - Update frequency set to: 100 ms
+2026-03-07 02:31:10,930 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:10,934 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:20,323 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:20,326 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:30,064 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:30,067 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:30,175 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:30,179 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:42,272 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:42,276 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:47,258 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:47,262 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:31:51,805 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:51,809 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:51,914 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:51,917 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:52,024 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:31:52,028 - INFO - Defenses is idle (0% progress).
+2026-03-07 02:32:37,470 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,470 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,470 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read memory chunk for infantry.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read memory chunk for unit.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read memory chunk for building.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,471 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,471 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,472 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:32:37,472 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,472 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,472 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,472 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:32:37,472 - ERROR - Failed to read factory pointer for Aircraft at offset 0x53ac
+2026-03-07 02:32:37,472 - ERROR - Caught ProcessExitedException – game ended unexpectedly. Breaking out.
+2026-03-07 02:32:37,472 - INFO - Emitted game_stopped signal.
+2026-03-07 02:32:37,472 - INFO - Game stopped handler called
+2026-03-07 02:32:37,473 - INFO - HUD positions saved successfully.
+2026-03-07 02:32:38,475 - INFO - Waiting for the game to start and players to load...
+2026-03-07 02:32:38,475 - INFO - Waiting for the game to start...
+2026-03-07 02:32:49,594 - INFO - Game detected
+2026-03-07 02:32:49,594 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-07 02:32:49,594 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-07 02:32:50,605 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-07 02:32:50,605 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-07 02:32:50,605 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-07 02:32:50,606 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-07 02:32:50,606 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-07 02:32:50,606 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-07 02:32:50,606 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-07 02:32:51,611 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-07 02:32:51,612 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-07 02:32:51,612 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-07 02:32:51,612 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-07 02:32:51,612 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-07 02:32:51,612 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-07 02:32:51,612 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-07 02:32:52,612 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-07 02:32:52,612 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-07 02:32:52,612 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-07 02:32:52,612 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-07 02:32:52,612 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-07 02:32:52,612 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-07 02:32:52,613 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-07 02:32:53,613 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-07 02:32:53,614 - INFO - Player 0 color: teal
+2026-03-07 02:32:53,614 - INFO - Player 0 country name: Americans
+2026-03-07 02:32:53,614 - INFO - Player 0 faction: Allied
+2026-03-07 02:32:53,614 - INFO - Player 0 name: Snark
+2026-03-07 02:32:53,614 - INFO - Number of valid players: 1
+2026-03-07 02:32:53,615 - INFO - Game started handler called
+2026-03-07 02:32:53,615 - INFO - Creating ResourceWindow for Snark with color teal
+2026-03-07 02:32:53,669 - INFO - Creating FactoryWindow for Snark with color teal
+2026-03-07 02:32:53,680 - INFO - Unit windows created successfully.
+2026-03-07 02:33:12,029 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:33:12,030 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:33:12,689 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:12,691 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:16,656 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:33:16,657 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:33:17,758 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:17,759 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:25,049 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:33:25,050 - INFO - Buildings is idle (0% progress).
+2026-03-07 02:33:44,719 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:44,720 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:48,915 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:48,916 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:50,572 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:50,574 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:53,999 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:54,000 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:54,770 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-07 02:33:56,970 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:56,971 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,078 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,079 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,189 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,190 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,299 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,300 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,409 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,410 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,518 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,519 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,630 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,631 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,742 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,743 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,852 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:57,853 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:58,842 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:33:58,843 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,496 - WARNING - Failed to read memory chunk for infantry.
+2026-03-07 02:34:18,496 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read memory chunk for unit.
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read memory chunk for building.
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read memory chunk for aircraft.
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,497 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,498 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-07 02:34:18,498 - ERROR - Failed to read factory pointer for Aircraft at offset 0x53ac
+2026-03-07 02:34:18,498 - ERROR - Caught ProcessExitedException – game ended unexpectedly. Breaking out.
+2026-03-07 02:34:18,498 - INFO - Emitted game_stopped signal.
+2026-03-07 02:34:18,498 - INFO - Game stopped handler called
+2026-03-07 02:34:18,499 - INFO - HUD positions saved successfully.
+2026-03-07 02:34:19,507 - INFO - Waiting for the game to start and players to load...
+2026-03-07 02:34:19,508 - INFO - Waiting for the game to start...
+2026-03-07 02:34:36,695 - INFO - All counter windows closed
+2026-03-07 02:34:36,696 - INFO - Saved selected units.
+2026-03-07 02:34:36,696 - INFO - HUD positions saved successfully.
+2026-03-07 02:34:36,696 - INFO - Settings saved on control panel close
+2026-03-07 02:34:36,701 - INFO - Exiting application, stopping data update thread
+2026-03-07 02:34:37,675 - INFO - Stop event set. Exiting thread.
+2026-03-07 02:34:37,675 - INFO - Data update thread has exited.
+2026-03-07 02:34:37,675 - INFO - Saving selected units and HUD positions
+2026-03-07 02:34:37,675 - INFO - Saved selected units.
+2026-03-07 02:34:37,676 - INFO - HUD positions saved successfully.
