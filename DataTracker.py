@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 
 # Import the new widget classes
 from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget, MoneySpentWidget
+from hud_position_utils import get_player_position
 from superweapon_panel import SuperweaponTimerPanel
 
 faction_to_flag = {
@@ -231,16 +232,16 @@ class ResourceWindow(QMainWindow):
         else:
             player_color_str = player_color
 
-        if player_color_str not in hud_positions:
-            hud_positions[player_color_str] = {}
-        if hud_type not in hud_positions[player_color_str]:
-            default_position = {"x": 100, "y": 100}
-            hud_positions[player_color_str][hud_type] = default_position
-        else:
-            default_position = hud_positions[player_color_str][hud_type]
-        default_position['x'] = int(default_position['x'])
-        default_position['y'] = int(default_position['y'])
-        return default_position
+        legacy_keys = []
+        if hud_type == 'superweapons':
+            legacy_keys = ['superweapon']
+
+        return get_player_position(
+            hud_positions,
+            player_color_str,
+            hud_type,
+            legacy_root_keys=legacy_keys,
+        )
 
     def update_labels(self):
         """Update the money, money spent, and power values."""

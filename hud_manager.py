@@ -8,6 +8,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox, QWidget, QVBoxLayout
 
 from app_state import check_spectator_status
+from hud_position_utils import normalize_hud_positions
 
 from DataTracker import ResourceWindow
 from scoreboard_window import (
@@ -33,6 +34,7 @@ def load_hud_positions(state):
         if os.path.exists(state.HUD_POSITION_FILE):
             with open(state.HUD_POSITION_FILE, 'r') as file:
                 state.hud_positions = json.load(file)
+            state.hud_positions = normalize_hud_positions(state.hud_positions)
             logging.info("HUD positions loaded successfully.")
         else:
             state.hud_positions = {}
@@ -261,6 +263,7 @@ def save_hud_positions(state):
                     state.hud_positions[player_id]['power'] = {"x": power_pos.x(), "y": power_pos.y()}
                     state.hud_positions[player_id]['money_spent'] = {"x": money_spent.x(), "y": money_spent.y()}
                     state.hud_positions[player_id]['superweapons'] = {"x": superweapon_pos.x(), "y": superweapon_pos.y()}
+                    state.hud_positions['superweapons'] = {"x": superweapon_pos.x(), "y": superweapon_pos.y()}
         # Save factory window positions if available.
         if hasattr(state, 'factory_windows'):
             for factory_win in state.factory_windows:
@@ -271,6 +274,7 @@ def save_hud_positions(state):
                     state.hud_positions.setdefault(player_id, {})
                     pos = factory_win.pos()
                     state.hud_positions[player_id]['factory'] = {"x": pos.x(), "y": pos.y()}
+                    state.hud_positions['factory'] = {"x": pos.x(), "y": pos.y()}
         with open(state.HUD_POSITION_FILE, 'w') as file:
             json.dump(state.hud_positions, file, indent=4)
         logging.info("HUD positions saved successfully.")
