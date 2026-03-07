@@ -24718,3 +24718,172 @@
 2026-03-08 00:46:13,766 - INFO - HUD positions saved successfully.
 2026-03-08 00:46:14,777 - INFO - Waiting for the game to start and players to load...
 2026-03-08 00:46:14,777 - INFO - Waiting for the game to start...
+2026-03-08 00:52:07,567 - INFO - Logging setup complete
+2026-03-08 00:52:07,625 - INFO - Starting Resource HUD Application
+2026-03-08 00:52:07,642 - INFO - Loading HUD positions
+2026-03-08 00:52:07,645 - INFO - HUD positions loaded successfully.
+2026-03-08 00:52:07,645 - INFO - Creating control panel
+2026-03-08 00:52:07,711 - INFO - Waiting for a valid game path to be selected
+2026-03-08 00:52:07,711 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-08 00:52:07,711 - INFO - Starting data update thread
+2026-03-08 00:52:07,712 - INFO - Entering application event loop
+2026-03-08 00:52:07,712 - INFO - Waiting for the game to start and players to load...
+2026-03-08 00:52:07,712 - INFO - Waiting for the game to start...
+2026-03-08 00:52:25,171 - INFO - Game detected
+2026-03-08 00:52:25,171 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,171 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-08 00:52:25,171 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,171 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-08 00:52:25,172 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,172 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-08 00:52:25,172 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,172 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-08 00:52:25,172 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,172 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-08 00:52:25,172 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,172 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-08 00:52:25,172 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,172 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-08 00:52:25,172 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:52:25,172 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:52:26,174 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:52:27,179 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:52:28,182 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:52:29,188 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-08 00:52:29,189 - INFO - Player 6 color: green
+2026-03-08 00:52:29,190 - INFO - Player 6 country name: Americans
+2026-03-08 00:52:29,190 - INFO - Player 6 faction: Allied
+2026-03-08 00:52:29,190 - INFO - Player 6 name: Snark
+2026-03-08 00:52:29,190 - INFO - Number of valid players: 1
+2026-03-08 00:52:29,191 - INFO - Game started handler called
+2026-03-08 00:52:29,191 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-08 00:52:29,282 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-08 00:52:29,304 - INFO - Unit windows created successfully.
+2026-03-08 00:53:13,668 - INFO - Game process no longer running; stopping updates.
+2026-03-08 00:53:13,668 - INFO - Emitted game_stopped signal.
+2026-03-08 00:53:13,668 - INFO - Game stopped handler called
+2026-03-08 00:53:13,671 - INFO - HUD positions saved successfully.
+2026-03-08 00:53:14,670 - INFO - Waiting for the game to start and players to load...
+2026-03-08 00:53:14,670 - INFO - Waiting for the game to start...
+2026-03-08 00:55:16,336 - INFO - All counter windows closed
+2026-03-08 00:55:16,338 - INFO - Saved selected units.
+2026-03-08 00:55:16,340 - INFO - HUD positions saved successfully.
+2026-03-08 00:55:16,340 - INFO - Settings saved on control panel close
+2026-03-08 00:55:16,347 - INFO - Exiting application, stopping data update thread
+2026-03-08 00:55:16,565 - INFO - Stop event set. Exiting thread.
+2026-03-08 00:55:16,566 - INFO - Data update thread has exited.
+2026-03-08 00:55:16,566 - INFO - Saving selected units and HUD positions
+2026-03-08 00:55:16,568 - INFO - Saved selected units.
+2026-03-08 00:55:16,569 - INFO - HUD positions saved successfully.
+2026-03-08 00:55:21,393 - INFO - Logging setup complete
+2026-03-08 00:55:21,450 - INFO - Starting Resource HUD Application
+2026-03-08 00:55:21,468 - INFO - Loading HUD positions
+2026-03-08 00:55:21,471 - INFO - HUD positions loaded successfully.
+2026-03-08 00:55:21,471 - INFO - Creating control panel
+2026-03-08 00:55:21,542 - INFO - Waiting for a valid game path to be selected
+2026-03-08 00:55:21,542 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-08 00:55:21,543 - INFO - Starting data update thread
+2026-03-08 00:55:21,543 - INFO - Entering application event loop
+2026-03-08 00:55:21,543 - INFO - Waiting for the game to start and players to load...
+2026-03-08 00:55:21,543 - INFO - Waiting for the game to start...
+2026-03-08 00:55:23,919 - INFO - Game detected
+2026-03-08 00:55:23,919 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-08 00:55:23,920 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-08 00:55:23,920 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-08 00:55:24,927 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:55:24,928 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:55:24,928 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:55:24,928 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:55:24,928 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:55:24,928 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:55:24,928 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:55:25,940 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:55:26,950 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:55:27,959 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-08 00:55:28,963 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-08 00:55:28,964 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-08 00:55:28,964 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-08 00:55:28,964 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-08 00:55:28,964 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-08 00:55:28,964 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-08 00:55:28,964 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-08 00:55:28,965 - INFO - Player 6 color: green
+2026-03-08 00:55:28,965 - INFO - Player 6 country name: Americans
+2026-03-08 00:55:28,965 - INFO - Player 6 faction: Allied
+2026-03-08 00:55:28,965 - INFO - Player 6 name: Snark
+2026-03-08 00:55:28,965 - INFO - Number of valid players: 1
+2026-03-08 00:55:28,965 - INFO - Game started handler called
+2026-03-08 00:55:28,966 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-08 00:55:29,052 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-08 00:55:29,074 - INFO - Unit windows created successfully.
+2026-03-08 00:57:10,994 - INFO - Game process no longer running; stopping updates.
+2026-03-08 00:57:10,995 - INFO - Emitted game_stopped signal.
+2026-03-08 00:57:10,995 - INFO - Game stopped handler called
+2026-03-08 00:57:10,997 - INFO - HUD positions saved successfully.
+2026-03-08 00:57:12,001 - INFO - Waiting for the game to start and players to load...
+2026-03-08 00:57:12,001 - INFO - Waiting for the game to start...
+2026-03-08 00:57:14,470 - INFO - All counter windows closed
+2026-03-08 00:57:14,472 - INFO - Saved selected units.
+2026-03-08 00:57:14,474 - INFO - HUD positions saved successfully.
+2026-03-08 00:57:14,474 - INFO - Settings saved on control panel close
+2026-03-08 00:57:14,481 - INFO - Exiting application, stopping data update thread
+2026-03-08 00:57:15,060 - INFO - Stop event set. Exiting thread.
+2026-03-08 00:57:15,060 - INFO - Data update thread has exited.
+2026-03-08 00:57:15,061 - INFO - Saving selected units and HUD positions
+2026-03-08 00:57:15,063 - INFO - Saved selected units.
+2026-03-08 00:57:15,064 - INFO - HUD positions saved successfully.

@@ -37,6 +37,8 @@ def get_color_name(color_scheme):
     """Returns a friendly color name based on the color scheme value."""
     return COLOR_NAME_MAPPING.get(color_scheme, "white")
 
+OIL_DERRICK_NAMES = {"Oil", "Oil Derrick", "Tech Oil Derrick"}
+
 
 class Player:
     def __init__(self, index, process_handle, real_class_base):
@@ -164,7 +166,7 @@ class Player:
                                 counts[name] = 0
                     elif name == "Psychic Beacon" and 15 > count > 0:
                         counts[name] = count
-                    elif name == "Oil":
+                    elif name in OIL_DERRICK_NAMES:
                         counts[name] = count
                         self.write_oil_count_to_file(count)
                     elif count <= test:
@@ -246,11 +248,34 @@ class Player:
     def get_lost_unit_totals(self):
         return self.get_killed_unit_totals()
 
+    def _normalize_color_name_for_oil_file(self):
+        if isinstance(self.color_name, str) and self.color_name in COLOR_NAME_MAPPING.values():
+            return self.color_name
+
+        color_value = self.color_name if not isinstance(self.color_name, str) else self.color
+        if hasattr(color_value, "name"):
+            try:
+                normalized_hex = color_value.name().lower()
+                for scheme_id, mapped_name in COLOR_NAME_MAPPING.items():
+                    mapped_color = get_color(scheme_id)
+                    if mapped_color.name().lower() == normalized_hex:
+                        return mapped_name
+            except Exception:
+                pass
+
+        if isinstance(self.color_name, str) and self.color_name:
+            logging.warning(
+                f"Unexpected color_name {self.color_name!r} for player {self.username.value}; "
+                "falling back to white oil count file."
+            )
+        return "white"
+
     def write_oil_count_to_file(self, oil_count):
         try:
             folder_name = "oil counts"
             os.makedirs(folder_name, exist_ok=True)
-            filename = os.path.join(folder_name, f"{self.color_name}_oil_count.txt")
+            normalized_color_name = self._normalize_color_name_for_oil_file()
+            filename = os.path.join(folder_name, f"{normalized_color_name}_oil_count.txt")
             with open(filename, 'w') as file:
                 file.write(str(oil_count))
             logging.debug(f"Wrote oil count {oil_count} to file {filename}")
