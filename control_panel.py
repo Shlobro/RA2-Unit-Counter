@@ -582,53 +582,6 @@ class ControlPanel(QMainWindow):
         hud_mode_group.setLayout(hud_mode_layout)
         layout.addWidget(hud_mode_group)
 
-        # UI Element Visibility Settings
-        visibility_group = QGroupBox("UI Element Visibility")
-        visibility_layout = QFormLayout()
-        
-        self.show_names_checkbox = QCheckBox("Show Player Names")
-        self.show_names_checkbox.setChecked(self.state.hud_positions.get('show_name', True))
-        self.show_names_checkbox.stateChanged.connect(self.toggle_name)
-        visibility_layout.addRow(self.show_names_checkbox)
-        
-        self.show_flags_checkbox = QCheckBox("Show Player Flags")
-        self.show_flags_checkbox.setChecked(self.state.hud_positions.get('show_flag', True))
-        self.show_flags_checkbox.stateChanged.connect(self.toggle_flag)
-        visibility_layout.addRow(self.show_flags_checkbox)
-
-        self.save_flags_as_images_checkbox = QCheckBox("Save Player Flags As Image Files")
-        self.save_flags_as_images_checkbox.setChecked(self.state.hud_positions.get('save_flags_as_images', False))
-        self.save_flags_as_images_checkbox.stateChanged.connect(self.toggle_save_flags_as_images)
-        visibility_layout.addRow(self.save_flags_as_images_checkbox)
-
-        self.show_money_checkbox = QCheckBox("Show Money")
-        self.show_money_checkbox.setChecked(self.state.hud_positions.get('show_money', True))
-        self.show_money_checkbox.stateChanged.connect(self.toggle_money)
-        visibility_layout.addRow(self.show_money_checkbox)
-        
-        self.show_power_checkbox = QCheckBox("Show Power")
-        self.show_power_checkbox.setChecked(self.state.hud_positions.get('show_power', True))
-        self.show_power_checkbox.stateChanged.connect(self.toggle_power)
-        visibility_layout.addRow(self.show_power_checkbox)
-        
-        self.show_money_spent_checkbox = QCheckBox("Show Money Spent")
-        self.show_money_spent_checkbox.setChecked(self.state.hud_positions.get('show_money_spent', True))
-        self.show_money_spent_checkbox.stateChanged.connect(self.toggle_money_spent)
-        visibility_layout.addRow(self.show_money_spent_checkbox)
-
-        self.show_superweapons_checkbox = QCheckBox("Show Superweapons")
-        self.show_superweapons_checkbox.setChecked(self.state.hud_positions.get('show_superweapons', True))
-        self.show_superweapons_checkbox.stateChanged.connect(self.toggle_superweapons)
-        visibility_layout.addRow(self.show_superweapons_checkbox)
-
-        self.post_game_scoreboard_checkbox = QCheckBox("Show Post-Game Scoreboard")
-        self.post_game_scoreboard_checkbox.setChecked(self.state.hud_positions.get('show_post_game_scoreboard', True))
-        self.post_game_scoreboard_checkbox.stateChanged.connect(self.toggle_post_game_scoreboard)
-        visibility_layout.addRow(self.post_game_scoreboard_checkbox)
-        
-        visibility_group.setLayout(visibility_layout)
-        layout.addWidget(visibility_group)
-
         # Data Update Settings
         data_update_group = QGroupBox("Data Update Settings")
         data_update_layout = QFormLayout()

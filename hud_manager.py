@@ -180,8 +180,8 @@ def save_hud_positions(state):
                 if value is not None:
                     state.hud_positions['show_money_spent'] = value
 
-            if hasattr(cp, 'show_superweapons_checkbox'):
-                value = safe_widget_value(cp.show_superweapons_checkbox, 'isChecked', state.hud_positions.get('show_superweapons', True))
+            if hasattr(cp, 'show_superweapon_panel_checkbox'):
+                value = safe_widget_value(cp.show_superweapon_panel_checkbox, 'isChecked', state.hud_positions.get('show_superweapons', True))
                 if value is not None:
                     state.hud_positions['show_superweapons'] = value
 
@@ -232,8 +232,8 @@ def save_hud_positions(state):
                 if value is not None:
                     state.hud_positions['show_factory_window'] = value
 
-            if hasattr(cp, 'post_game_scoreboard_checkbox'):
-                value = safe_widget_value(cp.post_game_scoreboard_checkbox, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))
+            if hasattr(cp, 'post_game_scoreboard_action'):
+                value = safe_widget_value(cp.post_game_scoreboard_action, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))
                 if value is not None:
                     state.hud_positions['show_post_game_scoreboard'] = value
 
