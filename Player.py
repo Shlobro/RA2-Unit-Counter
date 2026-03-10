@@ -18,11 +18,11 @@ from constants import (
     BUILT_INFANTRY_TOTAL_OFFSETS, BUILT_UNIT_TOTAL_OFFSETS, BUILT_BUILDING_TOTAL_OFFSETS,
     BUILT_AIRCRAFT_TOTAL_OFFSETS, LOST_INFANTRY_TOTAL_OFFSETS, LOST_UNIT_TOTAL_OFFSETS,
     LOST_BUILDING_TOTAL_OFFSETS, LOST_AIRCRAFT_TOTAL_OFFSETS, SUPERS_VECTOR_OFFSET,
-    SUPERS_DVC_ITEMS_PTR_OFFSET, SUPERS_DVC_COUNT_OFFSET, SUPERCLASS_READINESS_OFFSET,
+    SUPERS_DVC_ITEMS_PTR_OFFSET, SUPERS_DVC_COUNT_OFFSET,
     SUPERCLASS_NOT_OWNED, SUPERCLASS_READY_VALUE, SUPERWEAPON_ORDER,
     SUPERS_DVC_LEGACY_ITEMS_PTR_OFFSET, SUPERS_DVC_LEGACY_COUNT_OFFSET,
-    SUPERCLASS_READINESS_CANDIDATE_OFFSETS, HOUSE_SUPERS_ITEMS_PTR_OFFSET,
-    HOUSE_SUPERS_COUNT_OFFSET
+    HOUSE_SUPERS_ITEMS_PTR_OFFSET, HOUSE_SUPERS_COUNT_OFFSET,
+    SUPERCLASS_OWNERSHIP_OFFSET, SUPERCLASS_READY_OFFSET, SUPERCLASS_CHARGE_OFFSET
 )
 from factory import QueuedFactory, BuildingFactory
 from memory_utils import read_process_memory
@@ -497,32 +497,36 @@ class Player:
                 if super_ptr in (0, INVALIDCLASS):
                     continue
 
-                raw_value = None
-                for readiness_offset in SUPERCLASS_READINESS_CANDIDATE_OFFSETS:
-                    readiness_data = read_process_memory(
-                        self.process_handle,
-                        super_ptr + readiness_offset,
-                        4
-                    )
-                    if not readiness_data or len(readiness_data) < 4:
-                        continue
-
-                    candidate = int.from_bytes(readiness_data, byteorder='little')
-                    if candidate == SUPERCLASS_NOT_OWNED or 0 <= candidate <= SUPERCLASS_READY_VALUE:
-                        raw_value = candidate
-                        break
-
-                if raw_value is None:
+                status_size = (SUPERCLASS_CHARGE_OFFSET - SUPERCLASS_OWNERSHIP_OFFSET) + 4
+                status_data = read_process_memory(
+                    self.process_handle,
+                    super_ptr + SUPERCLASS_OWNERSHIP_OFFSET,
+                    status_size
+                )
+                if not status_data or len(status_data) < status_size:
                     continue
 
-                if raw_value == SUPERCLASS_NOT_OWNED:
+                owned_value = status_data[0]
+                if owned_value == 0:
                     continue
 
-                clamped_value = max(0, min(raw_value, SUPERCLASS_READY_VALUE))
+                ready_index = SUPERCLASS_READY_OFFSET - SUPERCLASS_OWNERSHIP_OFFSET
+                is_ready = status_data[ready_index] != 0
+                charge_index = SUPERCLASS_CHARGE_OFFSET - SUPERCLASS_OWNERSHIP_OFFSET
+                raw_value = int.from_bytes(
+                    status_data[charge_index:charge_index + 4],
+                    byteorder='little'
+                )
+                if is_ready:
+                    clamped_value = SUPERCLASS_READY_VALUE
+                elif raw_value == SUPERCLASS_NOT_OWNED:
+                    clamped_value = 0
+                else:
+                    clamped_value = max(0, min(raw_value, SUPERCLASS_READY_VALUE))
                 percent = round((clamped_value / SUPERCLASS_READY_VALUE) * 100)
                 results[name] = {
                     "owned": True,
-                    "raw_value": raw_value,
+                    "raw_value": clamped_value,
                     "percent": percent,
                 }
 
