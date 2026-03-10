@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
 
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
-from hud_position_utils import ensure_player_bucket, get_player_position
+from hud_position_utils import get_player_position, set_player_position
 
 class FactoryWindow(QMainWindow):
     def __init__(self, player, hud_pos, spacing=0):
@@ -158,8 +158,7 @@ class FactoryWindow(QMainWindow):
         self.mouseMoveEvent = mouse_move_event
 
     def update_hud_position(self, x, y):
-        player_bucket = ensure_player_bucket(self.hud_pos, self._get_player_color_key())
-        player_bucket['factory'] = {"x": int(x), "y": int(y)}
+        set_player_position(self.hud_pos, self._get_player_color_key(), 'factory', x, y)
 
     # --------------------------------------------------------------------
     # Updating

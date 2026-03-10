@@ -3,7 +3,6 @@ from PySide6.QtWidgets import (
     QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QAction
 import json
 import logging
 import os
@@ -21,8 +20,6 @@ class ControlPanel(QMainWindow):
         self.setWindowTitle("HUD Control Panel")
         self.setGeometry(100, 100, 600, 600)  # Wider to accommodate tabs
 
-        self.create_menu_bar()
-
         # Create a tab widget
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
@@ -38,14 +35,6 @@ class ControlPanel(QMainWindow):
 
         # Store reference in state so other modules can access control panel settings.
         self.state.control_panel = self
-
-    def create_menu_bar(self):
-        view_menu = self.menuBar().addMenu("View")
-        self.post_game_scoreboard_action = QAction("Show Post-Game Scoreboard", self)
-        self.post_game_scoreboard_action.setCheckable(True)
-        self.post_game_scoreboard_action.setChecked(self.state.hud_positions.get('show_post_game_scoreboard', True))
-        self.post_game_scoreboard_action.toggled.connect(self.toggle_post_game_scoreboard_from_menu)
-        view_menu.addAction(self.post_game_scoreboard_action)
 
     def create_unit_settings_tab(self):
         tab = QWidget()
@@ -582,6 +571,16 @@ class ControlPanel(QMainWindow):
         hud_mode_group.setLayout(hud_mode_layout)
         layout.addWidget(hud_mode_group)
 
+        # Post-game scoreboard visibility
+        scoreboard_group = QGroupBox("Scoreboard Settings")
+        scoreboard_layout = QFormLayout()
+        self.post_game_scoreboard_checkbox = QCheckBox("Show Post-Game Scoreboard")
+        self.post_game_scoreboard_checkbox.setChecked(self.state.hud_positions.get('show_post_game_scoreboard', True))
+        self.post_game_scoreboard_checkbox.stateChanged.connect(self.toggle_post_game_scoreboard)
+        scoreboard_layout.addRow(self.post_game_scoreboard_checkbox)
+        scoreboard_group.setLayout(scoreboard_layout)
+        layout.addWidget(scoreboard_group)
+
         # Data Update Settings
         data_update_group = QGroupBox("Data Update Settings")
         data_update_layout = QFormLayout()
@@ -790,9 +789,6 @@ class ControlPanel(QMainWindow):
         enabled = (state_val == 2)
         self.set_post_game_scoreboard_enabled(enabled)
 
-    def toggle_post_game_scoreboard_from_menu(self, enabled):
-        self.set_post_game_scoreboard_enabled(enabled)
-
     def set_post_game_scoreboard_enabled(self, enabled):
         self.state.hud_positions['show_post_game_scoreboard'] = enabled
         logging.info(f"Toggled show_post_game_scoreboard to: {enabled}")
@@ -801,11 +797,6 @@ class ControlPanel(QMainWindow):
             self.post_game_scoreboard_checkbox.blockSignals(True)
             self.post_game_scoreboard_checkbox.setChecked(enabled)
             self.post_game_scoreboard_checkbox.blockSignals(False)
-
-        if hasattr(self, 'post_game_scoreboard_action'):
-            self.post_game_scoreboard_action.blockSignals(True)
-            self.post_game_scoreboard_action.setChecked(enabled)
-            self.post_game_scoreboard_action.blockSignals(False)
 
         if not enabled and getattr(self.state, 'scoreboard_window', None) is not None:
             self.state.scoreboard_window.close()

@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 
 # Import the new widget classes
 from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget, MoneySpentWidget
-from hud_position_utils import get_player_position
+from hud_position_utils import get_player_position, set_player_position
 from superweapon_panel import SuperweaponTimerPanel
 
 faction_to_flag = {
@@ -217,6 +217,8 @@ class ResourceWindow(QMainWindow):
         window.mouseMoveEvent = mouse_move_event
 
         window.show()  # Show the window immediately
+        window.adjustSize()
+        window.move(pos['x'], pos['y'])
         return window
 
     def update_hud_position_for_type(self, hud_type, x, y):
@@ -225,9 +227,7 @@ class ResourceWindow(QMainWindow):
         else:
             player_color_str = self.player.color_name
 
-        if player_color_str not in self.hud_positions:
-            self.hud_positions[player_color_str] = {}
-        self.hud_positions[player_color_str][hud_type] = {"x": x, "y": y}
+        set_player_position(self.hud_positions, player_color_str, hud_type, x, y)
 
     def get_default_position(self, player_color, hud_type, player_count, hud_positions):
         if not isinstance(player_color, str):

@@ -297,3 +297,586 @@
 2026-03-07 02:34:37,675 - INFO - Saving selected units and HUD positions
 2026-03-07 02:34:37,675 - INFO - Saved selected units.
 2026-03-07 02:34:37,676 - INFO - HUD positions saved successfully.
+2026-03-11 00:03:23,549 - INFO - Logging setup complete
+2026-03-11 00:03:23,595 - INFO - Starting Resource HUD Application
+2026-03-11 00:03:23,621 - INFO - Loading HUD positions
+2026-03-11 00:03:23,621 - INFO - HUD positions loaded successfully.
+2026-03-11 00:03:23,621 - INFO - Creating control panel
+2026-03-11 00:03:23,706 - INFO - Waiting for a valid game path to be selected
+2026-03-11 00:03:23,706 - INFO - No game path set, user needs to select one in the control panel
+2026-03-11 00:03:27,720 - INFO - Starting data update thread
+2026-03-11 00:03:27,720 - INFO - Entering application event loop
+2026-03-11 00:03:27,720 - INFO - Waiting for the game to start and players to load...
+2026-03-11 00:03:27,721 - INFO - Waiting for the game to start...
+2026-03-11 00:04:30,984 - INFO - Saved selected units.
+2026-03-11 00:04:30,985 - INFO - HUD positions saved successfully.
+2026-03-11 00:04:30,985 - INFO - Settings saved on control panel close
+2026-03-11 00:04:30,985 - INFO - All counter windows closed
+2026-03-11 00:04:30,993 - INFO - Exiting application, stopping data update thread
+2026-03-11 00:04:31,451 - INFO - Stop event set. Exiting thread.
+2026-03-11 00:04:31,452 - INFO - Data update thread has exited.
+2026-03-11 00:04:31,452 - INFO - Saving selected units and HUD positions
+2026-03-11 00:04:31,452 - INFO - Saved selected units.
+2026-03-11 00:04:31,453 - INFO - HUD positions saved successfully.
+2026-03-11 00:06:59,788 - INFO - Logging setup complete
+2026-03-11 00:06:59,835 - INFO - Starting Resource HUD Application
+2026-03-11 00:06:59,859 - INFO - Loading HUD positions
+2026-03-11 00:06:59,859 - INFO - HUD positions loaded successfully.
+2026-03-11 00:06:59,859 - INFO - Creating control panel
+2026-03-11 00:06:59,932 - INFO - Waiting for a valid game path to be selected
+2026-03-11 00:06:59,932 - INFO - No game path set, user needs to select one in the control panel
+2026-03-11 00:07:02,516 - INFO - Starting data update thread
+2026-03-11 00:07:02,516 - INFO - Entering application event loop
+2026-03-11 00:07:02,516 - INFO - Waiting for the game to start and players to load...
+2026-03-11 00:07:02,517 - INFO - Waiting for the game to start...
+2026-03-11 00:07:33,091 - INFO - Game detected
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:33,092 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:34,094 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:07:34,095 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:07:34,095 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:07:34,095 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:07:34,095 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:07:34,095 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:07:35,095 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:07:35,095 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:07:35,095 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:07:35,095 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:07:35,095 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:07:35,096 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:07:36,098 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:07:36,098 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:07:36,098 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:07:36,098 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:07:36,098 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:07:36,098 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:07:37,112 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-11 00:07:37,112 - INFO - Player 0 color: magenta
+2026-03-11 00:07:37,112 - INFO - Player 0 country name: Russians
+2026-03-11 00:07:37,113 - INFO - Player 0 faction: Soviet
+2026-03-11 00:07:37,113 - INFO - Player 0 name: Easy Enemy
+2026-03-11 00:07:37,113 - INFO - Player 1 color: pistachio
+2026-03-11 00:07:37,113 - INFO - Player 1 country name: Arabs
+2026-03-11 00:07:37,113 - INFO - Player 1 faction: Soviet
+2026-03-11 00:07:37,113 - INFO - Player 1 name: Snark
+2026-03-11 00:07:37,114 - INFO - Number of valid players: 2
+2026-03-11 00:07:37,114 - INFO - Game started handler called
+2026-03-11 00:07:37,114 - INFO - Creating ResourceWindow for Easy Enemy with color magenta
+2026-03-11 00:07:37,203 - INFO - Creating FactoryWindow for Easy Enemy with color magenta
+2026-03-11 00:07:37,208 - INFO - Creating ResourceWindow for Snark with color pistachio
+2026-03-11 00:07:37,245 - INFO - Creating FactoryWindow for Snark with color pistachio
+2026-03-11 00:07:37,261 - INFO - Unit windows created successfully.
+2026-03-11 00:07:59,229 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,229 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,229 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,229 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,229 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read memory chunk for unit.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read memory chunk for building.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,230 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,230 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,231 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,231 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - WARNING - Failed to read score struct chunk for player Easy Enemy
+2026-03-11 00:07:59,231 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:07:59,231 - ERROR - Failed to read factory pointer for Aircraft at offset 0x53ac
+2026-03-11 00:07:59,231 - ERROR - Caught ProcessExitedException – game ended unexpectedly. Breaking out.
+2026-03-11 00:07:59,231 - INFO - Emitted game_stopped signal.
+2026-03-11 00:07:59,235 - INFO - Game stopped handler called
+2026-03-11 00:07:59,236 - INFO - HUD positions saved successfully.
+2026-03-11 00:08:00,237 - INFO - Waiting for the game to start and players to load...
+2026-03-11 00:08:00,237 - INFO - Waiting for the game to start...
+2026-03-11 00:08:45,609 - INFO - Game detected
+2026-03-11 00:08:45,610 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:08:45,610 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:08:45,610 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:08:45,610 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:08:45,610 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:08:45,610 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:08:46,614 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:08:46,614 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:08:46,614 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:08:46,614 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:08:46,614 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:08:46,614 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:08:47,617 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:08:47,618 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:08:47,618 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:08:47,618 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:08:47,618 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:08:47,618 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:08:48,620 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:08:48,621 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:08:48,621 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:08:48,621 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:08:48,621 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:08:48,621 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:08:49,625 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-11 00:08:49,625 - INFO - Player 0 color: red
+2026-03-11 00:08:49,625 - INFO - Player 0 country name: Africans
+2026-03-11 00:08:49,625 - INFO - Player 0 faction: Soviet
+2026-03-11 00:08:49,625 - INFO - Player 0 name: Snark
+2026-03-11 00:08:49,625 - INFO - Player 1 color: yellow
+2026-03-11 00:08:49,626 - INFO - Player 1 country name: Arabs
+2026-03-11 00:08:49,626 - INFO - Player 1 faction: Soviet
+2026-03-11 00:08:49,626 - INFO - Player 1 name: Doof88
+2026-03-11 00:08:49,626 - INFO - Number of valid players: 2
+2026-03-11 00:08:49,626 - INFO - Game started handler called
+2026-03-11 00:08:49,629 - INFO - Creating ResourceWindow for Snark with color red
+2026-03-11 00:08:49,689 - INFO - Creating FactoryWindow for Snark with color red
+2026-03-11 00:08:49,694 - INFO - Creating ResourceWindow for Doof88 with color yellow
+2026-03-11 00:08:49,739 - INFO - Creating FactoryWindow for Doof88 with color yellow
+2026-03-11 00:08:49,758 - INFO - Unit windows created successfully.
+2026-03-11 00:09:00,532 - INFO - Game process no longer running; stopping updates.
+2026-03-11 00:09:00,532 - INFO - Emitted game_stopped signal.
+2026-03-11 00:09:00,554 - INFO - Game stopped handler called
+2026-03-11 00:09:00,555 - INFO - HUD positions saved successfully.
+2026-03-11 00:09:01,538 - INFO - Waiting for the game to start and players to load...
+2026-03-11 00:09:01,538 - INFO - Waiting for the game to start...
+2026-03-11 00:12:53,125 - INFO - Game detected
+2026-03-11 00:12:53,125 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,125 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-11 00:12:53,125 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-11 00:12:53,126 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-11 00:12:53,126 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-11 00:12:53,126 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-11 00:12:53,126 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-11 00:12:53,126 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-11 00:12:53,126 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:12:53,126 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-11 00:12:54,136 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:12:54,137 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:12:54,137 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:12:54,137 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:12:54,137 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:12:54,137 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:12:55,138 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:12:55,138 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:12:55,138 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:12:55,138 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:12:55,139 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:12:55,139 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:12:56,142 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:12:56,142 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:12:56,143 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:12:56,143 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:12:56,143 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:12:56,143 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:12:57,157 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-11 00:12:57,157 - INFO - Player 0 color: yellow
+2026-03-11 00:12:57,158 - INFO - Player 0 country name: Americans
+2026-03-11 00:12:57,158 - INFO - Player 0 faction: Allied
+2026-03-11 00:12:57,158 - INFO - Player 0 name: Doof88
+2026-03-11 00:12:57,158 - INFO - Player 1 color: red
+2026-03-11 00:12:57,158 - INFO - Player 1 country name: Arabs
+2026-03-11 00:12:57,158 - INFO - Player 1 faction: Soviet
+2026-03-11 00:12:57,158 - INFO - Player 1 name: Snark
+2026-03-11 00:12:57,159 - INFO - Number of valid players: 2
+2026-03-11 00:12:57,159 - INFO - Game started handler called
+2026-03-11 00:12:57,166 - INFO - Creating ResourceWindow for Doof88 with color yellow
+2026-03-11 00:12:57,218 - INFO - Creating FactoryWindow for Doof88 with color yellow
+2026-03-11 00:12:57,222 - INFO - Creating ResourceWindow for Snark with color red
+2026-03-11 00:12:57,258 - INFO - Creating FactoryWindow for Snark with color red
+2026-03-11 00:12:57,276 - INFO - Unit windows created successfully.
+2026-03-11 00:12:58,261 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:12:58,262 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:12:59,193 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:12:59,196 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:04,612 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:04,613 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:10,571 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:10,573 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:10,999 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:11,002 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:11,102 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:11,103 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:11,204 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:11,206 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:11,511 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:13:11,514 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:13:18,293 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,296 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,395 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,397 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,498 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,500 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,605 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:18,608 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:31,813 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:31,815 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:31,915 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:31,917 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,017 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,019 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,119 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,120 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,221 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,223 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,323 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,325 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,425 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,427 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,527 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,529 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,629 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,631 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,732 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,733 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,834 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,836 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,936 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:32,938 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,039 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,041 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,141 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,142 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,243 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,245 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,345 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,347 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,448 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,450 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,550 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,551 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,652 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,654 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,754 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,755 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,856 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,859 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,959 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:33,960 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,061 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,063 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,163 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,165 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,265 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,267 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,367 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,369 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,469 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,470 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,571 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,573 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,674 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,676 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,776 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,777 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,879 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,880 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,981 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:34,982 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,083 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,084 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,185 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,186 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,287 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,288 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,388 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,390 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,491 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,493 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,593 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,595 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,694 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,696 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,796 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,798 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,899 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:35,900 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,001 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,002 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,103 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,104 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,205 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,207 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,308 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:36,309 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:38,848 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:38,850 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:38,963 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:38,964 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:39,065 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:39,067 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:39,167 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:39,169 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:41,209 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:13:41,211 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:13:41,318 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,320 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,421 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,422 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,523 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,525 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,625 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,626 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,727 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,729 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,829 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,831 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,932 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:41,933 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,033 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,035 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,136 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,137 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,237 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,239 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,340 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,342 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,442 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,444 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,544 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,546 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,646 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,648 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,748 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,750 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,850 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,852 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,953 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:42,954 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,055 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,057 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,157 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,159 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,260 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,262 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,362 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,364 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,464 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,466 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,567 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,568 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,669 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,670 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,771 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,772 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,873 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,874 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,975 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:43,977 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,078 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,079 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,180 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,182 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,282 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,284 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,384 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,386 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,487 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,488 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,588 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,590 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,691 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,692 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,793 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,794 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,895 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,896 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,997 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:44,999 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,099 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,100 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,201 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,202 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,303 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,305 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,405 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,407 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,508 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,510 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,611 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,613 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,713 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:45,715 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:13:54,758 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:54,879 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:54,916 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:55,017 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:55,021 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:55,129 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:55,132 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:55,239 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:13:55,241 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:07,570 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:07,571 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:07,672 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:07,673 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:18,562 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:18,564 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:18,674 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:18,677 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,026 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,027 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,128 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,130 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,231 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,232 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,332 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:28,334 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:31,597 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:31,599 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:31,700 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:31,702 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:31,802 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:31,804 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:56,585 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:14:56,586 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:56,588 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:14:56,588 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:56,696 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:14:56,697 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:56,698 - WARNING - Queued units pointer is zero for Infantry.
+2026-03-11 00:14:56,699 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:56,800 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:56,801 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:14:58,230 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,232 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,332 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,334 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,434 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,436 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,536 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,538 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,638 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,641 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,741 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:14:58,745 - INFO - Defenses is idle (0% progress).
+2026-03-11 00:15:02,726 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:15:02,729 - INFO - Infantry is idle (0% progress, 0 queued).
+2026-03-11 00:15:07,642 - INFO - Vehicles is idle (0% progress, 0 queued).
+2026-03-11 00:15:07,644 - INFO - Vehicles is idle (0% progress, 0 queued).
+2026-03-11 00:15:07,744 - INFO - Vehicles is idle (0% progress, 0 queued).
+2026-03-11 00:15:07,747 - INFO - Vehicles is idle (0% progress, 0 queued).
+2026-03-11 00:15:24,386 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:24,388 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:34,098 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:34,100 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:34,200 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:34,202 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:37,058 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:37,061 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:37,161 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:37,164 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,008 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,011 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,111 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,113 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,213 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,215 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,326 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:15:56,328 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:16:59,671 - INFO - Game process no longer running; stopping updates.
+2026-03-11 00:16:59,671 - INFO - Emitted game_stopped signal.
+2026-03-11 00:16:59,671 - INFO - Game stopped handler called
+2026-03-11 00:16:59,672 - INFO - HUD positions saved successfully.
+2026-03-11 00:17:00,674 - INFO - Waiting for the game to start and players to load...
+2026-03-11 00:17:00,674 - INFO - Waiting for the game to start...
+2026-03-11 00:24:55,993 - INFO - Game detected
+2026-03-11 00:24:55,993 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,993 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-11 00:24:55,993 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,993 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-11 00:24:55,994 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,994 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-11 00:24:55,994 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,994 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-11 00:24:55,994 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,994 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-11 00:24:55,994 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,994 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-11 00:24:55,994 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,994 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-11 00:24:55,994 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-11 00:24:55,994 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-11 00:24:56,999 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:24:56,999 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:24:56,999 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:24:56,999 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:24:56,999 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:24:56,999 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:24:58,014 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:24:58,015 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:24:58,015 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:24:58,015 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:24:58,015 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:24:58,015 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:24:59,022 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:24:59,022 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:24:59,022 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:24:59,022 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:24:59,022 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:24:59,022 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:25:00,033 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-11 00:25:00,033 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-11 00:25:00,033 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-11 00:25:00,033 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-11 00:25:00,033 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-11 00:25:00,033 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-11 00:25:01,040 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-11 00:25:01,041 - INFO - Player 0 color: red
+2026-03-11 00:25:01,041 - INFO - Player 0 country name: Arabs
+2026-03-11 00:25:01,041 - INFO - Player 0 faction: Soviet
+2026-03-11 00:25:01,041 - INFO - Player 0 name: Snark
+2026-03-11 00:25:01,041 - INFO - Player 1 color: yellow
+2026-03-11 00:25:01,041 - INFO - Player 1 country name: Americans
+2026-03-11 00:25:01,041 - INFO - Player 1 faction: Allied
+2026-03-11 00:25:01,041 - INFO - Player 1 name: Doof88
+2026-03-11 00:25:01,042 - INFO - Number of valid players: 2
+2026-03-11 00:25:01,042 - INFO - Game started handler called
+2026-03-11 00:25:01,046 - INFO - Creating ResourceWindow for Snark with color red
+2026-03-11 00:25:01,104 - INFO - Creating FactoryWindow for Snark with color red
+2026-03-11 00:25:01,110 - INFO - Creating ResourceWindow for Doof88 with color yellow
+2026-03-11 00:25:01,152 - INFO - Creating FactoryWindow for Doof88 with color yellow
+2026-03-11 00:25:01,171 - INFO - Unit windows created successfully.
+2026-03-11 00:25:03,818 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:25:03,820 - INFO - Buildings is idle (0% progress).
+2026-03-11 00:25:19,399 - INFO - Game process no longer running; stopping updates.
+2026-03-11 00:25:19,400 - INFO - Emitted game_stopped signal.
+2026-03-11 00:25:19,400 - INFO - Game stopped handler called
+2026-03-11 00:25:19,401 - INFO - HUD positions saved successfully.
+2026-03-11 00:25:20,408 - INFO - Waiting for the game to start and players to load...
+2026-03-11 00:25:20,408 - INFO - Waiting for the game to start...
+2026-03-11 00:26:14,833 - INFO - Saved selected units.
+2026-03-11 00:26:14,833 - INFO - HUD positions saved successfully.
+2026-03-11 00:26:14,833 - INFO - Settings saved on control panel close
+2026-03-11 00:26:14,833 - INFO - All counter windows closed
+2026-03-11 00:26:14,838 - INFO - Exiting application, stopping data update thread
+2026-03-11 00:26:15,817 - INFO - Stop event set. Exiting thread.
+2026-03-11 00:26:15,818 - INFO - Data update thread has exited.
+2026-03-11 00:26:15,818 - INFO - Saving selected units and HUD positions
+2026-03-11 00:26:15,818 - INFO - Saved selected units.
+2026-03-11 00:26:15,819 - INFO - HUD positions saved successfully.

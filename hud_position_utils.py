@@ -1,4 +1,10 @@
 DEFAULT_HUD_POSITION = {"x": 100, "y": 100}
+HUD_POSITION_COMPAT_KEYS = {
+    "combined": ["unit_counter_combined"],
+    "factory": ["factories"],
+    "superweapons": ["superweapon"],
+    "unit_counter_combined": ["combined"],
+}
 
 
 def _coerce_coordinate(value, fallback):
@@ -32,10 +38,21 @@ def ensure_player_bucket(hud_positions, player_color):
     return bucket
 
 
+def get_position_compat_keys(hud_type):
+    return list(HUD_POSITION_COMPAT_KEYS.get(hud_type, ()))
+
+
+def set_player_position(hud_positions, player_color, hud_type, x, y):
+    bucket = ensure_player_bucket(hud_positions, player_color)
+    bucket[hud_type] = normalize_position({"x": x, "y": y})
+    return bucket[hud_type]
+
+
 def get_player_position(hud_positions, player_color, hud_type, legacy_root_keys=None, default=None):
     bucket = ensure_player_bucket(hud_positions, player_color)
     fallback = dict(default or DEFAULT_HUD_POSITION)
-    legacy_root_keys = legacy_root_keys or []
+    compat_keys = get_position_compat_keys(hud_type)
+    legacy_root_keys = list(dict.fromkeys((legacy_root_keys or []) + compat_keys))
 
     for key in [hud_type]:
         if key in bucket:
@@ -60,7 +77,7 @@ def normalize_hud_positions(hud_positions):
     if not isinstance(hud_positions, dict):
         return {}
 
-    for key in ("factory", "superweapons", "superweapon"):
+    for key in ("factory", "factories", "superweapons", "superweapon", "combined", "unit_counter_combined"):
         if key in hud_positions:
             hud_positions[key] = normalize_position(hud_positions[key])
 
@@ -68,7 +85,21 @@ def normalize_hud_positions(hud_positions):
         if not isinstance(value, dict):
             continue
 
-        for key in ("factory", "superweapons", "superweapon", "combined", "unit_counter_combined"):
+        for key in (
+            "name",
+            "flag",
+            "money",
+            "power",
+            "money_spent",
+            "factory",
+            "factories",
+            "superweapons",
+            "superweapon",
+            "combined",
+            "unit_counter_combined",
+            "unit_counter_images",
+            "unit_counter_numbers",
+        ):
             if key in value:
                 value[key] = normalize_position(value[key])
 

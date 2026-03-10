@@ -51,10 +51,18 @@
             "y": 100
         },
         "superweapons": {
-            "x": 525,
-            "y": 378
+            "x": 465,
+            "y": 194
         },
         "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 475,
+            "y": 77
+        },
+        "combined": {
             "x": 100,
             "y": 100
         }
@@ -63,7 +71,7 @@
         "x": 475,
         "y": 77
     },
-    "game_path": "",
+    "game_path": "D:/ra2/Red Alert 2/Red Alert 2",
     "brown": {
         "name": {
             "x": 107,
@@ -139,6 +147,121 @@
         "factory": {
             "x": 475,
             "y": 77
+        }
+    },
+    "save_flags_as_images": false,
+    "magenta": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 475,
+            "y": 77
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "combined": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "pistachio": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 475,
+            "y": 77
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "combined": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "red": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 62,
+            "y": 238
+        },
+        "factory": {
+            "x": 708,
+            "y": 79
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "combined": {
+            "x": 100,
+            "y": 100
         }
     }
 }

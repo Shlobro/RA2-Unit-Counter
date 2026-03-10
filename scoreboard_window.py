@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from constants import resolve_factory_image_path
+from constants import _existing_asset_paths, resolve_factory_image_path
 
 
 COUNTRY_TO_FLAG = {
@@ -78,21 +78,27 @@ def _load_pixmap(path, width, height):
 
 
 def _scoreboard_background_path():
-    candidates = [
-        os.path.join("Other", "scoreboardbackground.png"),
-        os.path.join("Other", "post_game_background.png"),
-    ]
-    for candidate in candidates:
-        if os.path.exists(candidate):
+    for parts in (
+        ("Other", "scoreboardbackground.png"),
+        ("Other", "post_game_background.png"),
+    ):
+        for candidate in _existing_asset_paths(*parts):
             return candidate.replace("\\", "/")
     return None
 
 
+def _normalize_country_name(country_name):
+    return (country_name or "").split("\x00", 1)[0].strip()
+
+
 def _country_flag_path(country_name):
-    flag_name = COUNTRY_TO_FLAG.get(country_name)
+    normalized_country_name = _normalize_country_name(country_name)
+    flag_name = COUNTRY_TO_FLAG.get(normalized_country_name)
     if not flag_name:
         return None
-    return os.path.join("Flags", "PNG", flag_name)
+    for candidate in _existing_asset_paths("Flags", "PNG", flag_name):
+        return candidate
+    return None
 
 
 def _sort_units(unit_counts):
@@ -123,10 +129,11 @@ def build_post_game_snapshot(players):
         elif player.is_loser:
             result = "DEFEATED"
 
+        country_name = _normalize_country_name(player.country_name.value.decode("utf-8", errors="ignore"))
         snapshot_players.append({
             "username": player.username.value or f"Player {player.index}",
             "faction": player.faction,
-            "country": player.country_name.value.decode("utf-8", errors="ignore").strip("\x00"),
+            "country": country_name,
             "color_name": player.color_name if isinstance(player.color_name, str) else player.color_name.name(),
             "accent_color": _color_to_hex(player.color),
             "result": result,
@@ -164,8 +171,8 @@ class StatTable(QTableWidget):
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.setAlternatingRowColors(True)
         self.setShowGrid(False)
-        self.setIconSize(QSize(36, 28))
-        self.setMinimumHeight(160)
+        self.setIconSize(QSize(42, 32))
+        self.setMinimumHeight(210)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.populate(rows)
 
@@ -175,7 +182,7 @@ class StatTable(QTableWidget):
         for row_index, (unit_name, count) in enumerate(table_rows):
             unit_item = QTableWidgetItem(_display_name(unit_name))
             icon_path = resolve_factory_image_path(unit_name)
-            pixmap = _load_pixmap(icon_path, 34, 26)
+            pixmap = _load_pixmap(icon_path, 40, 30)
             if pixmap is not None:
                 unit_item.setIcon(QIcon(pixmap))
             count_item = QTableWidgetItem(f"{count:,}")
@@ -241,17 +248,17 @@ class PlayerReportCard(QFrame):
 
     def _build_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(14)
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(18)
         is_winner = self.player_snapshot["result"] == "WINNER"
 
         # Header row
         header = QHBoxLayout()
-        header.setSpacing(14)
+        header.setSpacing(18)
 
         flag_label = QLabel()
         flag_label.setObjectName("flagBadge")
-        flag_pixmap = _load_pixmap(_country_flag_path(self.player_snapshot["country"]), 64, 44)
+        flag_pixmap = _load_pixmap(_country_flag_path(self.player_snapshot["country"]), 84, 56)
         if flag_pixmap is not None:
             flag_label.setPixmap(flag_pixmap)
         else:
@@ -265,7 +272,7 @@ class PlayerReportCard(QFrame):
         header.addWidget(flag_label)
 
         title_block = QVBoxLayout()
-        title_block.setSpacing(2)
+        title_block.setSpacing(4)
         title = QLabel(self.player_snapshot["username"])
         title.setObjectName("playerName")
         title.setStyleSheet(f'color: {self.player_snapshot["accent_color"]};')
@@ -294,7 +301,7 @@ class PlayerReportCard(QFrame):
 
         # Money metrics row
         metrics = QHBoxLayout()
-        metrics.setSpacing(10)
+        metrics.setSpacing(14)
         summary_items = [
             ("Money Spent", _format_money(self.player_snapshot["money_spent"])),
             ("Cash Left", _format_money(self.player_snapshot["current_balance"])),
@@ -314,7 +321,7 @@ class PlayerReportCard(QFrame):
         tables_container = QFrame()
         tables_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         tables_layout = QHBoxLayout(tables_container)
-        tables_layout.setSpacing(10)
+        tables_layout.setSpacing(14)
         tables_layout.setContentsMargins(0, 0, 0, 0)
         tables_layout.addWidget(self._make_table_block("Built", self.player_snapshot["units_made"]))
         tables_layout.addWidget(self._make_table_block("Destroyed", self.player_snapshot["units_killed"]))
@@ -347,8 +354,8 @@ class PlayerReportCard(QFrame):
         cell = QFrame()
         cell.setObjectName("metricCell")
         layout = QVBoxLayout(cell)
-        layout.setContentsMargins(10, 8, 10, 8)
-        layout.setSpacing(4)
+        layout.setContentsMargins(14, 10, 14, 10)
+        layout.setSpacing(6)
 
         label = QLabel(label_text)
         label.setObjectName("metricLabel")
@@ -362,8 +369,8 @@ class PlayerReportCard(QFrame):
         strip = QFrame()
         strip.setObjectName("highlightStrip")
         layout = QHBoxLayout(strip)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(10)
+        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setSpacing(14)
 
         sections = [
             ("Built the most", self.player_snapshot["units_made"][:3]),
@@ -381,8 +388,8 @@ class PlayerReportCard(QFrame):
         strip = QFrame()
         strip.setObjectName("highlightStrip")
         layout = QHBoxLayout(strip)
-        layout.setContentsMargins(10, 10, 10, 10)
-        layout.setSpacing(10)
+        layout.setContentsMargins(14, 14, 14, 14)
+        layout.setSpacing(14)
 
         categories = [
             ("Infantry", self.player_snapshot["infantry_built"], self.player_snapshot["infantry_killed"]),
@@ -395,8 +402,8 @@ class PlayerReportCard(QFrame):
             block = QFrame()
             block.setObjectName("iconGroup")
             block_layout = QVBoxLayout(block)
-            block_layout.setContentsMargins(8, 8, 8, 8)
-            block_layout.setSpacing(4)
+            block_layout.setContentsMargins(10, 10, 10, 10)
+            block_layout.setSpacing(6)
 
             title_label = QLabel(title)
             title_label.setObjectName("iconGroupTitle")
@@ -413,15 +420,15 @@ class PlayerReportCard(QFrame):
         block = QFrame()
         block.setObjectName("iconGroup")
         layout = QVBoxLayout(block)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(6)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(8)
 
         title_label = QLabel(title)
         title_label.setObjectName("iconGroupTitle")
         layout.addWidget(title_label)
 
         row_layout = QHBoxLayout()
-        row_layout.setSpacing(8)
+        row_layout.setSpacing(10)
         if rows:
             for unit_name, count in rows:
                 row_layout.addWidget(self._make_unit_chip(unit_name, count))
@@ -438,12 +445,12 @@ class PlayerReportCard(QFrame):
         chip = QFrame()
         chip.setObjectName("unitChip")
         layout = QVBoxLayout(chip)
-        layout.setContentsMargins(6, 6, 6, 6)
-        layout.setSpacing(4)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(6)
 
         icon_label = QLabel()
         icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 58, 42)
+        pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 68, 50)
         if pixmap is not None:
             icon_label.setPixmap(pixmap)
         else:
@@ -468,8 +475,8 @@ class PlayerReportCard(QFrame):
         block.setObjectName("tableBlock")
         block.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout = QVBoxLayout(block)
-        layout.setContentsMargins(8, 8, 8, 8)
-        layout.setSpacing(6)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(8)
 
         title_label = QLabel(title)
         title_label.setObjectName("tableTitle")
@@ -489,8 +496,8 @@ class PostGameScoreboardWindow(QMainWindow):
         self.showMaximized()
 
     def _build_ui(self):
-        title_font = _load_ra_font(32)
-        heading_font = _load_ra_font(13)
+        title_font = _load_ra_font(38)
+        heading_font = _load_ra_font(16)
         background_path = _scoreboard_background_path()
 
         central = QWidget()
@@ -581,29 +588,30 @@ class PostGameScoreboardWindow(QMainWindow):
                 letter-spacing: 4px;
             }}
             QLabel#flagBadge {{
-                min-width: 70px;
-                min-height: 48px;
+                min-width: 92px;
+                min-height: 60px;
                 background-color: rgba(10, 8, 8, 0.5);
                 border: 1px solid rgba(201, 112, 50, 0.5);
                 border-radius: 8px;
                 color: #ffe7a8;
                 font-weight: 800;
+                font-size: 22px;
             }}
             QLabel#playerName {{
                 color: #ffe7a8;
-                font-size: 26px;
+                font-size: 32px;
                 font-weight: 700;
             }}
             QLabel#playerMeta {{
                 color: rgba(208, 170, 160, 0.8);
-                font-size: 14px;
+                font-size: 18px;
                 letter-spacing: 1px;
             }}
             QLabel#winnerBadge {{
-                padding: 10px 22px;
+                padding: 12px 24px;
                 border-radius: 12px;
                 font-weight: 900;
-                font-size: 16px;
+                font-size: 20px;
                 letter-spacing: 2px;
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
                     stop:0 rgba(120, 90, 0, 0.9),
@@ -611,14 +619,14 @@ class PostGameScoreboardWindow(QMainWindow):
                     stop:1 rgba(120, 90, 0, 0.9));
                 color: #fff8dc;
                 border: 2px solid #ffd700;
-                min-width: 120px;
+                min-width: 150px;
             }}
             QLabel#resultBadge {{
-                padding: 10px 18px;
+                padding: 12px 20px;
                 border-radius: 10px;
                 font-weight: 800;
-                font-size: 15px;
-                min-width: 100px;
+                font-size: 18px;
+                min-width: 120px;
                 letter-spacing: 1px;
             }}
             QLabel#resultBadge[result="DEFEATED"] {{
@@ -660,7 +668,7 @@ class PostGameScoreboardWindow(QMainWindow):
             }}
             QLabel#iconGroupTitle {{
                 color: rgba(255, 207, 118, 0.85);
-                font-size: 13px;
+                font-size: 16px;
                 font-weight: 700;
                 letter-spacing: 1px;
             }}
@@ -668,36 +676,36 @@ class PostGameScoreboardWindow(QMainWindow):
                 background-color: rgba(6, 5, 5, 0.65);
                 border: 1px solid rgba(201, 112, 50, 0.65);
                 border-radius: 8px;
-                min-width: 92px;
-                max-width: 116px;
+                min-width: 108px;
+                max-width: 136px;
             }}
             QLabel#unitChipName {{
                 color: #f4d6ba;
-                font-size: 12px;
+                font-size: 14px;
             }}
             QLabel#unitChipCount {{
                 color: #fff3c6;
-                font-size: 14px;
+                font-size: 18px;
                 font-weight: 800;
             }}
             QLabel#emptyChip, QLabel#fallbackIcon {{
                 color: #f0d0a6;
                 font-weight: 700;
-                font-size: 13px;
+                font-size: 15px;
             }}
             QLabel#metricLabel {{
                 color: rgba(211, 172, 139, 0.75);
-                font-size: 12px;
+                font-size: 14px;
                 letter-spacing: 1px;
             }}
             QLabel#metricValue {{
                 color: #fff3c6;
-                font-size: 18px;
+                font-size: 22px;
                 font-weight: 700;
             }}
             QLabel#tableTitle {{
                 color: rgba(255, 207, 118, 0.9);
-                font-size: 14px;
+                font-size: 18px;
                 font-weight: 700;
                 letter-spacing: 1px;
                 padding-left: 2px;
@@ -706,10 +714,10 @@ class PostGameScoreboardWindow(QMainWindow):
                 background-color: rgba(60, 20, 10, 0.85);
                 color: #ffd486;
                 border: none;
-                padding: 7px 10px;
+                padding: 9px 12px;
                 font-weight: 700;
                 letter-spacing: 1px;
-                font-size: 13px;
+                font-size: 15px;
             }}
             QTableWidget {{
                 background-color: rgba(5, 4, 4, 0.55);
@@ -718,11 +726,11 @@ class PostGameScoreboardWindow(QMainWindow):
                 border-radius: 8px;
                 gridline-color: transparent;
                 color: #f7e4d0;
-                font-size: 13px;
+                font-size: 15px;
                 padding: 2px;
             }}
             QTableWidget::item {{
-                padding: 5px 8px;
+                padding: 7px 10px;
                 background: transparent;
             }}
             QScrollArea#scoreboardScroll {{

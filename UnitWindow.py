@@ -12,6 +12,7 @@ from constants import (
 )
 from DataTracker import ResourceWindow
 from factory_panel import FactoryPanel
+from hud_position_utils import get_player_position, set_player_position
 
 
 # =============================================================================
@@ -176,27 +177,14 @@ class UnitWindowBase(QMainWindow):
             player_color_str = self.player.color_name.name()
         else:
             player_color_str = self.player.color_name
-        hud_type = self.get_hud_type()
-        if player_color_str not in self.hud_pos:
-            self.hud_pos[player_color_str] = {}
-        if hud_type not in self.hud_pos[player_color_str]:
-            default_position = {"x": 100, "y": 100}
-            self.hud_pos[player_color_str][hud_type] = default_position
-        else:
-            default_position = self.hud_pos[player_color_str][hud_type]
-        default_position['x'] = int(default_position['x'])
-        default_position['y'] = int(default_position['y'])
-        return default_position
+        return get_player_position(self.hud_pos, player_color_str, self.get_hud_type())
 
     def update_hud_position(self, x, y):
         if not isinstance(self.player.color_name, str):
             player_color_str = self.player.color_name.name()
         else:
             player_color_str = self.player.color_name
-        hud_type = self.get_hud_type()
-        if player_color_str not in self.hud_pos:
-            self.hud_pos[player_color_str] = {}
-        self.hud_pos[player_color_str][hud_type] = {"x": x, "y": y}
+        set_player_position(self.hud_pos, player_color_str, self.get_hud_type(), x, y)
 
     def get_hud_type(self):
         raise NotImplementedError("Subclasses must implement get_hud_type().")
@@ -412,9 +400,8 @@ class CombinedHudWindow(QWidget):
 
         # Restore saved position (for combined HUD).
         player_id = (player.color_name.name() if not isinstance(player.color_name, str) else player.color_name)
-        if player_id in self.hud_pos and 'combined' in self.hud_pos[player_id]:
-            pos = self.hud_pos[player_id]['combined']
-            self.move(pos['x'], pos['y'])
+        pos = get_player_position(self.hud_pos, player_id, 'combined')
+        self.move(pos['x'], pos['y'])
 
     def _init_ui(self):
         main_layout = QVBoxLayout(self)
@@ -540,9 +527,7 @@ class CombinedHudWindow(QWidget):
     def update_hud_position(self, x, y):
         player_id = (self.player.color_name.name() if not isinstance(self.player.color_name, str)
                      else self.player.color_name)
-        if player_id not in self.hud_pos:
-            self.hud_pos[player_id] = {}
-        self.hud_pos[player_id]['combined'] = {"x": x, "y": y}
+        set_player_position(self.hud_pos, player_id, 'combined', x, y)
 
     def update_unit_counters_size(self, new_size, section=None):
         """

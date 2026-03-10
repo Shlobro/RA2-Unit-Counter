@@ -8,7 +8,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMessageBox, QWidget, QVBoxLayout
 
 from app_state import check_spectator_status
-from hud_position_utils import normalize_hud_positions
+from hud_position_utils import normalize_hud_positions, set_player_position
 
 from DataTracker import ResourceWindow
 from scoreboard_window import (
@@ -232,8 +232,8 @@ def save_hud_positions(state):
                 if value is not None:
                     state.hud_positions['show_factory_window'] = value
 
-            if hasattr(cp, 'post_game_scoreboard_action'):
-                value = safe_widget_value(cp.post_game_scoreboard_action, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))
+            if hasattr(cp, 'post_game_scoreboard_checkbox'):
+                value = safe_widget_value(cp.post_game_scoreboard_checkbox, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))
                 if value is not None:
                     state.hud_positions['show_post_game_scoreboard'] = value
 
@@ -244,43 +244,40 @@ def save_hud_positions(state):
                 # path_edit widget has been deleted, skip saving game path
                 pass
 
-        # Save positions for each player.
+        def player_key(player):
+            return player.color_name.name() if not isinstance(player.color_name, str) else player.color_name
+
+        resource_window_types = [
+            'name',
+            'money',
+            'money_spent',
+            'power',
+            'flag',
+            'superweapons',
+        ]
+
+        # Capture all spawned window positions through the same per-player helper.
         for unit_window, resource_window in state.hud_windows:
+            if unit_window is not None and hasattr(unit_window, 'player') and hasattr(unit_window, 'pos'):
+                pos = unit_window.pos()
+                set_player_position(state.hud_positions, player_key(unit_window.player), 'combined', pos.x(), pos.y())
+
             if resource_window is not None and hasattr(resource_window, 'player'):
-                player_id = (resource_window.player.color_name.name()
-                             if not isinstance(resource_window.player.color_name, str)
-                             else resource_window.player.color_name)
-                state.hud_positions.setdefault(player_id, {})
-                # In combined HUD mode, unit_window is the CombinedHudWindow.
-                if unit_window is not None and hasattr(unit_window, 'pos'):
-                    pos = unit_window.pos()
-                    state.hud_positions[player_id]['combined'] = {"x": pos.x(), "y": pos.y()}
-                # In separate mode, store positions of resource windows.
-                elif hasattr(resource_window, 'windows') and resource_window.windows:
-                    name_pos = resource_window.windows[0].pos()
-                    money_pos = resource_window.windows[1].pos()
-                    money_spent = resource_window.windows[2].pos()
-                    power_pos = resource_window.windows[3].pos()
-                    flag_pos = resource_window.windows[4].pos()
-                    superweapon_pos = resource_window.windows[5].pos()
-                    state.hud_positions[player_id]['flag'] = {"x": flag_pos.x(), "y": flag_pos.y()}
-                    state.hud_positions[player_id]['name'] = {"x": name_pos.x(), "y": name_pos.y()}
-                    state.hud_positions[player_id]['money'] = {"x": money_pos.x(), "y": money_pos.y()}
-                    state.hud_positions[player_id]['power'] = {"x": power_pos.x(), "y": power_pos.y()}
-                    state.hud_positions[player_id]['money_spent'] = {"x": money_spent.x(), "y": money_spent.y()}
-                    state.hud_positions[player_id]['superweapons'] = {"x": superweapon_pos.x(), "y": superweapon_pos.y()}
-                    state.hud_positions['superweapons'] = {"x": superweapon_pos.x(), "y": superweapon_pos.y()}
-        # Save factory window positions if available.
+                player_id = player_key(resource_window.player)
+                if hasattr(resource_window, 'windows') and resource_window.windows:
+                    for hud_type, window in zip(resource_window_types, resource_window.windows):
+                        if window is None or not hasattr(window, 'pos'):
+                            continue
+                        pos = window.pos()
+                        set_player_position(state.hud_positions, player_id, hud_type, pos.x(), pos.y())
+
         if hasattr(state, 'factory_windows'):
             for factory_win in state.factory_windows:
-                if factory_win is not None and hasattr(factory_win, 'pos') and factory_win.player:
-                    player_id = (factory_win.player.color_name.name()
-                                 if not isinstance(factory_win.player.color_name, str)
-                                 else factory_win.player.color_name)
-                    state.hud_positions.setdefault(player_id, {})
-                    pos = factory_win.pos()
-                    state.hud_positions[player_id]['factory'] = {"x": pos.x(), "y": pos.y()}
-                    state.hud_positions['factory'] = {"x": pos.x(), "y": pos.y()}
+                if factory_win is None or not hasattr(factory_win, 'player') or not hasattr(factory_win, 'pos'):
+                    continue
+                pos = factory_win.pos()
+                set_player_position(state.hud_positions, player_key(factory_win.player), 'factory', pos.x(), pos.y())
+
         with open(state.HUD_POSITION_FILE, 'w') as file:
             json.dump(state.hud_positions, file, indent=4)
         logging.info("HUD positions saved successfully.")
@@ -402,6 +399,9 @@ def create_hud_windows(state):
             # Now create the separate unit windows (images/numbers).
             create_unit_windows_in_current_mode(state)
 
+        # Persist any compatibility migration immediately so old configs self-heal.
+        save_hud_positions(state)
+
     except Exception as e:
         logging.exception("Error creating HUD windows: %s", e)
 
@@ -441,13 +441,19 @@ def maybe_show_post_game_scoreboard(state):
     if not state.players:
         return
 
+    player_count = len(state.players)
+    winner_count = sum(1 for player in state.players if player.is_winner)
+    loser_count = sum(1 for player in state.players if player.is_loser)
+    active_count = max(0, player_count - loser_count)
     game_over = any(getattr(player, 'post_game_triggered', False) for player in state.players)
-    any_finished = any(player.is_winner or player.is_loser for player in state.players)
-    if not game_over or not any_finished:
+    result_state_complete = winner_count > 0 or (player_count > 1 and loser_count > 0 and active_count <= 1)
+    if not game_over and not result_state_complete:
         state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players)
         return
 
-    snapshot = state.last_live_scoreboard_snapshot or build_post_game_snapshot(state.players)
+    snapshot = build_post_game_snapshot(state.players)
+    if not snapshot["players"]:
+        snapshot = state.last_live_scoreboard_snapshot or {"players": []}
     if not snapshot["players"]:
         return
 
