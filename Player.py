@@ -270,11 +270,14 @@ class Player:
             )
         return "white"
 
+    def get_normalized_color_name_for_file(self):
+        return self._normalize_color_name_for_oil_file()
+
     def write_oil_count_to_file(self, oil_count):
         try:
             folder_name = "oil counts"
             os.makedirs(folder_name, exist_ok=True)
-            normalized_color_name = self._normalize_color_name_for_oil_file()
+            normalized_color_name = self.get_normalized_color_name_for_file()
             filename = os.path.join(folder_name, f"{normalized_color_name}_oil_count.txt")
             with open(filename, 'w') as file:
                 file.write(str(oil_count))

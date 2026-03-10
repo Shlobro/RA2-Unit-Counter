@@ -1,542 +1,3 @@
-2025-03-11 02:35:36,928 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:36,929 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:36,929 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:36,929 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:36,929 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:36,939 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:37,431 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:37,431 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:37,432 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:37,432 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:37,432 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:37,432 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:37,442 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:37,933 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:37,933 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:37,934 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:37,934 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:37,934 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:37,934 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:37,944 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:38,435 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:38,435 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:38,436 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:38,436 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:38,436 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:38,436 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:38,447 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:38,777 - INFO - Updated money spent widget size in hud_positions: 11
-2025-03-11 02:35:38,827 - INFO - Updated money spent widget size in hud_positions: 12
-2025-03-11 02:35:38,877 - INFO - Updated money spent widget size in hud_positions: 13
-2025-03-11 02:35:38,896 - INFO - Updated money spent widget size in hud_positions: 14
-2025-03-11 02:35:38,937 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:38,938 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:38,938 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:38,938 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:38,938 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:38,938 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:38,948 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:38,952 - INFO - Updated money spent widget size in hud_positions: 15
-2025-03-11 02:35:39,027 - INFO - Updated money spent widget size in hud_positions: 16
-2025-03-11 02:35:39,077 - INFO - Updated money spent widget size in hud_positions: 17
-2025-03-11 02:35:39,127 - INFO - Updated money spent widget size in hud_positions: 18
-2025-03-11 02:35:39,177 - INFO - Updated money spent widget size in hud_positions: 19
-2025-03-11 02:35:39,227 - INFO - Updated money spent widget size in hud_positions: 20
-2025-03-11 02:35:39,277 - INFO - Updated money spent widget size in hud_positions: 21
-2025-03-11 02:35:39,327 - INFO - Updated money spent widget size in hud_positions: 22
-2025-03-11 02:35:39,377 - INFO - Updated money spent widget size in hud_positions: 23
-2025-03-11 02:35:39,427 - INFO - Updated money spent widget size in hud_positions: 24
-2025-03-11 02:35:39,440 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:39,440 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:39,441 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:39,441 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:39,441 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:39,441 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:39,451 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:39,477 - INFO - Updated money spent widget size in hud_positions: 25
-2025-03-11 02:35:39,527 - INFO - Updated money spent widget size in hud_positions: 26
-2025-03-11 02:35:39,577 - INFO - Updated money spent widget size in hud_positions: 27
-2025-03-11 02:35:39,626 - INFO - Updated money spent widget size in hud_positions: 28
-2025-03-11 02:35:39,677 - INFO - Updated money spent widget size in hud_positions: 29
-2025-03-11 02:35:39,727 - INFO - Updated money spent widget size in hud_positions: 30
-2025-03-11 02:35:39,777 - INFO - Updated money spent widget size in hud_positions: 31
-2025-03-11 02:35:39,827 - INFO - Updated money spent widget size in hud_positions: 32
-2025-03-11 02:35:39,876 - INFO - Updated money spent widget size in hud_positions: 33
-2025-03-11 02:35:39,927 - INFO - Updated money spent widget size in hud_positions: 34
-2025-03-11 02:35:39,942 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:39,943 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:39,943 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:39,943 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:39,943 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:39,944 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:39,960 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:39,977 - INFO - Updated money spent widget size in hud_positions: 35
-2025-03-11 02:35:40,027 - INFO - Updated money spent widget size in hud_positions: 36
-2025-03-11 02:35:40,077 - INFO - Updated money spent widget size in hud_positions: 37
-2025-03-11 02:35:40,127 - INFO - Updated money spent widget size in hud_positions: 38
-2025-03-11 02:35:40,177 - INFO - Updated money spent widget size in hud_positions: 39
-2025-03-11 02:35:40,227 - INFO - Updated money spent widget size in hud_positions: 40
-2025-03-11 02:35:40,276 - INFO - Updated money spent widget size in hud_positions: 41
-2025-03-11 02:35:40,327 - INFO - Updated money spent widget size in hud_positions: 42
-2025-03-11 02:35:40,377 - INFO - Updated money spent widget size in hud_positions: 43
-2025-03-11 02:35:40,427 - INFO - Updated money spent widget size in hud_positions: 44
-2025-03-11 02:35:40,445 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:40,445 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:40,446 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:40,446 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:40,446 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:40,446 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:40,455 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:40,477 - INFO - Updated money spent widget size in hud_positions: 45
-2025-03-11 02:35:40,527 - INFO - Updated money spent widget size in hud_positions: 46
-2025-03-11 02:35:40,577 - INFO - Updated money spent widget size in hud_positions: 47
-2025-03-11 02:35:40,626 - INFO - Updated money spent widget size in hud_positions: 48
-2025-03-11 02:35:40,677 - INFO - Updated money spent widget size in hud_positions: 49
-2025-03-11 02:35:40,727 - INFO - Updated money spent widget size in hud_positions: 50
-2025-03-11 02:35:40,777 - INFO - Updated money spent widget size in hud_positions: 51
-2025-03-11 02:35:40,827 - INFO - Updated money spent widget size in hud_positions: 52
-2025-03-11 02:35:40,877 - INFO - Updated money spent widget size in hud_positions: 53
-2025-03-11 02:35:40,926 - INFO - Updated money spent widget size in hud_positions: 54
-2025-03-11 02:35:40,947 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:40,948 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:40,948 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:40,948 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:40,948 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:40,948 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:40,958 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:40,977 - INFO - Updated money spent widget size in hud_positions: 55
-2025-03-11 02:35:41,027 - INFO - Updated money spent widget size in hud_positions: 56
-2025-03-11 02:35:41,077 - INFO - Updated money spent widget size in hud_positions: 57
-2025-03-11 02:35:41,127 - INFO - Updated money spent widget size in hud_positions: 58
-2025-03-11 02:35:41,177 - INFO - Updated money spent widget size in hud_positions: 59
-2025-03-11 02:35:41,227 - INFO - Updated money spent widget size in hud_positions: 60
-2025-03-11 02:35:41,276 - INFO - Updated money spent widget size in hud_positions: 61
-2025-03-11 02:35:41,326 - INFO - Updated money spent widget size in hud_positions: 62
-2025-03-11 02:35:41,377 - INFO - Updated money spent widget size in hud_positions: 63
-2025-03-11 02:35:41,427 - INFO - Updated money spent widget size in hud_positions: 64
-2025-03-11 02:35:41,450 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:41,450 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:41,451 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:41,451 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:41,451 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:41,451 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:41,461 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:41,477 - INFO - Updated money spent widget size in hud_positions: 65
-2025-03-11 02:35:41,526 - INFO - Updated money spent widget size in hud_positions: 66
-2025-03-11 02:35:41,577 - INFO - Updated money spent widget size in hud_positions: 67
-2025-03-11 02:35:41,627 - INFO - Updated money spent widget size in hud_positions: 68
-2025-03-11 02:35:41,677 - INFO - Updated money spent widget size in hud_positions: 69
-2025-03-11 02:35:41,727 - INFO - Updated money spent widget size in hud_positions: 70
-2025-03-11 02:35:41,777 - INFO - Updated money spent widget size in hud_positions: 71
-2025-03-11 02:35:41,827 - INFO - Updated money spent widget size in hud_positions: 72
-2025-03-11 02:35:41,877 - INFO - Updated money spent widget size in hud_positions: 73
-2025-03-11 02:35:41,951 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:41,951 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:41,952 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:41,952 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:41,952 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:41,952 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:41,963 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:42,454 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:42,454 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:42,455 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:42,455 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:42,455 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:42,455 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:42,465 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:42,956 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:42,956 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:42,957 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:42,957 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:42,957 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:42,957 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:42,967 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:43,022 - INFO - Closing application...
-2025-03-11 02:35:43,023 - INFO - HUD positions saved successfully.
-2025-03-11 02:35:43,035 - INFO - Exiting application, stopping data update thread
-2025-03-11 02:35:43,459 - INFO - Emitted game_stopped signal.
-2025-03-11 02:35:44,459 - INFO - Data update thread has exited.
-2025-03-11 02:35:44,460 - INFO - Saving selected units and HUD positions
-2025-03-11 02:35:44,463 - INFO - Saved selected units.
-2025-03-11 02:35:44,465 - INFO - HUD positions saved successfully.
-2025-03-11 02:35:47,055 - INFO - Logging setup complete
-2025-03-11 02:35:47,055 - INFO - This is a test log entry.
-2025-03-11 02:35:47,089 - INFO - Starting Resource HUD Application
-2025-03-11 02:35:47,105 - INFO - Loading HUD positions
-2025-03-11 02:35:47,106 - INFO - HUD positions loaded successfully.
-2025-03-11 02:35:47,106 - INFO - Creating control panel
-2025-03-11 02:35:47,168 - INFO - Waiting for a valid game path to be selected
-2025-03-11 02:35:47,169 - DEBUG - Waiting for valid game path
-2025-03-11 02:35:47,169 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
-2025-03-11 02:35:47,169 - INFO - Starting data update thread
-2025-03-11 02:35:47,170 - INFO - Entering application event loop
-2025-03-11 02:35:47,171 - INFO - Waiting for the game to start and players to load...
-2025-03-11 02:35:47,171 - INFO - Waiting for the game to start...
-2025-03-11 02:35:47,604 - INFO - Game detected
-2025-03-11 02:35:47,605 - INFO - Skipping Player 0 as not fully initialized yet.
-2025-03-11 02:35:47,605 - INFO - Players loaded. Proceeding with players initialization.
-2025-03-11 02:35:47,605 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:47,605 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:47,605 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:47,605 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:47,606 - INFO - Player 1 color: PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)
-2025-03-11 02:35:47,606 - INFO - Player 1 country name: British
-2025-03-11 02:35:47,606 - INFO - Player 1 faction: Allied
-2025-03-11 02:35:47,606 - INFO - Player 1 name: Snark
-2025-03-11 02:35:47,606 - INFO - Number of valid players: 1
-2025-03-11 02:35:47,606 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:47,607 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:47,607 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:47,607 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:47,607 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:47,607 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:47,611 - INFO - Game started handler called
-2025-03-11 02:35:47,612 - INFO - Creating HUD for Snark with color PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)
-2025-03-11 02:35:47,784 - INFO - Unit windows created successfully.
-2025-03-11 02:35:47,789 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:48,123 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:48,124 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:48,124 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:48,124 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:48,124 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:48,124 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:48,136 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:48,625 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:48,625 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:48,626 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:48,626 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:48,626 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:48,626 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:48,636 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:49,128 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:49,128 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:49,129 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:49,129 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:49,129 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:49,129 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:49,139 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:49,630 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:49,630 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:49,631 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:49,631 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:49,631 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:49,631 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:49,641 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:50,132 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:50,133 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:50,133 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:50,133 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:50,133 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:50,133 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:50,143 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:50,407 - INFO - Updated power widget size in hud_positions: 499
-2025-03-11 02:35:50,455 - INFO - Updated power widget size in hud_positions: 498
-2025-03-11 02:35:50,504 - INFO - Updated power widget size in hud_positions: 497
-2025-03-11 02:35:50,555 - INFO - Updated power widget size in hud_positions: 496
-2025-03-11 02:35:50,605 - INFO - Updated power widget size in hud_positions: 495
-2025-03-11 02:35:50,634 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:50,635 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:50,635 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:50,635 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:50,635 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:50,635 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:50,645 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:50,655 - INFO - Updated power widget size in hud_positions: 494
-2025-03-11 02:35:50,705 - INFO - Updated power widget size in hud_positions: 493
-2025-03-11 02:35:50,755 - INFO - Updated power widget size in hud_positions: 492
-2025-03-11 02:35:50,805 - INFO - Updated power widget size in hud_positions: 491
-2025-03-11 02:35:51,136 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:51,136 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:51,137 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:51,137 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:51,137 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:51,137 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:51,147 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:51,638 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:51,638 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:51,639 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:51,639 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:51,639 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:51,639 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:51,649 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:51,654 - INFO - Updated money spent widget size in hud_positions: 199
-2025-03-11 02:35:51,687 - INFO - Updated money spent widget size in hud_positions: 198
-2025-03-11 02:35:51,753 - INFO - Updated money spent widget size in hud_positions: 197
-2025-03-11 02:35:51,803 - INFO - Updated money spent widget size in hud_positions: 196
-2025-03-11 02:35:51,817 - INFO - Updated money spent widget size in hud_positions: 195
-2025-03-11 02:35:51,879 - INFO - Updated money spent widget size in hud_positions: 194
-2025-03-11 02:35:51,907 - INFO - Updated money spent widget size in hud_positions: 193
-2025-03-11 02:35:52,004 - INFO - Updated money spent widget size in hud_positions: 192
-2025-03-11 02:35:52,051 - INFO - Updated money spent widget size in hud_positions: 191
-2025-03-11 02:35:52,141 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:52,141 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:52,142 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:52,142 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:52,142 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:52,142 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:52,153 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:52,643 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:52,643 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:52,644 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:52,644 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:52,644 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:52,644 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:52,654 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:53,145 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:53,145 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:53,146 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:53,146 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:53,146 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:53,146 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:53,156 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:53,647 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:53,647 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:53,648 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:53,648 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:53,648 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:53,648 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:53,658 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:54,149 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:54,149 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:54,150 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:54,150 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:54,150 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:54,150 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:54,160 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:54,331 - INFO - Updated money spent widget size in hud_positions: 5
-2025-03-11 02:35:54,651 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:54,652 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:54,652 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:54,652 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:54,652 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:54,652 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:54,662 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:54,735 - INFO - Updated money spent widget size in hud_positions: 50
-2025-03-11 02:35:55,154 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:55,154 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:55,155 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:55,155 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:55,155 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:55,155 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:55,165 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:55,656 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:55,656 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:55,657 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:55,657 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:55,657 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:55,657 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:55,667 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:56,159 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:35:56,159 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:35:56,160 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:35:56,160 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:35:56,160 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:35:56,160 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:35:56,170 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:35:56,608 - INFO - Closing application...
-2025-03-11 02:35:56,609 - INFO - HUD positions saved successfully.
-2025-03-11 02:35:56,622 - INFO - Exiting application, stopping data update thread
-2025-03-11 02:35:56,661 - INFO - Emitted game_stopped signal.
-2025-03-11 02:35:57,662 - INFO - Data update thread has exited.
-2025-03-11 02:35:57,662 - INFO - Saving selected units and HUD positions
-2025-03-11 02:35:57,664 - INFO - Saved selected units.
-2025-03-11 02:35:57,665 - INFO - HUD positions saved successfully.
-2025-03-11 02:35:59,988 - INFO - Logging setup complete
-2025-03-11 02:35:59,988 - INFO - This is a test log entry.
-2025-03-11 02:36:00,021 - INFO - Starting Resource HUD Application
-2025-03-11 02:36:00,037 - INFO - Loading HUD positions
-2025-03-11 02:36:00,037 - INFO - HUD positions loaded successfully.
-2025-03-11 02:36:00,037 - INFO - Creating control panel
-2025-03-11 02:36:00,098 - INFO - Waiting for a valid game path to be selected
-2025-03-11 02:36:00,098 - DEBUG - Waiting for valid game path
-2025-03-11 02:36:00,099 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
-2025-03-11 02:36:00,099 - INFO - Starting data update thread
-2025-03-11 02:36:00,099 - INFO - Entering application event loop
-2025-03-11 02:36:00,100 - INFO - Waiting for the game to start and players to load...
-2025-03-11 02:36:00,100 - INFO - Waiting for the game to start...
-2025-03-11 02:36:00,518 - INFO - Game detected
-2025-03-11 02:36:00,518 - INFO - Skipping Player 0 as not fully initialized yet.
-2025-03-11 02:36:00,519 - INFO - Players loaded. Proceeding with players initialization.
-2025-03-11 02:36:00,519 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:00,519 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:00,519 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:00,519 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:00,520 - INFO - Player 1 color: PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)
-2025-03-11 02:36:00,520 - INFO - Player 1 country name: British
-2025-03-11 02:36:00,520 - INFO - Player 1 faction: Allied
-2025-03-11 02:36:00,520 - INFO - Player 1 name: Snark
-2025-03-11 02:36:00,520 - INFO - Number of valid players: 1
-2025-03-11 02:36:00,520 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:00,521 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:00,521 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:00,521 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:00,521 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:00,522 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:00,525 - INFO - Game started handler called
-2025-03-11 02:36:00,526 - INFO - Creating HUD for Snark with color PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)
-2025-03-11 02:36:00,697 - INFO - Unit windows created successfully.
-2025-03-11 02:36:00,702 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:01,029 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:01,030 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:01,030 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:01,030 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:01,030 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:01,030 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:01,040 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:01,531 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:01,531 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:01,532 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:01,532 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:01,532 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:01,532 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:01,542 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:02,033 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:02,033 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:02,034 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:02,034 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:02,034 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:02,034 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:02,044 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:02,535 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:02,535 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:02,536 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:02,536 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:02,536 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:02,536 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:02,546 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:03,037 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:03,037 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:03,038 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:03,038 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:03,038 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:03,038 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:03,047 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:03,539 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:03,539 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:03,540 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:03,540 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:03,540 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:03,540 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:03,550 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:04,042 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:04,043 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:04,043 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:04,043 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:04,043 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:04,043 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:04,053 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:04,544 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:04,545 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:04,545 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:04,545 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:04,545 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:04,545 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:04,555 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:05,046 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:05,046 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:05,047 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:05,047 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:05,047 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:05,047 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:05,056 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:05,548 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:05,548 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:05,549 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:05,549 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:05,549 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:05,549 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:05,559 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:06,050 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:06,050 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:06,051 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:06,051 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:06,051 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:06,051 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:06,061 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:06,552 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:06,552 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:06,553 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:06,553 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:06,553 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:06,553 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:06,563 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:07,055 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:07,055 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:07,056 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:07,056 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:07,056 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:07,056 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:07,065 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:07,235 - INFO - Updated money widget size in hud_positions: 199
-2025-03-11 02:36:07,285 - INFO - Updated money widget size in hud_positions: 198
-2025-03-11 02:36:07,335 - INFO - Updated money widget size in hud_positions: 197
-2025-03-11 02:36:07,385 - INFO - Updated money widget size in hud_positions: 196
-2025-03-11 02:36:07,435 - INFO - Updated money widget size in hud_positions: 195
-2025-03-11 02:36:07,485 - INFO - Updated money widget size in hud_positions: 194
-2025-03-11 02:36:07,534 - INFO - Updated money widget size in hud_positions: 193
-2025-03-11 02:36:07,557 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:07,557 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:07,558 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:07,558 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:07,558 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:07,558 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:07,568 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:07,585 - INFO - Updated money widget size in hud_positions: 192
-2025-03-11 02:36:07,635 - INFO - Updated money widget size in hud_positions: 191
-2025-03-11 02:36:07,685 - INFO - Updated money widget size in hud_positions: 190
-2025-03-11 02:36:07,735 - INFO - Updated money widget size in hud_positions: 189
-2025-03-11 02:36:07,785 - INFO - Updated money widget size in hud_positions: 188
-2025-03-11 02:36:07,834 - INFO - Updated money widget size in hud_positions: 187
-2025-03-11 02:36:07,885 - INFO - Updated money widget size in hud_positions: 186
-2025-03-11 02:36:07,935 - INFO - Updated money widget size in hud_positions: 185
-2025-03-11 02:36:07,985 - INFO - Updated money widget size in hud_positions: 184
-2025-03-11 02:36:08,035 - INFO - Updated money widget size in hud_positions: 183
-2025-03-11 02:36:08,059 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:08,059 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:08,060 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:08,060 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:08,060 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:08,060 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:08,070 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:08,085 - INFO - Updated money widget size in hud_positions: 182
-2025-03-11 02:36:08,135 - INFO - Updated money widget size in hud_positions: 181
-2025-03-11 02:36:08,185 - INFO - Updated money widget size in hud_positions: 180
-2025-03-11 02:36:08,235 - INFO - Updated money widget size in hud_positions: 179
-2025-03-11 02:36:08,285 - INFO - Updated money widget size in hud_positions: 178
-2025-03-11 02:36:08,335 - INFO - Updated money widget size in hud_positions: 177
-2025-03-11 02:36:08,385 - INFO - Updated money widget size in hud_positions: 176
-2025-03-11 02:36:08,435 - INFO - Updated money widget size in hud_positions: 175
-2025-03-11 02:36:08,485 - INFO - Updated money widget size in hud_positions: 174
-2025-03-11 02:36:08,535 - INFO - Updated money widget size in hud_positions: 173
-2025-03-11 02:36:08,561 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:08,561 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:08,562 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:08,562 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:08,562 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:08,562 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:08,572 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:08,585 - INFO - Updated money widget size in hud_positions: 172
-2025-03-11 02:36:08,635 - INFO - Updated money widget size in hud_positions: 171
-2025-03-11 02:36:08,685 - INFO - Updated money widget size in hud_positions: 170
-2025-03-11 02:36:08,735 - INFO - Updated money widget size in hud_positions: 169
-2025-03-11 02:36:08,785 - INFO - Updated money widget size in hud_positions: 168
-2025-03-11 02:36:08,835 - INFO - Updated money widget size in hud_positions: 167
-2025-03-11 02:36:08,885 - INFO - Updated money widget size in hud_positions: 166
-2025-03-11 02:36:08,935 - INFO - Updated money widget size in hud_positions: 165
-2025-03-11 02:36:08,985 - INFO - Updated money widget size in hud_positions: 164
-2025-03-11 02:36:09,035 - INFO - Updated money widget size in hud_positions: 163
-2025-03-11 02:36:09,063 - DEBUG - Updating dynamic data for player 2
-2025-03-11 02:36:09,063 - DEBUG - Wrote oil count 0 to file oil counts\PySide6.QtGui.QColor.fromRgbF(1.000000, 0.647059, 0.000000, 1.000000)_oil_count.txt
-2025-03-11 02:36:09,064 - DEBUG - Initialized unit array pointer: 48408320
-2025-03-11 02:36:09,064 - DEBUG - Initialized building array pointer: 310491752
-2025-03-11 02:36:09,064 - DEBUG - Initialized infantry array pointer: 307466992
-2025-03-11 02:36:09,064 - DEBUG - Initialized aircraft array pointer: 0
-2025-03-11 02:36:09,074 - DEBUG - update_color: new_text_color: #00ff00
-2025-03-11 02:36:09,084 - INFO - Updated money widget size in hud_positions: 162
-2025-03-11 02:36:09,135 - INFO - Updated money widget size in hud_positions: 161
-2025-03-11 02:36:09,184 - INFO - Updated money widget size in hud_positions: 160
-2025-03-11 02:36:09,235 - INFO - Updated money widget size in hud_positions: 159
-2025-03-11 02:36:09,284 - INFO - Updated money widget size in hud_positions: 158
 2025-03-11 02:36:09,335 - INFO - Updated money widget size in hud_positions: 157
 2025-03-11 02:36:09,384 - INFO - Updated money widget size in hud_positions: 156
 2025-03-11 02:36:09,434 - INFO - Updated money widget size in hud_positions: 155
@@ -9998,3 +9459,542 @@
 2026-03-10 23:20:36,671 - INFO - Saved selected units.
 2026-03-10 23:20:36,673 - INFO - HUD positions saved successfully.
 2026-03-10 23:25:24,049 - INFO - Logging setup complete
+2026-03-10 23:31:43,742 - INFO - Logging setup complete
+2026-03-10 23:31:43,827 - INFO - Starting Resource HUD Application
+2026-03-10 23:31:43,854 - INFO - Loading HUD positions
+2026-03-10 23:31:43,869 - INFO - HUD positions loaded successfully.
+2026-03-10 23:31:43,879 - INFO - Creating control panel
+2026-03-10 23:31:43,968 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:31:43,978 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:31:43,985 - INFO - Starting data update thread
+2026-03-10 23:31:43,991 - INFO - Entering application event loop
+2026-03-10 23:31:43,991 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:31:44,002 - INFO - Waiting for the game to start...
+2026-03-10 23:31:44,469 - INFO - Game detected
+2026-03-10 23:31:44,475 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:31:44,481 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:31:44,486 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:31:44,491 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:31:44,497 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:31:44,502 - INFO - Player 4 color: green
+2026-03-10 23:31:44,508 - INFO - Player 4 country name: Americans
+2026-03-10 23:31:44,513 - INFO - Player 4 faction: Allied
+2026-03-10 23:31:44,518 - INFO - Player 4 name: Snark
+2026-03-10 23:31:44,524 - INFO - Number of valid players: 1
+2026-03-10 23:31:44,529 - INFO - Game started handler called
+2026-03-10 23:31:44,535 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:31:44,639 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:31:44,667 - INFO - Unit windows created successfully.
+2026-03-10 23:31:51,623 - INFO - Toggled show_flag state to: True
+2026-03-10 23:32:30,017 - INFO - Saved selected units.
+2026-03-10 23:32:30,024 - INFO - HUD positions saved successfully.
+2026-03-10 23:32:30,030 - INFO - Settings saved on control panel close
+2026-03-10 23:32:30,043 - INFO - All counter windows closed
+2026-03-10 23:32:30,053 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:32:30,899 - INFO - Emitted game_stopped signal.
+2026-03-10 23:32:31,911 - INFO - Data update thread has exited.
+2026-03-10 23:32:31,917 - INFO - Saving selected units and HUD positions
+2026-03-10 23:32:31,926 - INFO - Saved selected units.
+2026-03-10 23:32:31,933 - INFO - HUD positions saved successfully.
+2026-03-10 23:32:33,031 - INFO - Logging setup complete
+2026-03-10 23:32:33,098 - INFO - Starting Resource HUD Application
+2026-03-10 23:32:33,127 - INFO - Loading HUD positions
+2026-03-10 23:32:33,134 - INFO - HUD positions loaded successfully.
+2026-03-10 23:32:33,141 - INFO - Creating control panel
+2026-03-10 23:32:33,228 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:32:33,234 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:32:33,241 - INFO - Starting data update thread
+2026-03-10 23:32:33,247 - INFO - Entering application event loop
+2026-03-10 23:32:33,253 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:32:33,261 - INFO - Waiting for the game to start...
+2026-03-10 23:32:33,870 - INFO - Game detected
+2026-03-10 23:32:33,876 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:32:33,882 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:32:33,889 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:32:33,896 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:32:33,904 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:32:33,912 - INFO - Player 4 color: green
+2026-03-10 23:32:33,921 - INFO - Player 4 country name: Americans
+2026-03-10 23:32:33,927 - INFO - Player 4 faction: Allied
+2026-03-10 23:32:33,932 - INFO - Player 4 name: Snark
+2026-03-10 23:32:33,937 - INFO - Number of valid players: 1
+2026-03-10 23:32:33,942 - INFO - Game started handler called
+2026-03-10 23:32:33,948 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:32:34,065 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:32:34,094 - INFO - Unit windows created successfully.
+2026-03-10 23:32:40,427 - INFO - Toggled show_name state to: True
+2026-03-10 23:32:41,181 - INFO - Toggled show_name state to: False
+2026-03-10 23:32:41,724 - INFO - Toggled show_name state to: True
+2026-03-10 23:32:42,119 - INFO - Toggled show_name state to: False
+2026-03-10 23:32:43,206 - INFO - Toggled show_flag state to: False
+2026-03-10 23:32:43,856 - INFO - Toggled show_flag state to: True
+2026-03-10 23:32:44,910 - INFO - Toggled show_money state to: False
+2026-03-10 23:32:45,947 - INFO - Toggled show_money state to: True
+2026-03-10 23:32:47,139 - INFO - Toggled show_power state to: False
+2026-03-10 23:32:47,568 - INFO - Toggled show_power state to: True
+2026-03-10 23:32:48,178 - INFO - Toggled show_money_spent state to: True
+2026-03-10 23:32:48,638 - INFO - Toggled show_money_spent state to: False
+2026-03-10 23:32:49,615 - INFO - Toggled show_superweapons state to: False
+2026-03-10 23:32:50,100 - INFO - Toggled show_superweapons state to: True
+2026-03-10 23:32:51,002 - INFO - Toggled show_post_game_scoreboard to: False
+2026-03-10 23:32:51,471 - INFO - Toggled show_post_game_scoreboard to: True
+2026-03-10 23:32:53,928 - INFO - Toggled show_superweapons state to: False
+2026-03-10 23:32:54,328 - INFO - Toggled show_superweapons state to: True
+2026-03-10 23:32:57,222 - INFO - Toggled show_superweapon_frames to: False
+2026-03-10 23:32:57,591 - INFO - Toggled show_superweapon_frames to: True
+2026-03-10 23:34:08,909 - INFO - Toggled show_post_game_scoreboard to: False
+2026-03-10 23:34:09,942 - INFO - Toggled show_post_game_scoreboard to: True
+2026-03-10 23:34:52,087 - INFO - Set show_factory_queue to False
+2026-03-10 23:34:52,100 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:52,182 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:52,205 - INFO - Unit windows created successfully.
+2026-03-10 23:34:52,660 - INFO - Set show_factory_queue to True
+2026-03-10 23:34:52,673 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:52,725 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:52,745 - INFO - Unit windows created successfully.
+2026-03-10 23:34:53,229 - INFO - Set show_factory_queue to False
+2026-03-10 23:34:53,243 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:53,301 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:53,325 - INFO - Unit windows created successfully.
+2026-03-10 23:34:53,888 - INFO - Set show_factory_queue to True
+2026-03-10 23:34:53,904 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:53,963 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:53,989 - INFO - Unit windows created successfully.
+2026-03-10 23:34:56,165 - INFO - Set show_factory_queue to False
+2026-03-10 23:34:56,177 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:56,231 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:56,251 - INFO - Unit windows created successfully.
+2026-03-10 23:34:57,105 - INFO - Set show_factory_queue to True
+2026-03-10 23:34:57,118 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:57,170 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:57,190 - INFO - Unit windows created successfully.
+2026-03-10 23:34:57,874 - INFO - Set show_factory_queue to False
+2026-03-10 23:34:57,886 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:57,941 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:57,965 - INFO - Unit windows created successfully.
+2026-03-10 23:34:58,599 - INFO - Set show_factory_queue to True
+2026-03-10 23:34:58,611 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:34:58,663 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:34:58,684 - INFO - Unit windows created successfully.
+2026-03-10 23:35:00,292 - INFO - Set show_factory_window to False
+2026-03-10 23:35:00,844 - INFO - Set show_factory_window to True
+2026-03-10 23:35:04,780 - INFO - Toggled show_factory_frames to: False
+2026-03-10 23:35:05,380 - INFO - Toggled show_factory_frames to: True
+2026-03-10 23:35:25,974 - INFO - Toggled combined_hud to: True
+2026-03-10 23:35:25,986 - INFO - Creating combined HUD for Snark with color green
+2026-03-10 23:35:30,343 - INFO - Toggled combined_hud to: False
+2026-03-10 23:35:30,351 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:35:30,402 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:35:30,424 - INFO - Unit windows created successfully.
+2026-03-10 23:35:32,075 - INFO - Toggled combined_hud to: True
+2026-03-10 23:35:32,087 - INFO - Creating combined HUD for Snark with color green
+2026-03-10 23:35:33,412 - INFO - Toggled combined_hud to: False
+2026-03-10 23:35:33,420 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:35:33,469 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:35:33,489 - INFO - Unit windows created successfully.
+2026-03-10 23:35:34,896 - INFO - Toggled combined_hud to: True
+2026-03-10 23:35:34,909 - INFO - Creating combined HUD for Snark with color green
+2026-03-10 23:35:36,937 - INFO - Updated superweapon widget size: 99
+2026-03-10 23:35:37,368 - INFO - Updated superweapon widget size: 98
+2026-03-10 23:35:37,527 - INFO - Updated superweapon widget size: 97
+2026-03-10 23:35:37,665 - INFO - Updated superweapon widget size: 96
+2026-03-10 23:35:37,818 - INFO - Updated superweapon widget size: 95
+2026-03-10 23:35:37,957 - INFO - Updated superweapon widget size: 94
+2026-03-10 23:35:38,121 - INFO - Updated superweapon widget size: 93
+2026-03-10 23:35:38,256 - INFO - Updated superweapon widget size: 92
+2026-03-10 23:35:38,389 - INFO - Updated superweapon widget size: 91
+2026-03-10 23:35:38,547 - INFO - Updated superweapon widget size: 90
+2026-03-10 23:35:40,043 - INFO - Updated superweapon widget size: 91
+2026-03-10 23:35:40,256 - INFO - Updated superweapon widget size: 92
+2026-03-10 23:35:40,406 - INFO - Updated superweapon widget size: 93
+2026-03-10 23:35:40,555 - INFO - Updated superweapon widget size: 94
+2026-03-10 23:35:40,698 - INFO - Updated superweapon widget size: 95
+2026-03-10 23:35:40,945 - INFO - Updated superweapon widget size: 96
+2026-03-10 23:35:41,214 - INFO - Updated superweapon widget size: 97
+2026-03-10 23:35:41,275 - INFO - Updated superweapon widget size: 98
+2026-03-10 23:35:41,323 - INFO - Updated superweapon widget size: 99
+2026-03-10 23:35:41,370 - INFO - Updated superweapon widget size: 100
+2026-03-10 23:35:41,417 - INFO - Updated superweapon widget size: 101
+2026-03-10 23:35:41,481 - INFO - Updated superweapon widget size: 102
+2026-03-10 23:35:41,529 - INFO - Updated superweapon widget size: 103
+2026-03-10 23:35:41,576 - INFO - Updated superweapon widget size: 104
+2026-03-10 23:35:41,623 - INFO - Updated superweapon widget size: 105
+2026-03-10 23:36:49,113 - INFO - Toggled combined_hud to: False
+2026-03-10 23:36:49,121 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:36:49,174 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:36:49,196 - INFO - Unit windows created successfully.
+2026-03-10 23:36:58,850 - INFO - Updated unit window size: 76
+2026-03-10 23:36:59,365 - INFO - Updated unit window size: 77
+2026-03-10 23:36:59,827 - INFO - Updated unit window size: 78
+2026-03-10 23:36:59,892 - INFO - Updated unit window size: 79
+2026-03-10 23:36:59,938 - INFO - Updated unit window size: 80
+2026-03-10 23:36:59,986 - INFO - Updated unit window size: 81
+2026-03-10 23:37:00,033 - INFO - Updated unit window size: 82
+2026-03-10 23:37:00,081 - INFO - Updated unit window size: 83
+2026-03-10 23:37:00,143 - INFO - Updated unit window size: 84
+2026-03-10 23:37:00,191 - INFO - Updated unit window size: 85
+2026-03-10 23:37:00,239 - INFO - Updated unit window size: 86
+2026-03-10 23:37:00,287 - INFO - Updated unit window size: 87
+2026-03-10 23:37:00,333 - INFO - Updated unit window size: 88
+2026-03-10 23:37:01,497 - INFO - Updated unit window size: 87
+2026-03-10 23:37:01,994 - INFO - Updated unit window size: 86
+2026-03-10 23:37:02,060 - INFO - Updated unit window size: 85
+2026-03-10 23:37:02,108 - INFO - Updated unit window size: 84
+2026-03-10 23:37:02,153 - INFO - Updated unit window size: 83
+2026-03-10 23:37:02,201 - INFO - Updated unit window size: 82
+2026-03-10 23:37:02,246 - INFO - Updated unit window size: 81
+2026-03-10 23:37:02,310 - INFO - Updated unit window size: 80
+2026-03-10 23:37:02,356 - INFO - Updated unit window size: 79
+2026-03-10 23:37:02,404 - INFO - Updated unit window size: 78
+2026-03-10 23:37:02,450 - INFO - Updated unit window size: 77
+2026-03-10 23:37:02,497 - INFO - Updated unit window size: 76
+2026-03-10 23:37:02,545 - INFO - Updated unit window size: 75
+2026-03-10 23:37:02,608 - INFO - Updated unit window size: 74
+2026-03-10 23:37:03,284 - INFO - Updated unit window size: 75
+2026-03-10 23:37:03,351 - INFO - Updated unit window size: 76
+2026-03-10 23:37:03,399 - INFO - Updated unit window size: 77
+2026-03-10 23:37:03,447 - INFO - Updated unit window size: 78
+2026-03-10 23:37:03,493 - INFO - Updated unit window size: 79
+2026-03-10 23:37:03,540 - INFO - Updated unit window size: 80
+2026-03-10 23:37:03,588 - INFO - Updated unit window size: 81
+2026-03-10 23:37:03,636 - INFO - Updated unit window size: 82
+2026-03-10 23:37:03,700 - INFO - Updated unit window size: 83
+2026-03-10 23:37:03,748 - INFO - Updated unit window size: 84
+2026-03-10 23:37:03,796 - INFO - Updated unit window size: 85
+2026-03-10 23:37:03,844 - INFO - Updated unit window size: 86
+2026-03-10 23:37:03,891 - INFO - Updated unit window size: 87
+2026-03-10 23:49:29,138 - INFO - Saved selected units.
+2026-03-10 23:49:29,145 - INFO - HUD positions saved successfully.
+2026-03-10 23:49:29,150 - INFO - Settings saved on control panel close
+2026-03-10 23:49:29,163 - INFO - All counter windows closed
+2026-03-10 23:49:29,174 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:49:29,477 - INFO - Emitted game_stopped signal.
+2026-03-10 23:49:30,491 - INFO - Data update thread has exited.
+2026-03-10 23:49:30,497 - INFO - Saving selected units and HUD positions
+2026-03-10 23:49:30,504 - INFO - Saved selected units.
+2026-03-10 23:49:30,511 - INFO - HUD positions saved successfully.
+2026-03-10 23:49:32,087 - INFO - Logging setup complete
+2026-03-10 23:49:32,162 - INFO - Starting Resource HUD Application
+2026-03-10 23:49:32,190 - INFO - Loading HUD positions
+2026-03-10 23:49:32,196 - INFO - HUD positions loaded successfully.
+2026-03-10 23:49:32,202 - INFO - Creating control panel
+2026-03-10 23:49:32,292 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:49:32,298 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:49:32,304 - INFO - Starting data update thread
+2026-03-10 23:49:32,309 - INFO - Entering application event loop
+2026-03-10 23:49:32,310 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:49:32,320 - INFO - Waiting for the game to start...
+2026-03-10 23:49:32,780 - INFO - Game detected
+2026-03-10 23:49:32,786 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:49:32,791 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:49:32,796 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:49:32,801 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:49:32,806 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:49:32,812 - INFO - Player 4 color: green
+2026-03-10 23:49:32,818 - INFO - Player 4 country name: Americans
+2026-03-10 23:49:32,823 - INFO - Player 4 faction: Allied
+2026-03-10 23:49:32,828 - INFO - Player 4 name: Snark
+2026-03-10 23:49:32,834 - INFO - Number of valid players: 1
+2026-03-10 23:49:32,839 - INFO - Game started handler called
+2026-03-10 23:49:32,846 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:49:32,954 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:49:32,983 - INFO - Unit windows created successfully.
+2026-03-10 23:49:38,201 - INFO - Toggled save_flags_as_images to: True
+2026-03-10 23:49:38,213 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:49:38,320 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:49:38,344 - INFO - Unit windows created successfully.
+2026-03-10 23:50:34,415 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,420 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,425 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,430 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,434 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,439 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,443 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,448 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,453 - WARNING - Failed to read memory chunk for infantry.
+2026-03-10 23:50:34,457 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,462 - WARNING - Failed to read memory chunk for unit.
+2026-03-10 23:50:34,467 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,471 - WARNING - Failed to read memory chunk for building.
+2026-03-10 23:50:34,476 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,481 - WARNING - Failed to read memory chunk for aircraft.
+2026-03-10 23:50:34,485 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,490 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,495 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,500 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,504 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,509 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,514 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,519 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,523 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,528 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,533 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,537 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,542 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,547 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,551 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,556 - WARNING - Failed to read score struct chunk for player Snark
+2026-03-10 23:50:34,561 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,566 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,570 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,575 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:34,580 - ERROR - Failed to read factory pointer for Aircraft at offset 0x53ac
+2026-03-10 23:50:34,584 - ERROR - Caught ProcessExitedException – game ended unexpectedly. Breaking out.
+2026-03-10 23:50:34,589 - INFO - Emitted game_stopped signal.
+2026-03-10 23:50:34,589 - INFO - Game stopped handler called
+2026-03-10 23:50:34,600 - INFO - HUD positions saved successfully.
+2026-03-10 23:50:35,601 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:50:35,606 - INFO - Waiting for the game to start...
+2026-03-10 23:50:35,625 - INFO - Game detected
+2026-03-10 23:50:35,630 - ERROR - Failed to obtain process handle.
+2026-03-10 23:50:36,646 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:50:36,652 - INFO - Waiting for the game to start...
+2026-03-10 23:50:40,826 - INFO - Game detected
+2026-03-10 23:50:40,832 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,837 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-10 23:50:40,842 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,847 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-10 23:50:40,852 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,857 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-10 23:50:40,862 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,866 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-10 23:50:40,871 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,876 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-10 23:50:40,880 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,885 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-10 23:50:40,889 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,894 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-10 23:50:40,899 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:40,904 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-10 23:50:41,919 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,924 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-10 23:50:41,929 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,934 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-10 23:50:41,938 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,943 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-10 23:50:41,948 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,953 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-10 23:50:41,957 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,962 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-10 23:50:41,967 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,971 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-10 23:50:41,976 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,981 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-10 23:50:41,986 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:41,990 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-10 23:50:43,010 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,015 - WARNING - Skipping Player 0 due to incomplete memory read.
+2026-03-10 23:50:43,020 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,025 - WARNING - Skipping Player 1 due to incomplete memory read.
+2026-03-10 23:50:43,030 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,035 - WARNING - Skipping Player 2 due to incomplete memory read.
+2026-03-10 23:50:43,039 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,044 - WARNING - Skipping Player 3 due to incomplete memory read.
+2026-03-10 23:50:43,049 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,055 - WARNING - Skipping Player 4 due to incomplete memory read.
+2026-03-10 23:50:43,062 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,067 - WARNING - Skipping Player 5 due to incomplete memory read.
+2026-03-10 23:50:43,072 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,077 - WARNING - Skipping Player 6 due to incomplete memory read.
+2026-03-10 23:50:43,083 - WARNING - Memory read incomplete. Game might still be loading.
+2026-03-10 23:50:43,088 - WARNING - Skipping Player 7 due to incomplete memory read.
+2026-03-10 23:50:44,107 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:50:44,113 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:50:44,117 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:50:44,122 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-10 23:50:44,127 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-10 23:50:44,131 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-10 23:50:44,136 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-10 23:50:45,143 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:50:45,148 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:50:45,153 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:50:45,158 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-10 23:50:45,163 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-10 23:50:45,168 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-10 23:50:45,173 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-10 23:50:46,178 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:50:46,183 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:50:46,188 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:50:46,192 - INFO - Skipping Player 4 as not fully initialized yet.
+2026-03-10 23:50:46,197 - INFO - Skipping Player 5 as not fully initialized yet.
+2026-03-10 23:50:46,202 - INFO - Skipping Player 6 as not fully initialized yet.
+2026-03-10 23:50:46,207 - INFO - Skipping Player 7 as not fully initialized yet.
+2026-03-10 23:50:47,227 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:50:47,233 - INFO - Player 0 color: green
+2026-03-10 23:50:47,239 - INFO - Player 0 country name: YuriCountry
+2026-03-10 23:50:47,245 - INFO - Player 0 faction: Yuri
+2026-03-10 23:50:47,250 - INFO - Player 0 name: Snark
+2026-03-10 23:50:47,256 - INFO - Number of valid players: 1
+2026-03-10 23:50:47,262 - INFO - Game started handler called
+2026-03-10 23:50:47,267 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:50:47,313 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:50:47,334 - INFO - Unit windows created successfully.
+2026-03-10 23:50:55,745 - INFO - Toggled show_flag state to: False
+2026-03-10 23:52:15,538 - INFO - Saved selected units.
+2026-03-10 23:52:15,546 - INFO - HUD positions saved successfully.
+2026-03-10 23:52:15,552 - INFO - Settings saved on control panel close
+2026-03-10 23:52:15,565 - INFO - All counter windows closed
+2026-03-10 23:52:15,580 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:52:15,966 - INFO - Emitted game_stopped signal.
+2026-03-10 23:52:16,974 - INFO - Data update thread has exited.
+2026-03-10 23:52:16,981 - INFO - Saving selected units and HUD positions
+2026-03-10 23:52:16,989 - INFO - Saved selected units.
+2026-03-10 23:52:16,996 - INFO - HUD positions saved successfully.
+2026-03-10 23:52:21,096 - INFO - Logging setup complete
+2026-03-10 23:52:21,167 - INFO - Starting Resource HUD Application
+2026-03-10 23:52:21,196 - INFO - Loading HUD positions
+2026-03-10 23:52:21,203 - INFO - HUD positions loaded successfully.
+2026-03-10 23:52:21,209 - INFO - Creating control panel
+2026-03-10 23:52:21,304 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:52:21,311 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:52:21,318 - INFO - Starting data update thread
+2026-03-10 23:52:21,324 - INFO - Entering application event loop
+2026-03-10 23:52:21,324 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:52:21,337 - INFO - Waiting for the game to start...
+2026-03-10 23:52:21,645 - INFO - Game detected
+2026-03-10 23:52:21,651 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:52:21,657 - INFO - Player 0 color: green
+2026-03-10 23:52:21,663 - INFO - Player 0 country name: YuriCountry
+2026-03-10 23:52:21,668 - INFO - Player 0 faction: Yuri
+2026-03-10 23:52:21,673 - INFO - Player 0 name: Snark
+2026-03-10 23:52:21,679 - INFO - Number of valid players: 1
+2026-03-10 23:52:21,685 - INFO - Game started handler called
+2026-03-10 23:52:21,691 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:52:21,791 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:52:21,823 - INFO - Unit windows created successfully.
+2026-03-10 23:52:45,510 - INFO - Updated money widget size: 51
+2026-03-10 23:52:45,572 - INFO - Updated money widget size: 52
+2026-03-10 23:52:45,619 - INFO - Updated money widget size: 53
+2026-03-10 23:52:45,667 - INFO - Updated money widget size: 54
+2026-03-10 23:52:45,713 - INFO - Updated money widget size: 55
+2026-03-10 23:52:45,777 - INFO - Updated money widget size: 56
+2026-03-10 23:52:45,823 - INFO - Updated money widget size: 57
+2026-03-10 23:52:45,870 - INFO - Updated money widget size: 58
+2026-03-10 23:52:45,916 - INFO - Updated money widget size: 59
+2026-03-10 23:52:45,963 - INFO - Updated money widget size: 60
+2026-03-10 23:52:46,027 - INFO - Updated money widget size: 61
+2026-03-10 23:52:46,074 - INFO - Updated money widget size: 62
+2026-03-10 23:52:46,122 - INFO - Updated money widget size: 63
+2026-03-10 23:52:46,170 - INFO - Updated money widget size: 64
+2026-03-10 23:52:46,217 - INFO - Updated money widget size: 65
+2026-03-10 23:52:46,264 - INFO - Updated money widget size: 66
+2026-03-10 23:52:46,312 - INFO - Updated money widget size: 67
+2026-03-10 23:52:46,375 - INFO - Updated money widget size: 68
+2026-03-10 23:52:46,422 - INFO - Updated money widget size: 69
+2026-03-10 23:52:46,468 - INFO - Updated money widget size: 70
+2026-03-10 23:52:46,515 - INFO - Updated money widget size: 71
+2026-03-10 23:52:46,563 - INFO - Updated money widget size: 72
+2026-03-10 23:52:46,627 - INFO - Updated money widget size: 73
+2026-03-10 23:52:46,674 - INFO - Updated money widget size: 74
+2026-03-10 23:52:46,722 - INFO - Updated money widget size: 75
+2026-03-10 23:52:46,770 - INFO - Updated money widget size: 76
+2026-03-10 23:52:46,818 - INFO - Updated money widget size: 77
+2026-03-10 23:52:46,866 - INFO - Updated money widget size: 78
+2026-03-10 23:52:46,914 - INFO - Updated money widget size: 79
+2026-03-10 23:52:46,975 - INFO - Updated money widget size: 80
+2026-03-10 23:52:47,023 - INFO - Updated money widget size: 81
+2026-03-10 23:52:47,070 - INFO - Updated money widget size: 82
+2026-03-10 23:52:47,117 - INFO - Updated money widget size: 83
+2026-03-10 23:52:47,164 - INFO - Updated money widget size: 84
+2026-03-10 23:52:49,546 - INFO - Toggled show_money_spent state to: True
+2026-03-10 23:52:51,569 - INFO - Updated money spent widget size: 49
+2026-03-10 23:52:51,616 - INFO - Updated money spent widget size: 50
+2026-03-10 23:52:51,678 - INFO - Updated money spent widget size: 51
+2026-03-10 23:52:51,727 - INFO - Updated money spent widget size: 52
+2026-03-10 23:52:51,773 - INFO - Updated money spent widget size: 53
+2026-03-10 23:52:51,821 - INFO - Updated money spent widget size: 54
+2026-03-10 23:52:52,228 - INFO - Updated money spent widget size: 55
+2026-03-10 23:52:52,292 - INFO - Updated money spent widget size: 56
+2026-03-10 23:52:52,339 - INFO - Updated money spent widget size: 57
+2026-03-10 23:52:52,385 - INFO - Updated money spent widget size: 58
+2026-03-10 23:52:52,433 - INFO - Updated money spent widget size: 59
+2026-03-10 23:52:52,481 - INFO - Updated money spent widget size: 60
+2026-03-10 23:52:52,545 - INFO - Updated money spent widget size: 61
+2026-03-10 23:52:52,592 - INFO - Updated money spent widget size: 62
+2026-03-10 23:52:52,640 - INFO - Updated money spent widget size: 63
+2026-03-10 23:52:54,735 - INFO - Updated money spent widget size: 64
+2026-03-10 23:52:54,916 - INFO - Updated money spent widget size: 65
+2026-03-10 23:52:55,091 - INFO - Updated money spent widget size: 66
+2026-03-10 23:52:55,287 - INFO - Updated money spent widget size: 67
+2026-03-10 23:52:55,475 - INFO - Updated money spent widget size: 68
+2026-03-10 23:52:55,535 - INFO - Updated money spent widget size: 69
+2026-03-10 23:52:55,582 - INFO - Updated money spent widget size: 70
+2026-03-10 23:52:55,629 - INFO - Updated money spent widget size: 71
+2026-03-10 23:52:55,691 - INFO - Updated money spent widget size: 72
+2026-03-10 23:52:55,738 - INFO - Updated money spent widget size: 73
+2026-03-10 23:52:55,785 - INFO - Updated money spent widget size: 74
+2026-03-10 23:52:55,832 - INFO - Updated money spent widget size: 75
+2026-03-10 23:52:55,879 - INFO - Updated money spent widget size: 76
+2026-03-10 23:52:55,928 - INFO - Updated money spent widget size: 77
+2026-03-10 23:52:55,992 - INFO - Updated money spent widget size: 78
+2026-03-10 23:52:56,038 - INFO - Updated money spent widget size: 79
+2026-03-10 23:52:56,085 - INFO - Updated money spent widget size: 80
+2026-03-10 23:52:56,132 - INFO - Updated money spent widget size: 81
+2026-03-10 23:52:56,179 - INFO - Updated money spent widget size: 82
+2026-03-10 23:52:56,228 - INFO - Updated money spent widget size: 83
+2026-03-10 23:52:56,291 - INFO - Updated money spent widget size: 84
+2026-03-10 23:52:56,338 - INFO - Updated money spent widget size: 85
+2026-03-10 23:52:56,386 - INFO - Updated money spent widget size: 86
+2026-03-10 23:52:56,434 - INFO - Updated money spent widget size: 87
+2026-03-10 23:52:59,154 - INFO - Updated power widget size: 51
+2026-03-10 23:52:59,213 - INFO - Updated power widget size: 52
+2026-03-10 23:52:59,262 - INFO - Updated power widget size: 53
+2026-03-10 23:52:59,307 - INFO - Updated power widget size: 54
+2026-03-10 23:52:59,370 - INFO - Updated power widget size: 55
+2026-03-10 23:52:59,417 - INFO - Updated power widget size: 56
+2026-03-10 23:52:59,465 - INFO - Updated power widget size: 57
+2026-03-10 23:52:59,512 - INFO - Updated power widget size: 58
+2026-03-10 23:52:59,560 - INFO - Updated power widget size: 59
+2026-03-10 23:52:59,605 - INFO - Updated power widget size: 60
+2026-03-10 23:52:59,668 - INFO - Updated power widget size: 61
+2026-03-10 23:52:59,716 - INFO - Updated power widget size: 62
+2026-03-10 23:52:59,763 - INFO - Updated power widget size: 63
+2026-03-10 23:52:59,810 - INFO - Updated power widget size: 64
+2026-03-10 23:52:59,858 - INFO - Updated power widget size: 65
+2026-03-10 23:52:59,905 - INFO - Updated power widget size: 66
+2026-03-10 23:52:59,969 - INFO - Updated power widget size: 67
+2026-03-10 23:53:00,015 - INFO - Updated power widget size: 68
+2026-03-10 23:53:00,063 - INFO - Updated power widget size: 69
+2026-03-10 23:53:00,111 - INFO - Updated power widget size: 70
+2026-03-10 23:53:00,159 - INFO - Updated power widget size: 71
+2026-03-10 23:53:00,206 - INFO - Updated power widget size: 72
+2026-03-10 23:53:00,269 - INFO - Updated power widget size: 73
+2026-03-10 23:53:00,317 - INFO - Updated power widget size: 74
+2026-03-10 23:53:22,238 - INFO - Saved selected units.
+2026-03-10 23:53:22,247 - INFO - HUD positions saved successfully.
+2026-03-10 23:53:22,252 - INFO - Settings saved on control panel close
+2026-03-10 23:53:22,265 - INFO - All counter windows closed
+2026-03-10 23:53:22,276 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:53:23,119 - INFO - Emitted game_stopped signal.
+2026-03-10 23:53:24,126 - INFO - Data update thread has exited.
+2026-03-10 23:53:24,132 - INFO - Saving selected units and HUD positions
+2026-03-10 23:53:24,141 - INFO - Saved selected units.
+2026-03-10 23:53:24,148 - INFO - HUD positions saved successfully.
+2026-03-10 23:53:28,704 - INFO - Logging setup complete
+2026-03-10 23:53:28,777 - INFO - Starting Resource HUD Application
+2026-03-10 23:53:28,806 - INFO - Loading HUD positions
+2026-03-10 23:53:28,813 - INFO - HUD positions loaded successfully.
+2026-03-10 23:53:28,819 - INFO - Creating control panel
+2026-03-10 23:53:28,910 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:53:28,916 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:53:28,922 - INFO - Starting data update thread
+2026-03-10 23:53:28,928 - INFO - Entering application event loop
+2026-03-10 23:53:28,928 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:53:28,939 - INFO - Waiting for the game to start...
+2026-03-10 23:53:29,211 - INFO - Game detected
+2026-03-10 23:53:29,217 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:53:29,223 - INFO - Player 0 color: green
+2026-03-10 23:53:29,228 - INFO - Player 0 country name: YuriCountry
+2026-03-10 23:53:29,234 - INFO - Player 0 faction: Yuri
+2026-03-10 23:53:29,239 - INFO - Player 0 name: Snark
+2026-03-10 23:53:29,245 - INFO - Number of valid players: 1
+2026-03-10 23:53:29,250 - INFO - Game started handler called
+2026-03-10 23:53:29,256 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:53:29,359 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:53:29,393 - INFO - Unit windows created successfully.
+2026-03-10 23:53:44,981 - INFO - Toggled save_flags_as_images to: True
+2026-03-10 23:53:44,995 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:53:45,050 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:53:45,074 - INFO - Unit windows created successfully.
+2026-03-10 23:53:48,071 - INFO - Toggled show_flag state to: True
+2026-03-10 23:53:48,705 - INFO - Toggled show_flag state to: False

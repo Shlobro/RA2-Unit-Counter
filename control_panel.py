@@ -210,9 +210,11 @@ class ControlPanel(QMainWindow):
             if self.state.hud_positions.get('combined_hud', False):
                 for combined_window, _ in self.state.hud_windows:
                     combined_window.resource_widget.flag_widget.update_data_size(new_size)
+                    combined_window.resource_widget.export_flag_image_if_needed()
             else:
                 for _, resource_window in self.state.hud_windows:
                     resource_window.flag_widget.update_data_size(new_size)
+                    resource_window.export_flag_image_if_needed()
 
 
 
@@ -283,6 +285,10 @@ class ControlPanel(QMainWindow):
         self.flag_checkbox.setChecked(self.state.hud_positions.get('show_flag', True))
         self.flag_checkbox.stateChanged.connect(self.toggle_flag)
         flag_layout.addRow(self.flag_checkbox)
+        self.save_flags_as_images_checkbox = QCheckBox("Save Flags As Images")
+        self.save_flags_as_images_checkbox.setChecked(self.state.hud_positions.get('save_flags_as_images', False))
+        self.save_flags_as_images_checkbox.stateChanged.connect(self.toggle_save_flags_as_images)
+        flag_layout.addRow(self.save_flags_as_images_checkbox)
         flag_size_label = QLabel("Flag Widget Size:")
         flag_size = self.state.hud_positions.get('flag_widget_size', 50)
         self.flag_size_spinbox = QSpinBox()
@@ -327,6 +333,26 @@ class ControlPanel(QMainWindow):
         money_spent_group.setLayout(money_spent_layout)
         layout.addWidget(money_spent_group)
 
+        # Power Settings
+        power_group = QGroupBox("Power Widget Settings")
+        power_layout = QFormLayout()
+        self.power_checkbox = QCheckBox("Show Power")
+        self.power_checkbox.setChecked(self.state.hud_positions.get('show_power', True))
+        self.power_checkbox.stateChanged.connect(self.toggle_power)
+        power_layout.addRow(self.power_checkbox)
+        power_size_label = QLabel("Power Widget Size:")
+        power_size = self.state.hud_positions.get('power_widget_size', 50)
+        self.power_size_spinbox = QSpinBox()
+        self.power_size_spinbox.setRange(5, 500)
+        self.power_size_spinbox.setValue(power_size)
+        self.power_size_spinbox.valueChanged.connect(self.update_power_widget_size)
+        power_layout.addRow(power_size_label, self.power_size_spinbox)
+        power_group.setLayout(power_layout)
+        layout.addWidget(power_group)
+
+        tab.setLayout(layout)
+        self.tabs.addTab(tab, "Name/Flag/Money")
+
     def update_distance_between_numbers(self):
         new_distance = self.distance_spinbox.value()
         self.state.hud_positions['distance_between_numbers'] = new_distance
@@ -367,39 +393,6 @@ class ControlPanel(QMainWindow):
                     elif unit_window:
                         # Single unit window (non-separate mode)
                         unit_window.update_spacing(new_distance)
-
-    def update_flag_widget_size(self):
-        new_size = self.flag_size_spinbox.value()
-        self.state.hud_positions['flag_widget_size'] = new_size
-        logging.info(f"Updated flag widget size: {new_size}")
-        if self.state.hud_windows:
-            if self.state.hud_positions.get('combined_hud', False):
-                for combined_window, _ in self.state.hud_windows:
-                    combined_window.resource_widget.flag_widget.update_data_size(new_size)
-            else:
-                for _, resource_window in self.state.hud_windows:
-                    resource_window.flag_widget.update_data_size(new_size)
-
-        # Power Settings
-        power_group = QGroupBox("Power Widget Settings")
-        power_layout = QFormLayout()
-        self.power_checkbox = QCheckBox("Show Power")
-        self.power_checkbox.setChecked(self.state.hud_positions.get('show_power', True))
-        self.power_checkbox.stateChanged.connect(self.toggle_power)
-        power_layout.addRow(self.power_checkbox)
-        power_size_label = QLabel("Power Widget Size:")
-        power_size = self.state.hud_positions.get('power_widget_size', 50)
-        self.power_size_spinbox = QSpinBox()
-        self.power_size_spinbox.setRange(5, 500)
-        self.power_size_spinbox.setValue(power_size)
-        self.power_size_spinbox.valueChanged.connect(self.update_power_widget_size)
-        power_layout.addRow(power_size_label, self.power_size_spinbox)
-        power_group.setLayout(power_layout)
-        layout.addWidget(power_group)
-
-        tab.setLayout(layout)
-        self.tabs.addTab(tab, "Name/Flag/Money")
-
 
     # ------------------------- Factory stuff ------------------------------
     def create_factory_settings_tab(self):
@@ -602,7 +595,12 @@ class ControlPanel(QMainWindow):
         self.show_flags_checkbox.setChecked(self.state.hud_positions.get('show_flag', True))
         self.show_flags_checkbox.stateChanged.connect(self.toggle_flag)
         visibility_layout.addRow(self.show_flags_checkbox)
-        
+
+        self.save_flags_as_images_checkbox = QCheckBox("Save Player Flags As Image Files")
+        self.save_flags_as_images_checkbox.setChecked(self.state.hud_positions.get('save_flags_as_images', False))
+        self.save_flags_as_images_checkbox.stateChanged.connect(self.toggle_save_flags_as_images)
+        visibility_layout.addRow(self.save_flags_as_images_checkbox)
+
         self.show_money_checkbox = QCheckBox("Show Money")
         self.show_money_checkbox.setChecked(self.state.hud_positions.get('show_money', True))
         self.show_money_checkbox.stateChanged.connect(self.toggle_money)
@@ -826,6 +824,14 @@ class ControlPanel(QMainWindow):
 
     def toggle_flag(self, state_val):
         self.toggle_hud_element('show_flag', 'flag_widget', state_val)
+
+    def toggle_save_flags_as_images(self, state_val):
+        enabled = (state_val == 2)
+        self.state.hud_positions['save_flags_as_images'] = enabled
+        logging.info(f"Toggled save_flags_as_images to: {enabled}")
+
+        from hud_manager import create_hud_windows
+        create_hud_windows(self.state)
 
     def toggle_post_game_scoreboard(self, state_val):
         enabled = (state_val == 2)

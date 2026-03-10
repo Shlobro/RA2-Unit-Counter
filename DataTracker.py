@@ -1,4 +1,5 @@
 import logging
+import os
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QFont, QFontDatabase, QColor
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
@@ -31,6 +32,7 @@ class ResourceWindow(QMainWindow):
         self.player = player
         self.hud_positions = hud_positions
         self.combined_mode = combined_mode
+        self._last_exported_flag_key = None
 
         # Load sizes from hud_positions
         name_widget_size = self.hud_positions.get('name_widget_size', 50)
@@ -59,9 +61,10 @@ class ResourceWindow(QMainWindow):
             font=username_font
         )
         self.flag_widget = FlagWidget(
-            image_path="Flags/PNG/" + faction_to_flag[self.player.country_name.value.decode('utf-8')],
+            image_path=self.get_flag_image_path(),
             size=flag_widget_size
         )
+        self.export_flag_image_if_needed()
         money_color_option = self.hud_positions.get('money_color', 'Use player color')
         if money_color_option == 'Use player color':
             money_text_color = self.player.color
@@ -105,7 +108,7 @@ class ResourceWindow(QMainWindow):
 
             if self.hud_positions.get('show_name', True):
                 layout.addWidget(self.name_widget)
-            if self.hud_positions.get('show_flag', True):
+            if self.hud_positions.get('show_flag', True) and not self.hud_positions.get('save_flags_as_images', False):
                 layout.addWidget(self.flag_widget)
             if self.hud_positions.get('show_money', True):
                 layout.addWidget(self.money_widget)
@@ -130,7 +133,7 @@ class ResourceWindow(QMainWindow):
             self.flag_window = self.create_window_with_widget(
                 f"Player {player_index} Flag", self.flag_widget, player_count, 'flag', self.player.color_name
             )
-            if self.hud_positions.get('show_flag', True):
+            if self.hud_positions.get('show_flag', True) and not self.hud_positions.get('save_flags_as_images', False):
                 self.flag_window.show()
             else:
                 self.flag_window.hide()
@@ -245,6 +248,7 @@ class ResourceWindow(QMainWindow):
 
     def update_labels(self):
         """Update the money, money spent, and power values."""
+        self.refresh_flag_widget()
         self.money_widget.update_data(self.player.balance)
         self.money_spent_widget.update_data(self.player.spent_credit)
         self.power_widget.update_data(self.player.power)
@@ -259,6 +263,53 @@ class ResourceWindow(QMainWindow):
         self.name_widget.update_data_size(new_size)
         self.money_widget.update_data_size(new_size)
         self.power_widget.update_data_size(new_size)
+
+    def export_flag_image_if_needed(self):
+        if not self.hud_positions.get('save_flags_as_images', False):
+            return
+
+        try:
+            folder_name = "player flags"
+            os.makedirs(folder_name, exist_ok=True)
+            color_name = self.player.get_normalized_color_name_for_file()
+            flag_image_path = self.get_flag_image_path()
+            export_key = (color_name, flag_image_path, self.flag_widget.size)
+            if self._last_exported_flag_key == export_key:
+                return
+            filename = os.path.join(folder_name, f"{color_name}_flag.png")
+            pixmap = QPixmap(flag_image_path).scaled(
+                self.flag_widget.size,
+                self.flag_widget.size,
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation
+            )
+            if pixmap.isNull():
+                logging.warning("Skipping flag export for %s because the pixmap is null.", self.player.username.value)
+                return
+            if not pixmap.save(filename, "PNG"):
+                logging.warning("Failed to save flag image for %s to %s", self.player.username.value, filename)
+                return
+            self._last_exported_flag_key = export_key
+            logging.debug("Saved flag image for %s to %s", self.player.username.value, filename)
+        except Exception as e:
+            logging.exception("Failed to export flag image for %s: %s", self.player.username.value, e)
+
+    def get_flag_image_path(self):
+        try:
+            country_name = self.player.country_name.value.decode('utf-8').strip('\x00')
+        except Exception:
+            country_name = ''
+        flag_filename = faction_to_flag.get(country_name, "RA2_Yuricountry.png")
+        return os.path.join("Flags", "PNG", flag_filename)
+
+    def refresh_flag_widget(self):
+        new_image_path = self.get_flag_image_path()
+        if self.flag_widget.image_path != new_image_path:
+            self.flag_widget.image_path = new_image_path
+            self.flag_widget.load_and_set_image()
+            self.flag_widget.adjust_size()
+            self._last_exported_flag_key = None
+        self.export_flag_image_if_needed()
 
     def update_money_widget_color(self):
         money_color_option = self.hud_positions.get('money_color', 'Use player color').strip().lower()

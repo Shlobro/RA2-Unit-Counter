@@ -55,6 +55,7 @@ def load_hud_positions(state):
         'unit_layout': 'Vertical',
         'money_color': 'Use player color',
         'show_flag': True,
+        'save_flags_as_images': False,
         'flag_widget_size': 50,
         'show_unit_frames': True,
         'name_widget_size': 50,
@@ -153,6 +154,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.money_checkbox, 'isChecked', state.hud_positions.get('show_money', True))
                 if value is not None:
                     state.hud_positions['show_money'] = value
+
+            if hasattr(cp, 'save_flags_as_images_checkbox'):
+                value = safe_widget_value(cp.save_flags_as_images_checkbox, 'isChecked', state.hud_positions.get('save_flags_as_images', False))
+                if value is not None:
+                    state.hud_positions['save_flags_as_images'] = value
                     
             if hasattr(cp, 'power_checkbox'):
                 value = safe_widget_value(cp.power_checkbox, 'isChecked', state.hud_positions.get('show_power', True))
