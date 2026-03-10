@@ -24887,3 +24887,149 @@
 2026-03-08 00:57:15,061 - INFO - Saving selected units and HUD positions
 2026-03-08 00:57:15,063 - INFO - Saved selected units.
 2026-03-08 00:57:15,064 - INFO - HUD positions saved successfully.
+2026-03-10 23:10:37,099 - INFO - Logging setup complete
+2026-03-10 23:10:37,220 - INFO - Starting Resource HUD Application
+2026-03-10 23:10:37,239 - INFO - Loading HUD positions
+2026-03-10 23:10:37,242 - INFO - HUD positions loaded successfully.
+2026-03-10 23:10:37,242 - INFO - Creating control panel
+2026-03-10 23:10:37,315 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:10:37,315 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:10:37,315 - INFO - Starting data update thread
+2026-03-10 23:10:37,315 - INFO - Entering application event loop
+2026-03-10 23:10:37,316 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:10:37,316 - INFO - Waiting for the game to start...
+2026-03-10 23:10:37,636 - INFO - Game detected
+2026-03-10 23:10:37,636 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:10:37,636 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:10:37,637 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:10:37,637 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:10:37,637 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:10:37,637 - INFO - Player 4 color: green
+2026-03-10 23:10:37,638 - INFO - Player 4 country name: Americans
+2026-03-10 23:10:37,638 - INFO - Player 4 faction: Allied
+2026-03-10 23:10:37,638 - INFO - Player 4 name: Snark
+2026-03-10 23:10:37,638 - INFO - Number of valid players: 1
+2026-03-10 23:10:37,642 - INFO - Game started handler called
+2026-03-10 23:10:37,650 - INFO - Reading spawn.ini from: D:/ra2/Red Alert 2/Red Alert 2\spawn.ini
+2026-03-10 23:10:37,650 - INFO - Sections found: ['Settings']
+2026-03-10 23:10:37,650 - INFO - Raw IsSpectator value: 'False'
+2026-03-10 23:10:37,650 - INFO - Parsed IsSpectator=False in spawn.ini
+2026-03-10 23:10:38,904 - WARNING - User is not admin and not spectator - preventing unit counter from starting
+2026-03-10 23:10:40,913 - INFO - All counter windows closed
+2026-03-10 23:10:40,927 - INFO - Saved selected units.
+2026-03-10 23:10:40,928 - INFO - HUD positions saved successfully.
+2026-03-10 23:10:40,928 - INFO - Settings saved on control panel close
+2026-03-10 23:10:40,933 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:10:41,651 - INFO - Emitted game_stopped signal.
+2026-03-10 23:10:42,662 - INFO - Data update thread has exited.
+2026-03-10 23:10:42,663 - INFO - Saving selected units and HUD positions
+2026-03-10 23:10:42,665 - INFO - Saved selected units.
+2026-03-10 23:10:42,667 - INFO - HUD positions saved successfully.
+2026-03-10 23:10:53,067 - INFO - Logging setup complete
+2026-03-10 23:10:53,126 - INFO - Starting Resource HUD Application
+2026-03-10 23:10:53,144 - INFO - Loading HUD positions
+2026-03-10 23:10:53,144 - INFO - HUD positions loaded successfully.
+2026-03-10 23:10:53,144 - INFO - Creating control panel
+2026-03-10 23:10:53,220 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:10:53,220 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:10:53,221 - INFO - Starting data update thread
+2026-03-10 23:10:53,221 - INFO - Entering application event loop
+2026-03-10 23:10:53,221 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:10:53,221 - INFO - Waiting for the game to start...
+2026-03-10 23:10:53,571 - INFO - Game detected
+2026-03-10 23:10:53,572 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:10:53,572 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:10:53,572 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:10:53,572 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:10:53,572 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:10:53,573 - INFO - Player 4 color: green
+2026-03-10 23:10:53,573 - INFO - Player 4 country name: Americans
+2026-03-10 23:10:53,573 - INFO - Player 4 faction: Allied
+2026-03-10 23:10:53,573 - INFO - Player 4 name: Snark
+2026-03-10 23:10:53,573 - INFO - Number of valid players: 1
+2026-03-10 23:10:53,576 - INFO - Game started handler called
+2026-03-10 23:10:53,577 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:10:53,687 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:10:53,707 - INFO - Unit windows created successfully.
+2026-03-10 23:16:28,423 - INFO - All counter windows closed
+2026-03-10 23:16:28,426 - INFO - Saved selected units.
+2026-03-10 23:16:28,427 - INFO - HUD positions saved successfully.
+2026-03-10 23:16:28,427 - INFO - Settings saved on control panel close
+2026-03-10 23:16:28,429 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:16:29,049 - INFO - Emitted game_stopped signal.
+2026-03-10 23:16:30,050 - INFO - Data update thread has exited.
+2026-03-10 23:16:30,051 - INFO - Saving selected units and HUD positions
+2026-03-10 23:16:30,055 - INFO - Saved selected units.
+2026-03-10 23:16:30,057 - INFO - HUD positions saved successfully.
+2026-03-10 23:16:32,961 - INFO - Logging setup complete
+2026-03-10 23:16:33,032 - INFO - Starting Resource HUD Application
+2026-03-10 23:16:33,054 - INFO - Loading HUD positions
+2026-03-10 23:16:33,059 - INFO - HUD positions loaded successfully.
+2026-03-10 23:16:33,059 - INFO - Creating control panel
+2026-03-10 23:16:33,134 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:16:33,134 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:16:33,134 - INFO - Starting data update thread
+2026-03-10 23:16:33,134 - INFO - Entering application event loop
+2026-03-10 23:16:33,135 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:16:33,135 - INFO - Waiting for the game to start...
+2026-03-10 23:16:33,635 - INFO - Game detected
+2026-03-10 23:16:33,635 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:16:33,636 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:16:33,636 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:16:33,636 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:16:33,636 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:16:33,636 - INFO - Player 4 color: green
+2026-03-10 23:16:33,637 - INFO - Player 4 country name: Americans
+2026-03-10 23:16:33,637 - INFO - Player 4 faction: Allied
+2026-03-10 23:16:33,637 - INFO - Player 4 name: Snark
+2026-03-10 23:16:33,637 - INFO - Number of valid players: 1
+2026-03-10 23:16:33,641 - INFO - Game started handler called
+2026-03-10 23:16:33,641 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:16:33,747 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:16:33,774 - INFO - Unit windows created successfully.
+2026-03-10 23:18:35,482 - INFO - All counter windows closed
+2026-03-10 23:18:35,485 - INFO - Saved selected units.
+2026-03-10 23:18:35,487 - INFO - HUD positions saved successfully.
+2026-03-10 23:18:35,488 - INFO - Settings saved on control panel close
+2026-03-10 23:18:35,492 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:18:35,746 - INFO - Emitted game_stopped signal.
+2026-03-10 23:18:36,752 - INFO - Data update thread has exited.
+2026-03-10 23:18:36,753 - INFO - Saving selected units and HUD positions
+2026-03-10 23:18:36,755 - INFO - Saved selected units.
+2026-03-10 23:18:36,757 - INFO - HUD positions saved successfully.
+2026-03-10 23:18:38,904 - INFO - Logging setup complete
+2026-03-10 23:18:38,965 - INFO - Starting Resource HUD Application
+2026-03-10 23:18:38,985 - INFO - Loading HUD positions
+2026-03-10 23:18:38,986 - INFO - HUD positions loaded successfully.
+2026-03-10 23:18:38,986 - INFO - Creating control panel
+2026-03-10 23:18:39,063 - INFO - Waiting for a valid game path to be selected
+2026-03-10 23:18:39,064 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-10 23:18:39,064 - INFO - Starting data update thread
+2026-03-10 23:18:39,064 - INFO - Entering application event loop
+2026-03-10 23:18:39,064 - INFO - Waiting for the game to start and players to load...
+2026-03-10 23:18:39,064 - INFO - Waiting for the game to start...
+2026-03-10 23:18:39,540 - INFO - Game detected
+2026-03-10 23:18:39,541 - INFO - Skipping Player 0 as not fully initialized yet.
+2026-03-10 23:18:39,541 - INFO - Skipping Player 1 as not fully initialized yet.
+2026-03-10 23:18:39,541 - INFO - Skipping Player 2 as not fully initialized yet.
+2026-03-10 23:18:39,541 - INFO - Skipping Player 3 as not fully initialized yet.
+2026-03-10 23:18:39,541 - INFO - Players loaded. Proceeding with players initialization.
+2026-03-10 23:18:39,542 - INFO - Player 4 color: green
+2026-03-10 23:18:39,542 - INFO - Player 4 country name: Americans
+2026-03-10 23:18:39,542 - INFO - Player 4 faction: Allied
+2026-03-10 23:18:39,542 - INFO - Player 4 name: Snark
+2026-03-10 23:18:39,542 - INFO - Number of valid players: 1
+2026-03-10 23:18:39,545 - INFO - Game started handler called
+2026-03-10 23:18:39,545 - INFO - Creating ResourceWindow for Snark with color green
+2026-03-10 23:18:39,648 - INFO - Creating FactoryWindow for Snark with color green
+2026-03-10 23:18:39,671 - INFO - Unit windows created successfully.
+2026-03-10 23:20:34,980 - INFO - All counter windows closed
+2026-03-10 23:20:34,983 - INFO - Saved selected units.
+2026-03-10 23:20:34,985 - INFO - HUD positions saved successfully.
+2026-03-10 23:20:34,985 - INFO - Settings saved on control panel close
+2026-03-10 23:20:34,988 - INFO - Exiting application, stopping data update thread
+2026-03-10 23:20:35,667 - INFO - Emitted game_stopped signal.
+2026-03-10 23:20:36,667 - INFO - Data update thread has exited.
+2026-03-10 23:20:36,668 - INFO - Saving selected units and HUD positions
+2026-03-10 23:20:36,671 - INFO - Saved selected units.
+2026-03-10 23:20:36,673 - INFO - HUD positions saved successfully.

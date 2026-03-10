@@ -968,11 +968,8 @@ class ControlPanel(QMainWindow):
         if self.unit_selection_window is not None and self.unit_selection_window.isVisible():
             logging.info("Closing unit selection window")
             self.unit_selection_window.close()
-            
-        # Close all HUD counter windows
-        self.close_all_counter_windows()
-        
-        # Save all settings before closing
+
+        # Save while the HUD windows still exist so their live screen positions can be read.
         try:
             from hud_manager import save_hud_positions
             save_selected_units(self.state)
@@ -980,7 +977,10 @@ class ControlPanel(QMainWindow):
             logging.info("Settings saved on control panel close")
         except Exception as save_error:
             logging.exception("Error saving settings on close: %s", save_error)
-            
+
+        # Close all HUD counter windows after persistence is complete.
+        self.close_all_counter_windows()
+
         super().closeEvent(event)
     
 
