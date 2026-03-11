@@ -1,6 +1,6 @@
 import logging
 from collections import Counter
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QMainWindow, QWidget,
     QVBoxLayout, QHBoxLayout,
@@ -27,6 +27,8 @@ class FactoryWindow(QMainWindow):
         self.hud_pos = hud_pos
         self.spacing = spacing
         self._dragging = False
+        self._applying_geometry = False
+        self._anchor_refresh_pending = False
 
         # Each entry: factory_name -> dict with:
         # {
@@ -68,8 +70,7 @@ class FactoryWindow(QMainWindow):
         self.main_layout.setSpacing(0)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self._apply_layout_direction(self.main_layout)
-        # REMOVE the fixed-size constraint so the layout can expand/shrink properly:
-        # self.main_layout.setSizeConstraint(QLayout.SetFixedSize)
+        self.main_layout.setSizeConstraint(QLayout.SetFixedSize)
 
         self.factory_frame.setLayout(self.main_layout)
         self.setCentralWidget(self.factory_frame)
@@ -80,9 +81,10 @@ class FactoryWindow(QMainWindow):
         # Default geometry
         default_size = self.get_default_size()
         self.setGeometry(0, 0, default_size, default_size)
-        self._refresh_window_size()
-        self._move_to_saved_anchor()
+        self.update_labels()
+        self._apply_layout_and_anchor()
         self.show()
+        self._schedule_anchor_refresh()
 
     # --------------------------------------------------------------------
     # Setup
@@ -172,14 +174,17 @@ class FactoryWindow(QMainWindow):
         self._move_to_saved_anchor()
 
     def get_default_position(self):
-        anchor = get_player_position(
+        anchor = self._get_saved_anchor_position()
+        return self._anchor_to_top_left(anchor)
+
+    def _get_saved_anchor_position(self):
+        return get_player_position(
             self.hud_pos,
             self.player_bucket_key,
             'factory',
             legacy_root_keys=['factories'],
             legacy_bucket_keys=self.legacy_player_bucket_keys,
         )
-        return self._anchor_to_top_left(anchor)
 
     # --------------------------------------------------------------------
     # Movable window
@@ -236,6 +241,9 @@ class FactoryWindow(QMainWindow):
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
+        if self._applying_geometry or self._dragging or not self._is_reverse_expansion():
+            return
+        self._move_to_saved_anchor()
 
     def _get_anchor_position(self, direction=None, origin_x=None, origin_y=None):
         direction = direction or ('reverse' if self._is_reverse_expansion() else 'forward')
@@ -251,10 +259,20 @@ class FactoryWindow(QMainWindow):
             anchor_y += size.height()
         return {'x': anchor_x, 'y': anchor_y}
 
-    def _anchor_to_top_left(self, anchor):
+    def top_left_to_anchor(self, x, y, size, direction=None):
+        direction = direction or ('reverse' if self._is_reverse_expansion() else 'forward')
+        anchor_x = x
+        anchor_y = y
+        if self.layout_type == 'Horizontal' and direction == 'reverse':
+            anchor_x += size.width()
+        elif self.layout_type == 'Vertical' and direction == 'reverse':
+            anchor_y += size.height()
+        return {'x': anchor_x, 'y': anchor_y}
+
+    def _anchor_to_top_left(self, anchor, size=None):
         x = anchor['x']
         y = anchor['y']
-        size = self.size()
+        size = self.size() if size is None else size
         if self.layout_type == 'Horizontal' and self._is_reverse_expansion():
             x -= size.width()
         elif self.layout_type == 'Vertical' and self._is_reverse_expansion():
@@ -268,20 +286,47 @@ class FactoryWindow(QMainWindow):
         if pos['x'] != self.x() or pos['y'] != self.y():
             self.move(pos['x'], pos['y'])
 
-    def _refresh_window_size(self):
+    def _get_target_window_size(self):
         self.main_layout.activate()
-        self.factory_frame.adjustSize()
-        self.adjustSize()
+        size = self.main_layout.sizeHint()
+        return size.expandedTo(self.minimumSizeHint())
+
+    def _apply_window_geometry(self, anchor_to_saved=False):
+        target_size = self._get_target_window_size()
+        new_x = self.x()
+        new_y = self.y()
+        if anchor_to_saved:
+            saved_anchor = self._get_saved_anchor_position()
+            pos = self._anchor_to_top_left(saved_anchor, target_size)
+            new_x = pos['x']
+            new_y = pos['y']
+
+        self._applying_geometry = True
+        try:
+            self.setGeometry(new_x, new_y, target_size.width(), target_size.height())
+        finally:
+            self._applying_geometry = False
+
+    def _refresh_window_size(self):
+        self._apply_window_geometry(anchor_to_saved=False)
+
+    def _schedule_anchor_refresh(self):
+        if self._anchor_refresh_pending:
+            return
+        self._anchor_refresh_pending = True
+        QTimer.singleShot(0, self._flush_pending_anchor_refresh)
+
+    def _flush_pending_anchor_refresh(self):
+        self._anchor_refresh_pending = False
+        if self._dragging:
+            return
+        self._apply_layout_and_anchor()
 
     def _apply_layout_and_anchor(self):
         self.setUpdatesEnabled(False)
         self.factory_frame.setUpdatesEnabled(False)
         try:
-            self.main_layout.activate()
-            self.factory_frame.adjustSize()
-            self.adjustSize()
-            if not self._dragging and self._is_reverse_expansion():
-                self._move_to_saved_anchor()
+            self._apply_window_geometry(anchor_to_saved=not self._dragging)
             self.main_layout.update()
             self.updateGeometry()
         finally:
@@ -315,6 +360,7 @@ class FactoryWindow(QMainWindow):
 
             # Remove old queue widgets
             for qw in queue_widgets:
+                sub_layout.removeWidget(qw)
                 qw.setParent(None)
                 qw.deleteLater()
             queue_widgets.clear()
@@ -355,6 +401,7 @@ class FactoryWindow(QMainWindow):
 
         self._sync_display_order(currently_visible)
         self._apply_layout_and_anchor()
+        self._schedule_anchor_refresh()
 
     def _sync_display_order(self, currently_visible):
         visible_names = [
@@ -380,7 +427,6 @@ class FactoryWindow(QMainWindow):
             self.main_layout.addWidget(self.factory_data[factory_name]["container"])
 
         self._current_layout_order = list(ordered_names)
-        self._apply_layout_and_anchor()
 
     # --------------------------------------------------------------------
     # Called by control panel or external code
@@ -434,6 +480,7 @@ class FactoryWindow(QMainWindow):
 
         new_main_layout.setSpacing(0)
         new_main_layout.setContentsMargins(0, 0, 0, 0)
+        new_main_layout.setSizeConstraint(QLayout.SetFixedSize)
         self._apply_layout_direction(new_main_layout)
 
         # Remove each factory container from old layout, add to new
@@ -489,7 +536,7 @@ class FactoryWindow(QMainWindow):
         self.update_labels()
 
         # Finally, resize and show
-        self.adjustSize()
+        self._refresh_window_size()
         self.show()
 
         logging.info(f"Factory layout updated to {new_layout_type}")

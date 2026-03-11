@@ -259,6 +259,17 @@ def save_hud_positions(state):
         def player_key(player):
             return get_player_bucket_key(player, state.hud_positions)
 
+        def get_saved_window_position(window, embedded_widget=None):
+            if window is None or not hasattr(window, 'pos'):
+                return None
+
+            pos = window.pos()
+            if embedded_widget is not None and hasattr(embedded_widget, 'top_left_to_anchor'):
+                anchor = embedded_widget.top_left_to_anchor(pos.x(), pos.y(), window.size())
+                return anchor['x'], anchor['y']
+
+            return pos.x(), pos.y()
+
         resource_window_types = [
             'name',
             'money',
@@ -278,17 +289,24 @@ def save_hud_positions(state):
                 player_id = player_key(resource_window.player)
                 if hasattr(resource_window, 'windows') and resource_window.windows:
                     for hud_type, window in zip(resource_window_types, resource_window.windows):
-                        if window is None or not hasattr(window, 'pos'):
+                        if window is None:
                             continue
-                        pos = window.pos()
-                        set_player_position(state.hud_positions, player_id, hud_type, pos.x(), pos.y())
+                        embedded_widget = None
+                        if hud_type == 'superweapons' and hasattr(resource_window, 'superweapon_widget'):
+                            embedded_widget = resource_window.superweapon_widget
+                        saved_pos = get_saved_window_position(window, embedded_widget)
+                        if saved_pos is None:
+                            continue
+                        set_player_position(state.hud_positions, player_id, hud_type, saved_pos[0], saved_pos[1])
 
         if hasattr(state, 'factory_windows'):
             for factory_win in state.factory_windows:
-                if factory_win is None or not hasattr(factory_win, 'player') or not hasattr(factory_win, 'pos'):
+                if factory_win is None or not hasattr(factory_win, 'player'):
                     continue
-                pos = factory_win.pos()
-                set_player_position(state.hud_positions, player_key(factory_win.player), 'factory', pos.x(), pos.y())
+                saved_pos = get_saved_window_position(factory_win, factory_win)
+                if saved_pos is None:
+                    continue
+                set_player_position(state.hud_positions, player_key(factory_win.player), 'factory', saved_pos[0], saved_pos[1])
 
         with open(state.HUD_POSITION_FILE, 'w') as file:
             json.dump(state.hud_positions, file, indent=4)

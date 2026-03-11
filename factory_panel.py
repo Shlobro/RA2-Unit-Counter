@@ -155,6 +155,7 @@ class FactoryPanel(QWidget):
 
             # Remove old queue widgets
             for qw in queue_widgets:
+                sub_layout.removeWidget(qw)
                 qw.setParent(None)
                 qw.deleteLater()
             queue_widgets.clear()
