@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QHBoxLayout, QLayout, QSizePolicy, QVBoxLayout, QWidget, QMenu
 
 from superweapon_widget import SuperweaponWidget
@@ -14,6 +14,9 @@ class SuperweaponTimerPanel(QWidget):
         self.player = player
         self.hud_positions = hud_positions
         self.widgets = {}
+        self._applying_container_geometry = False
+        self._anchor_refresh_pending = False
+        self._dragging_container = False
         self.layout_type = hud_positions.get('superweapon_layout', 'Horizontal')
         self.player_bucket_key = get_player_bucket_key(self.player, self.hud_positions)
         self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_positions)
@@ -63,11 +66,8 @@ class SuperweaponTimerPanel(QWidget):
             self.save_anchor_position(anchor)
         self._apply_layout_direction(self.main_layout)
         self.main_layout.invalidate()
-        self.adjustSize()
-        self.updateGeometry()
-        if hasattr(self, '_container_window') and self._container_window is not None:
-            self._container_window.adjustSize()
-            self._move_container_to_saved_anchor()
+        self._apply_layout_and_anchor()
+        self._schedule_anchor_refresh()
 
     def get_saved_anchor_position(self):
         return get_player_position(
@@ -109,6 +109,53 @@ class SuperweaponTimerPanel(QWidget):
         pos = self.anchor_to_top_left(anchor, self._container_window.size())
         if pos['x'] != self._container_window.x() or pos['y'] != self._container_window.y():
             self._container_window.move(pos['x'], pos['y'])
+
+    def _get_target_container_size(self):
+        if hasattr(self, '_container_window') and self._container_window is not None and self._container_window.layout() is not None:
+            size = self._container_window.layout().sizeHint()
+        else:
+            size = self.sizeHint()
+        return size.expandedTo(self.minimumSizeHint())
+
+    def _apply_container_geometry(self, anchor_to_saved=False):
+        if not hasattr(self, '_container_window') or self._container_window is None:
+            return
+
+        target_size = self._get_target_container_size()
+        new_x = self._container_window.x()
+        new_y = self._container_window.y()
+        if anchor_to_saved:
+            saved_anchor = self.get_saved_anchor_position()
+            pos = self.anchor_to_top_left(saved_anchor, target_size)
+            new_x = pos['x']
+            new_y = pos['y']
+
+        self._applying_container_geometry = True
+        try:
+            self._container_window.setGeometry(new_x, new_y, target_size.width(), target_size.height())
+        finally:
+            self._applying_container_geometry = False
+
+    def _schedule_anchor_refresh(self):
+        if self._anchor_refresh_pending:
+            return
+        self._anchor_refresh_pending = True
+        QTimer.singleShot(0, self._flush_pending_anchor_refresh)
+
+    def _flush_pending_anchor_refresh(self):
+        self._anchor_refresh_pending = False
+        if self._dragging_container:
+            return
+        self._apply_layout_and_anchor()
+
+    def _apply_layout_and_anchor(self):
+        self.setUpdatesEnabled(False)
+        try:
+            self._apply_container_geometry(anchor_to_saved=not self._dragging_container)
+            self.updateGeometry()
+        finally:
+            self.setUpdatesEnabled(True)
+            self.update()
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
@@ -163,17 +210,18 @@ class SuperweaponTimerPanel(QWidget):
                 visible_count += 1
 
         self.setVisible(visible_count > 0)
-        self.updateGeometry()
+        self._apply_layout_and_anchor()
+        self._schedule_anchor_refresh()
 
     def update_size(self, new_size):
         for widget in self.widgets.values():
             widget.update_size(new_size)
-        self.adjustSize()
+        self._apply_layout_and_anchor()
 
     def update_show_frame(self, show):
         for widget in self.widgets.values():
             widget.update_show_frame(show)
-        self.adjustSize()
+        self._apply_layout_and_anchor()
 
     def set_size_for_all(self, new_size):
         self.update_size(new_size)
@@ -208,4 +256,4 @@ class SuperweaponTimerPanel(QWidget):
         self.setLayout(new_layout)
         self.main_layout = new_layout
         self.update_labels()
-        self.adjustSize()
+        self._apply_layout_and_anchor()

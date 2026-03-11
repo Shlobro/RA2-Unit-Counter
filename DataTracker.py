@@ -1,6 +1,6 @@
 import logging
 import os
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap, QFont, QFontDatabase, QColor
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 
@@ -206,6 +206,8 @@ class ResourceWindow(QMainWindow):
 
         # Create layout and add widget
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         layout.addWidget(widget)
         window.setLayout(layout)
         widget._container_window = window
@@ -216,6 +218,8 @@ class ResourceWindow(QMainWindow):
             nonlocal offset
             if event.button() == Qt.LeftButton:
                 offset = event.pos()
+                if hasattr(widget, '_dragging_container'):
+                    widget._dragging_container = True
         def mouse_move_event(event):
             nonlocal offset
             if offset is not None:
@@ -226,12 +230,27 @@ class ResourceWindow(QMainWindow):
                     widget.save_anchor_position(widget.top_left_to_anchor(x, y, window.size()))
                 else:
                     self.update_hud_position_for_type(hud_type, x, y)
+        def mouse_release_event(event):
+            nonlocal offset
+            if event.button() == Qt.LeftButton:
+                offset = None
+                if hasattr(widget, 'top_left_to_anchor') and hasattr(widget, 'save_anchor_position'):
+                    widget.save_anchor_position(widget.top_left_to_anchor(window.x(), window.y(), window.size()))
+                else:
+                    self.update_hud_position_for_type(hud_type, window.x(), window.y())
+                if hasattr(widget, '_dragging_container'):
+                    QTimer.singleShot(0, lambda: setattr(widget, '_dragging_container', False))
         window.mousePressEvent = mouse_press_event
         window.mouseMoveEvent = mouse_move_event
+        window.mouseReleaseEvent = mouse_release_event
 
         def resize_event(event):
             QWidget.resizeEvent(window, event)
             if not hasattr(widget, 'anchor_to_top_left'):
+                return
+            if getattr(widget, '_applying_container_geometry', False):
+                return
+            if getattr(widget, '_dragging_container', False):
                 return
 
             anchor = None
@@ -259,6 +278,8 @@ class ResourceWindow(QMainWindow):
             widget.save_anchor_position(anchor)
             pos = widget.anchor_to_top_left(anchor, window.size())
         window.move(pos['x'], pos['y'])
+        if hasattr(widget, '_schedule_anchor_refresh'):
+            widget._schedule_anchor_refresh()
         return window
 
     def update_hud_position_for_type(self, hud_type, x, y):
