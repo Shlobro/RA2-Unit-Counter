@@ -13,6 +13,12 @@ from constants import (
 from DataTracker import ResourceWindow
 from factory_panel import FactoryPanel
 from hud_position_utils import get_player_position, set_player_position, get_player_setting, set_player_setting
+from player_identity import (
+    get_combined_hud_title,
+    get_player_bucket_key,
+    get_player_display_label,
+    get_player_legacy_bucket_keys,
+)
 
 
 # =============================================================================
@@ -41,6 +47,8 @@ class UnitWindowBase(QMainWindow):
         self.show_unit_frames = hud_pos.get('show_unit_frames', True)
         self.counters = {}
         self.spacing = spacing
+        self.player_bucket_key = get_player_bucket_key(self.player, self.hud_pos)
+        self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
 
         # Set geometry and flags.
         self.setGeometry(0, 0, 120, 120)
@@ -177,17 +185,13 @@ class UnitWindowBase(QMainWindow):
         self.mousePressEvent = mouse_press_event
         self.mouseMoveEvent = mouse_move_event
 
-    def _get_player_color_key(self):
-        if not isinstance(self.player.color_name, str):
-            return self.player.color_name.name()
-        return self.player.color_name
-
     def _is_reverse_expansion(self):
         return get_player_setting(
             self.hud_pos,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.EXPANSION_SETTING_KEY,
             'forward',
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
         ) == 'reverse'
 
     def _apply_layout_direction(self, layout):
@@ -200,13 +204,13 @@ class UnitWindowBase(QMainWindow):
         anchor = self._get_anchor_position(direction)
         set_player_setting(
             self.hud_pos,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.EXPANSION_SETTING_KEY,
             direction,
         )
         set_player_position(
             self.hud_pos,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.get_hud_type(),
             anchor['x'],
             anchor['y'],
@@ -252,14 +256,19 @@ class UnitWindowBase(QMainWindow):
         anchor = self._get_anchor_position(origin_x=x, origin_y=y)
         set_player_position(
             self.hud_pos,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.get_hud_type(),
             anchor['x'],
             anchor['y'],
         )
 
     def _get_saved_anchor_position(self):
-        return get_player_position(self.hud_pos, self._get_player_color_key(), self.get_hud_type())
+        return get_player_position(
+            self.hud_pos,
+            self.player_bucket_key,
+            self.get_hud_type(),
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
+        )
 
     def _get_anchor_position(self, direction=None, origin_x=None, origin_y=None):
         direction = direction or ('reverse' if self._is_reverse_expansion() else 'forward')
@@ -493,7 +502,7 @@ class CombinedHudWindow(QWidget):
         self.hud_pos = hud_pos
         self.selected_units_dict = selected_units_dict
 
-        self.setWindowTitle(f"{player.color_name} Combined HUD")
+        self.setWindowTitle(get_combined_hud_title(player, hud_pos))
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.make_hud_movable()
@@ -501,8 +510,13 @@ class CombinedHudWindow(QWidget):
         self._init_ui()
 
         # Restore saved position (for combined HUD).
-        player_id = (player.color_name.name() if not isinstance(player.color_name, str) else player.color_name)
-        pos = get_player_position(self.hud_pos, player_id, 'combined')
+        player_id = get_player_bucket_key(player, self.hud_pos)
+        pos = get_player_position(
+            self.hud_pos,
+            player_id,
+            'combined',
+            legacy_bucket_keys=get_player_legacy_bucket_keys(player, self.hud_pos),
+        )
         self.move(pos['x'], pos['y'])
 
     def _init_ui(self):
@@ -627,9 +641,13 @@ class CombinedHudWindow(QWidget):
         self.mouseMoveEvent = mouse_move_event
 
     def update_hud_position(self, x, y):
-        player_id = (self.player.color_name.name() if not isinstance(self.player.color_name, str)
-                     else self.player.color_name)
-        set_player_position(self.hud_pos, player_id, 'combined', x, y)
+        set_player_position(
+            self.hud_pos,
+            get_player_bucket_key(self.player, self.hud_pos),
+            'combined',
+            x,
+            y,
+        )
 
     def update_unit_counters_size(self, new_size, section=None):
         """
@@ -736,7 +754,7 @@ class CombinedUnitWindow(QMainWindow):
         self.hud_pos = hud_pos
         self.selected_units_dict = selected_units_dict
 
-        self.setWindowTitle(f"Player {player.color_name} Unit HUD")
+        self.setWindowTitle(f"{get_player_display_label(player, hud_pos)} Unit HUD")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         central = QWidget(self)

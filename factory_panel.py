@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QL
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
 from hud_position_utils import get_player_setting, set_player_setting
+from player_identity import get_player_bucket_key, get_player_legacy_bucket_keys
 
 class FactoryPanel(QWidget):
     EXPANSION_SETTING_KEY = 'factory_expansion_direction'
@@ -21,6 +22,8 @@ class FactoryPanel(QWidget):
         self._current_layout_order = []
         self.layout_type = hud_pos.get('factory_layout', 'Horizontal')
         self.show_factory_queue = hud_pos.get('show_factory_queue', True)
+        self.player_bucket_key = get_player_bucket_key(self.player, self.hud_pos)
+        self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
 
         # Main layout for the panel
         if self.layout_type == 'Vertical':
@@ -44,17 +47,13 @@ class FactoryPanel(QWidget):
     def get_default_size(self):
         return self.hud_pos.get('factory_size', 100)
 
-    def _get_player_color_key(self):
-        if isinstance(self.player.color_name, str):
-            return self.player.color_name
-        return self.player.color_name.name()
-
     def _is_reverse_expansion(self):
         return get_player_setting(
             self.hud_pos,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.EXPANSION_SETTING_KEY,
             'forward',
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
         ) == 'reverse'
 
     def _apply_layout_direction(self, layout):
@@ -66,7 +65,7 @@ class FactoryPanel(QWidget):
     def _set_expansion_direction(self, direction):
         set_player_setting(
             self.hud_pos,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.EXPANSION_SETTING_KEY,
             direction,
         )

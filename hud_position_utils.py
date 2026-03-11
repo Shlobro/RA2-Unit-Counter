@@ -30,11 +30,11 @@ def normalize_position(value, default=None):
     return fallback
 
 
-def ensure_player_bucket(hud_positions, player_color):
-    bucket = hud_positions.get(player_color)
+def ensure_player_bucket(hud_positions, player_key):
+    bucket = hud_positions.get(player_key)
     if not isinstance(bucket, dict):
         bucket = {}
-        hud_positions[player_color] = bucket
+        hud_positions[player_key] = bucket
     return bucket
 
 
@@ -42,25 +42,34 @@ def get_position_compat_keys(hud_type):
     return list(HUD_POSITION_COMPAT_KEYS.get(hud_type, ()))
 
 
-def set_player_position(hud_positions, player_color, hud_type, x, y):
-    bucket = ensure_player_bucket(hud_positions, player_color)
+def set_player_position(hud_positions, player_key, hud_type, x, y):
+    bucket = ensure_player_bucket(hud_positions, player_key)
     bucket[hud_type] = normalize_position({"x": x, "y": y})
     return bucket[hud_type]
 
 
-def get_player_setting(hud_positions, player_color, setting_key, default=None):
-    bucket = ensure_player_bucket(hud_positions, player_color)
+def get_player_setting(hud_positions, player_key, setting_key, default=None, legacy_bucket_keys=None):
+    bucket = ensure_player_bucket(hud_positions, player_key)
+    if setting_key in bucket:
+        return bucket.get(setting_key, default)
+
+    for legacy_key in legacy_bucket_keys or ():
+        legacy_bucket = hud_positions.get(legacy_key)
+        if isinstance(legacy_bucket, dict) and setting_key in legacy_bucket:
+            bucket[setting_key] = legacy_bucket[setting_key]
+            return bucket[setting_key]
+
     return bucket.get(setting_key, default)
 
 
-def set_player_setting(hud_positions, player_color, setting_key, value):
-    bucket = ensure_player_bucket(hud_positions, player_color)
+def set_player_setting(hud_positions, player_key, setting_key, value):
+    bucket = ensure_player_bucket(hud_positions, player_key)
     bucket[setting_key] = value
     return value
 
 
-def get_player_position(hud_positions, player_color, hud_type, legacy_root_keys=None, default=None):
-    bucket = ensure_player_bucket(hud_positions, player_color)
+def get_player_position(hud_positions, player_key, hud_type, legacy_root_keys=None, default=None, legacy_bucket_keys=None):
+    bucket = ensure_player_bucket(hud_positions, player_key)
     fallback = dict(default or DEFAULT_HUD_POSITION)
     compat_keys = get_position_compat_keys(hud_type)
     legacy_root_keys = list(dict.fromkeys((legacy_root_keys or []) + compat_keys))
@@ -74,6 +83,16 @@ def get_player_position(hud_positions, player_color, hud_type, legacy_root_keys=
         if key in bucket:
             bucket[hud_type] = normalize_position(bucket[key], fallback)
             return bucket[hud_type]
+
+    for legacy_key in legacy_bucket_keys or ():
+        legacy_bucket = hud_positions.get(legacy_key)
+        if not isinstance(legacy_bucket, dict):
+            continue
+
+        for key in [hud_type] + legacy_root_keys:
+            if key in legacy_bucket:
+                bucket[hud_type] = normalize_position(legacy_bucket[key], fallback)
+                return bucket[hud_type]
 
     for key in [hud_type] + legacy_root_keys:
         if key in hud_positions:

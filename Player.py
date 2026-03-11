@@ -43,6 +43,7 @@ OIL_DERRICK_NAMES = {"Oil", "Oil Derrick", "Tech Oil Derrick"}
 class Player:
     def __init__(self, index, process_handle, real_class_base):
         self.index = index
+        self.display_slot = index + 1
         self.process_handle = process_handle
         self.real_class_base = real_class_base
 

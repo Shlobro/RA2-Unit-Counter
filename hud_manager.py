@@ -23,6 +23,12 @@ from UnitWindow import (
     CombinedUnitWindow  # Used in separate mode if separate unit counters are enabled.
 )
 from factory_window import FactoryWindow  # New import for the factory window
+from player_identity import (
+    get_combined_hud_title,
+    get_player_bucket_key,
+    get_player_display_label,
+    sync_player_color_exports,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -76,6 +82,7 @@ def load_hud_positions(state):
         'factory_layout': 'Horizontal',  # Could be Vertical as well.
         'show_factory_frames': True,
         'show_post_game_scoreboard': True,
+        'use_player_numbers': False,
         # Toggle to show/hide the entire factory window
         'show_factory_window': True
     }
@@ -237,6 +244,11 @@ def save_hud_positions(state):
                 if value is not None:
                     state.hud_positions['show_post_game_scoreboard'] = value
 
+            if hasattr(cp, 'use_player_numbers_checkbox'):
+                value = safe_widget_value(cp.use_player_numbers_checkbox, 'isChecked', state.hud_positions.get('use_player_numbers', False))
+                if value is not None:
+                    state.hud_positions['use_player_numbers'] = value
+
         if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'path_edit'):
             try:
                 state.hud_positions['game_path'] = state.control_panel.path_edit.text()
@@ -245,7 +257,7 @@ def save_hud_positions(state):
                 pass
 
         def player_key(player):
-            return player.color_name.name() if not isinstance(player.color_name, str) else player.color_name
+            return get_player_bucket_key(player, state.hud_positions)
 
         resource_window_types = [
             'name',
@@ -311,13 +323,14 @@ def create_unit_windows_in_current_mode(state):
                 # two separate windows
                 img_win = UnitWindowImagesOnly(player, state.hud_positions, state.selected_units_dict)
                 num_win = UnitWindowNumbersOnly(player, state.hud_positions, state.selected_units_dict)
-                img_win.setWindowTitle(f"Player {player.color_name} Unit Images")
-                num_win.setWindowTitle(f"Player {player.color_name} Unit Numbers")
+                player_label = get_player_display_label(player, state.hud_positions)
+                img_win.setWindowTitle(f"{player_label} Unit Images")
+                num_win.setWindowTitle(f"{player_label} Unit Numbers")
                 state.hud_windows[i] = ((img_win, num_win), res_win)
             else:
                 # single combined unit window
                 uw = UnitWindowWithImages(player, state.hud_positions, state.selected_units_dict)
-                uw.setWindowTitle(f"Player {player.color_name} Unit Window")
+                uw.setWindowTitle(f"{get_player_display_label(player, state.hud_positions)} Unit Window")
                 state.hud_windows[i] = (uw, res_win)
 
         logging.info("Unit windows created successfully.")
@@ -328,6 +341,50 @@ def create_unit_windows_in_current_mode(state):
 # ---------------------------------------------------------------------------
 # Create Overall HUD Windows
 # ---------------------------------------------------------------------------
+def assign_player_display_slots(players):
+    reserved_slots = {}
+    if players:
+        hud_positions = getattr(players[0], "hud_positions_override", None)
+    else:
+        hud_positions = None
+
+    if isinstance(hud_positions, dict):
+        for slot in range(1, 9):
+            reserved_name = (hud_positions.get(f"player_{slot}_name") or "").strip()
+            if reserved_name:
+                reserved_slots[slot] = reserved_name.casefold()
+
+    remaining_players = list(players)
+    assigned_slots = set()
+
+    for slot in range(1, 9):
+        reserved_name = reserved_slots.get(slot)
+        if not reserved_name:
+            continue
+
+        matched_player = None
+        for player in remaining_players:
+            player_name = (player.username.value or "").strip().casefold()
+            if player_name == reserved_name:
+                matched_player = player
+                break
+
+        if matched_player is None:
+            continue
+
+        matched_player.display_slot = slot
+        assigned_slots.add(slot)
+        remaining_players.remove(matched_player)
+
+    next_open_slot = 1
+    for player in remaining_players:
+        while next_open_slot in assigned_slots:
+            next_open_slot += 1
+        player.display_slot = next_open_slot
+        assigned_slots.add(next_open_slot)
+        next_open_slot += 1
+
+
 def create_hud_windows(state):
     """Create all HUD windows based on loaded players and HUD configuration."""
     try:
@@ -357,6 +414,9 @@ def create_hud_windows(state):
             logging.info("No valid players found. HUD will not be displayed.")
             return
 
+        for player in state.players:
+            player.hud_positions_override = state.hud_positions
+        assign_player_display_slots(state.players)
         show_factory = state.hud_positions.get('show_factory_window', True)
 
         # ----------------------------------------
@@ -367,6 +427,7 @@ def create_hud_windows(state):
             for player in state.players:
                 logging.info(f"Creating combined HUD for {player.username.value} with color {player.color_name}")
                 combined = CombinedHudWindow(player, state.hud_positions, state.selected_units_dict)
+                combined.setWindowTitle(get_combined_hud_title(player, state.hud_positions))
                 combined.show()
                 # We store (combined, None) because there's no separate resource window in combined mode
                 state.hud_windows.append((combined, None))
@@ -389,7 +450,6 @@ def create_hud_windows(state):
                 # This only happens in separate HUD mode.
                 logging.info(f"Creating FactoryWindow for {player.username.value} with color {player.color_name}")
                 factory_win = FactoryWindow(player, state.hud_positions)
-                factory_win.setWindowTitle(f"Player {player.color_name} Factory Window")
                 if show_factory:
                     factory_win.show()
                 else:
@@ -398,6 +458,8 @@ def create_hud_windows(state):
 
             # Now create the separate unit windows (images/numbers).
             create_unit_windows_in_current_mode(state)
+
+        sync_player_color_exports(state)
 
         # Persist any compatibility migration immediately so old configs self-heal.
         save_hud_positions(state)
@@ -414,6 +476,9 @@ def update_huds(state):
     if not state.hud_windows:
         return
     try:
+        for player in state.players:
+            player.hud_positions_override = state.hud_positions
+        assign_player_display_slots(state.players)
         for unit_window, resource_window in state.hud_windows:
             if unit_window is not None:
                 if isinstance(unit_window, tuple):
@@ -427,6 +492,7 @@ def update_huds(state):
         if hasattr(state, 'factory_windows'):
             for factory_win in state.factory_windows:
                 factory_win.update_labels()
+        sync_player_color_exports(state)
         maybe_show_post_game_scoreboard(state)
     except Exception as e:
         logging.error(f"Exception in update_huds: {e}")

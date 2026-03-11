@@ -1,7 +1,4 @@
-# UnitSelectionWindow.py
-import json
 import logging
-import os
 
 from PySide6.QtGui import QPixmap, QImage, QAction, QPainter, QFont
 from PySide6.QtWidgets import QMainWindow, QWidget, QTabWidget, QVBoxLayout, QGridLayout, QLabel, QMenu, QInputDialog
@@ -13,7 +10,11 @@ from constants import (
     unit_types,
     names,
     name_to_path,
-    SLAVE_MINER_CANONICAL_NAME,
+)
+from selected_units_utils import (
+    enforce_global_selected_unit_positions,
+    normalize_selected_units_payload,
+    save_selected_units_file,
 )
 
 
@@ -21,15 +22,16 @@ class UnitSelectionWindow(QMainWindow):
     def __init__(self, selected_units_dict, hud_windows, parent=None):
         super().__init__(parent)
         self.hud_windows = hud_windows
+        normalized_payload, _ = normalize_selected_units_payload(selected_units_dict)
+        selected_units_dict.clear()
+        selected_units_dict.update(normalized_payload)
+        self.selected_units_dict = selected_units_dict
 
         # Ensure 'selected_units' key exists in selected_units_dict
         if 'selected_units' not in selected_units_dict:
             selected_units_dict['selected_units'] = {}
         self.units_data = selected_units_dict['selected_units']
 
-        # Migrate units data to new format if necessary
-        self.migrate_units_data()
-        
         # Validate position data integrity on startup
         self.validate_position_data()
 
@@ -122,67 +124,6 @@ class UnitSelectionWindow(QMainWindow):
             self.units_data.setdefault(faction, {}).setdefault(unit_type, {})[unit] = unit_info
         return unit_info.get('locked', False)
 
-    def migrate_units_data(self):
-        self.migrate_slave_miner_selection()
-        for faction, unit_types_data in self.units_data.items():
-            for unit_type, units in unit_types_data.items():
-                for unit_name, unit_info in units.items():
-                    if isinstance(unit_info, bool):
-                        self.units_data[faction][unit_type][unit_name] = {'selected': unit_info, 'locked': False,
-                                                                          'position': -1}
-                    else:
-                        if 'position' not in unit_info:
-                            unit_info['position'] = -1
-
-    def migrate_slave_miner_selection(self):
-        yuri_units = self.units_data.setdefault('Yuri', {})
-        tank_units = yuri_units.setdefault('Tank', {})
-        structure_units = yuri_units.setdefault('Structure', {})
-
-        canonical_info = tank_units.get(SLAVE_MINER_CANONICAL_NAME)
-        merged_info = self._normalize_unit_info(canonical_info)
-
-        for legacy_name in ('Slave miner undeployed', 'Slave Miner Deployed', 'Yuri Ore Refinery'):
-            legacy_group = tank_units if legacy_name == 'Slave miner undeployed' else structure_units
-            legacy_info = legacy_group.pop(legacy_name, None)
-            if legacy_info is not None:
-                merged_info = self._merge_unit_info(merged_info, self._normalize_unit_info(legacy_info))
-
-        if merged_info:
-            merged_info['unit_type'] = 'Tank'
-            merged_info['faction'] = 'Yuri'
-            tank_units[SLAVE_MINER_CANONICAL_NAME] = merged_info
-
-    def _normalize_unit_info(self, unit_info):
-        if unit_info is None:
-            return None
-        if isinstance(unit_info, bool):
-            return {'selected': unit_info, 'locked': False, 'position': -1}
-        normalized = dict(unit_info)
-        normalized.setdefault('selected', False)
-        normalized.setdefault('locked', False)
-        normalized.setdefault('position', -1)
-        return normalized
-
-    def _merge_unit_info(self, base_info, incoming_info):
-        if base_info is None:
-            return incoming_info
-        if incoming_info is None:
-            return base_info
-        merged = dict(base_info)
-        merged['selected'] = base_info.get('selected', False) or incoming_info.get('selected', False)
-        merged['locked'] = base_info.get('locked', False) or incoming_info.get('locked', False)
-
-        base_position = base_info.get('position', -1)
-        incoming_position = incoming_info.get('position', -1)
-        if base_position == -1:
-            merged['position'] = incoming_position
-        elif incoming_position == -1:
-            merged['position'] = base_position
-        else:
-            merged['position'] = min(base_position, incoming_position)
-        return merged
-
     def unit_image_mousePressEvent(self, event, faction, unit_type, unit_name, label):
         if event.button() == Qt.LeftButton:
             self.toggle_unit_selection(faction, unit_type, unit_name, label)
@@ -207,8 +148,8 @@ class UnitSelectionWindow(QMainWindow):
         unit_info = self.units_data.setdefault(faction, {}).setdefault(unit_type, {}).setdefault(unit_name, {})
         current_position = unit_info.get('position', -1)
         
-        # Get the maximum valid position based on selected units
-        max_position = self.get_max_valid_position(faction, unit_type)
+        # Get the maximum valid position across all units shown in the counter.
+        max_position = self.get_max_valid_position()
         
         position, ok = QInputDialog.getInt(
             self, 
@@ -239,71 +180,61 @@ class UnitSelectionWindow(QMainWindow):
         except KeyError:
             print(f"Error: Unit '{unit_name}' of type '{unit_type}' in faction '{faction}' not found.")
 
-    def get_max_valid_position(self, faction, unit_type):
-        """Get the maximum valid position - allow positioning up to total available units."""
-        units = self.units_data.get(faction, {}).get(unit_type, {})
-        total_units = len(units)
-        
-        # Allow positions from 0 to total_units-1, with minimum of 10 for flexibility
-        # This allows users to set positions even for units not yet selected
-        max_reasonable_position = max(10, total_units - 1)
-        return max_reasonable_position
+    def get_max_valid_position(self):
+        """Allow positions across the full counter, not just one category."""
+        total_units = sum(
+            len(units)
+            for unit_types_data in self.units_data.values()
+            for units in unit_types_data.values()
+            if isinstance(units, dict)
+        )
+        return max(10, total_units - 1)
 
     def validate_and_resolve_position(self, requested_position, faction, unit_type, target_unit_name):
         """Validate position and resolve conflicts by adjusting other units' positions."""
         if requested_position == -1:
             return -1  # -1 means "end of list"
-        
-        # Get all selected units in this category with their positions
-        units = self.units_data.get(faction, {}).get(unit_type, {})
-        selected_units = {}
-        for unit_name, unit_info in units.items():
-            if unit_info.get('selected', False):
-                selected_units[unit_name] = unit_info.get('position', -1)
-        
-        # If no conflict, return the requested position
-        conflict_unit = None
-        for unit_name, position in selected_units.items():
-            if unit_name != target_unit_name and position == requested_position and position != -1:
-                conflict_unit = unit_name
-                break
-        
-        if conflict_unit is None:
+
+        target_key = (faction, unit_type, target_unit_name)
+        for current_faction, current_unit_type, current_unit_name, unit_info in self.iter_selected_units():
+            if (current_faction, current_unit_type, current_unit_name) == target_key:
+                continue
+            if unit_info.get('position', -1) == requested_position:
+                self.resolve_position_conflict(requested_position, faction, unit_type, target_unit_name)
+                return requested_position
+
+        if requested_position < 0:
             return requested_position
-        
-        # Resolve conflict by pushing other units down
-        self.resolve_position_conflict(requested_position, faction, unit_type, target_unit_name)
         return requested_position
 
     def resolve_position_conflict(self, target_position, faction, unit_type, target_unit_name):
         """Resolve position conflicts by shifting other units' positions."""
-        units = self.units_data.get(faction, {}).get(unit_type, {})
-        
-        # Get all units that need to be shifted (position >= target_position, excluding target unit)
         units_to_shift = []
-        for unit_name, unit_info in units.items():
-            if unit_name != target_unit_name and unit_info.get('selected', False):
-                current_pos = unit_info.get('position', -1)
-                if current_pos >= target_position and current_pos != -1:
-                    units_to_shift.append((unit_name, current_pos))
+        target_key = (faction, unit_type, target_unit_name)
+        for current_faction, current_unit_type, current_unit_name, unit_info in self.iter_selected_units():
+            if (current_faction, current_unit_type, current_unit_name) == target_key:
+                continue
+            current_pos = unit_info.get('position', -1)
+            if current_pos >= target_position and current_pos != -1:
+                units_to_shift.append((current_faction, current_unit_type, current_unit_name, current_pos))
         
-        # Sort by current position and shift each one down by 1
-        units_to_shift.sort(key=lambda x: x[1])
-        for unit_name, old_position in units_to_shift:
+        units_to_shift.sort(key=lambda x: x[3])
+        for current_faction, current_unit_type, current_unit_name, old_position in units_to_shift:
             new_position = old_position + 1
-            units[unit_name]['position'] = new_position
-            print(f"Shifted {unit_name} from position {old_position} to {new_position}")
+            self.units_data[current_faction][current_unit_type][current_unit_name]['position'] = new_position
+            print(f"Shifted {current_unit_name} from position {old_position} to {new_position}")
             
-            # Update the visual representation for shifted units
             for hud_window, _ in self.hud_windows:
                 if hasattr(hud_window, 'update_position_widgets'):
-                    hud_window.update_position_widgets(faction, unit_type, unit_name)
+                    hud_window.update_position_widgets(current_faction, current_unit_type, current_unit_name)
 
     def save_unit_positions(self):
         """Save the current unit selection data to JSON file immediately."""
         try:
-            with open('unit_selection.json', 'w') as f:
-                json.dump({'selected_units': self.units_data}, f, indent=4)
+            normalized_payload = save_selected_units_file(self.selected_units_dict)
+            self.selected_units_dict.clear()
+            self.selected_units_dict.update(normalized_payload)
+            self.units_data = self.selected_units_dict['selected_units']
             print("Unit positions saved to unit_selection.json")
         except Exception as e:
             print(f"Error saving unit positions: {e}")
@@ -344,51 +275,29 @@ class UnitSelectionWindow(QMainWindow):
                         unit_info['selected'] = False
                         changes_made = True
                         print(f"Fixed missing selected field for {unit_name}")
-                
-                # Get all selected units with their positions
-                selected_units = [(name, info) for name, info in units.items() 
-                                if info.get('selected', False)]
-                
-                if not selected_units:
-                    continue
-                
-                # Check for position conflicts and gaps
-                positions_used = {}
-                units_to_fix = []
-                
-                for unit_name, unit_info in selected_units:
-                    position = unit_info.get('position', -1)
-                    if position != -1:
-                        if position in positions_used:
-                            # Duplicate position found
-                            print(f"Conflict detected: {unit_name} and {positions_used[position]} both have position {position}")
-                            units_to_fix.append((unit_name, unit_info))
-                        else:
-                            positions_used[position] = unit_name
-                    else:
-                        units_to_fix.append((unit_name, unit_info))
-                
-                # Fix conflicts by reassigning positions
-                if units_to_fix:
-                    next_available = 0
-                    sorted_positions = sorted(positions_used.keys())
-                    
-                    for unit_name, unit_info in units_to_fix:
-                        # Find next available position
-                        while next_available in positions_used:
-                            next_available += 1
-                        
-                        unit_info['position'] = next_available
-                        positions_used[next_available] = unit_name
-                        print(f"Fixed position for {unit_name}: assigned position {next_available}")
-                        changes_made = True
-                        next_available += 1
+
+        if enforce_global_selected_unit_positions(self.units_data):
+            changes_made = True
+            print("Normalized selected unit positions across the full counter.")
         
         if changes_made:
             self.save_unit_positions()
             print("Position data validation complete - changes saved.")
         else:
             print("Position data validation complete - no issues found.")
+
+    def iter_selected_units(self):
+        for faction, unit_types in self.units_data.items():
+            for unit_type, units in unit_types.items():
+                for unit_name, unit_info in units.items():
+                    if unit_info.get('selected', False):
+                        yield faction, unit_type, unit_name, unit_info
+
+    def refresh_position_widgets_for_selected_units(self):
+        for faction, unit_type, unit_name, _ in self.iter_selected_units():
+            for hud_window, _ in self.hud_windows:
+                if hasattr(hud_window, 'update_position_widgets'):
+                    hud_window.update_position_widgets(faction, unit_type, unit_name)
 
     def update_image_selection(self, label, is_selected, is_locked, position):
         image_path = label.property("image_path")
@@ -464,6 +373,15 @@ class UnitSelectionWindow(QMainWindow):
         logging.debug(f'{unit_name} selection state changed to {new_state}')
         unit_info = self.units_data.setdefault(faction, {}).setdefault(unit_type, {}).setdefault(unit_name, {})
         unit_info['selected'] = new_state
+        if new_state and unit_info.get('position', -1) != -1:
+            unit_info['position'] = self.validate_and_resolve_position(
+                unit_info.get('position', -1),
+                faction,
+                unit_type,
+                unit_name,
+            )
+        elif new_state and unit_info.get('position', -1) == -1 and enforce_global_selected_unit_positions(self.units_data):
+            self.refresh_position_widgets_for_selected_units()
         is_locked = self.is_unit_locked(faction, unit_type, unit_name)
         position = self.get_unit_position(faction, unit_type, unit_name)
         self.update_image_selection(label, new_state, is_locked, position)
@@ -473,3 +391,7 @@ class UnitSelectionWindow(QMainWindow):
         
         # Save changes immediately
         self.save_unit_positions()
+
+    def closeEvent(self, event):
+        self.save_unit_positions()
+        super().closeEvent(event)

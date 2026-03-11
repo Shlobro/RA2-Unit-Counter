@@ -7,6 +7,12 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 # Import the new widget classes
 from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget, MoneySpentWidget
 from hud_position_utils import get_player_position, set_player_position
+from player_identity import (
+    get_combined_hud_title,
+    get_player_bucket_key,
+    get_player_display_label,
+    get_player_legacy_bucket_keys,
+)
 from superweapon_panel import SuperweaponTimerPanel
 
 faction_to_flag = {
@@ -33,6 +39,9 @@ class ResourceWindow(QMainWindow):
         self.hud_positions = hud_positions
         self.combined_mode = combined_mode
         self._last_exported_flag_key = None
+        self.player_bucket_key = get_player_bucket_key(self.player, self.hud_positions)
+        self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_positions)
+        self.player_display_label = get_player_display_label(self.player, self.hud_positions)
 
         # Load sizes from hud_positions
         name_widget_size = self.hud_positions.get('name_widget_size', 50)
@@ -101,7 +110,7 @@ class ResourceWindow(QMainWindow):
         if self.combined_mode:
             # Combined mode: Create one composite widget for all resource widgets.
 
-            self.setWindowTitle(f'{self.player.color_name} Combined HUD')
+            self.setWindowTitle(get_combined_hud_title(self.player, self.hud_positions))
 
             central_widget = QWidget()
             layout = QVBoxLayout(central_widget)
@@ -123,7 +132,7 @@ class ResourceWindow(QMainWindow):
         else:
             # Separate mode: Create individual top-level windows for each resource widget.
             self.name_window = self.create_window_with_widget(
-                f"Player {player_index} Name", self.name_widget, player_count, 'name', self.player.color_name
+                f"{self.player_display_label} Name", self.name_widget, player_count, 'name'
             )
             if self.hud_positions.get('show_name', True):
                 self.name_window.show()
@@ -131,7 +140,7 @@ class ResourceWindow(QMainWindow):
                 self.name_window.hide()
 
             self.flag_window = self.create_window_with_widget(
-                f"Player {player_index} Flag", self.flag_widget, player_count, 'flag', self.player.color_name
+                f"{self.player_display_label} Flag", self.flag_widget, player_count, 'flag'
             )
             if self.hud_positions.get('show_flag', True) and not self.hud_positions.get('save_flags_as_images', False):
                 self.flag_window.show()
@@ -139,7 +148,7 @@ class ResourceWindow(QMainWindow):
                 self.flag_window.hide()
 
             self.money_window = self.create_window_with_widget(
-                f"Player {player_index} Money", self.money_widget, player_count, 'money', self.player.color_name
+                f"{self.player_display_label} Money", self.money_widget, player_count, 'money'
             )
             if self.hud_positions.get('show_money', True):
                 self.money_window.show()
@@ -147,7 +156,7 @@ class ResourceWindow(QMainWindow):
                 self.money_window.hide()
 
             self.power_window = self.create_window_with_widget(
-                f"Player {player_index} Power", self.power_widget, player_count, 'power', self.player.color_name
+                f"{self.player_display_label} Power", self.power_widget, player_count, 'power'
             )
             if self.hud_positions.get('show_power', True):
                 self.power_window.show()
@@ -155,8 +164,7 @@ class ResourceWindow(QMainWindow):
                 self.power_window.hide()
 
             self.money_spent_window = self.create_window_with_widget(
-                f"Player {player_index} Money Spent", self.money_spent_widget, player_count, 'money_spent',
-                self.player.color_name
+                f"{self.player_display_label} Money Spent", self.money_spent_widget, player_count, 'money_spent'
             )
             if self.hud_positions.get('show_money_spent', True):
                 self.money_spent_window.show()
@@ -164,11 +172,10 @@ class ResourceWindow(QMainWindow):
                 self.money_spent_window.hide()
 
             self.superweapon_window = self.create_window_with_widget(
-                f"Player {player_index} Superweapons",
+                f"{self.player_display_label} Superweapons",
                 self.superweapon_widget,
                 player_count,
-                'superweapons',
-                self.player.color_name
+                'superweapons'
             )
             if self.hud_positions.get('show_superweapons', True):
                 self.superweapon_window.show()
@@ -184,7 +191,7 @@ class ResourceWindow(QMainWindow):
                 self.superweapon_window,
             ]
 
-    def create_window_with_widget(self, title, widget, player_count, hud_type, player_color):
+    def create_window_with_widget(self, title, widget, player_count, hud_type):
         """Create a new window for a given widget with a specified title."""
         window = QWidget()
         window.setWindowTitle(title)
@@ -192,7 +199,7 @@ class ResourceWindow(QMainWindow):
         window.setAttribute(Qt.WA_TranslucentBackground)
 
         # Get the initial position of the HUD using hud_type parameter
-        pos = self.get_default_position(player_color, hud_type, player_count, self.hud_positions)
+        pos = self.get_default_position(hud_type, player_count, self.hud_positions)
         window.setGeometry(0, 0, widget.sizeHint().width(), widget.sizeHint().height())
 
         # Create layout and add widget
@@ -253,18 +260,9 @@ class ResourceWindow(QMainWindow):
         return window
 
     def update_hud_position_for_type(self, hud_type, x, y):
-        if not isinstance(self.player.color_name, str):
-            player_color_str = self.player.color_name.name()
-        else:
-            player_color_str = self.player.color_name
+        set_player_position(self.hud_positions, self.player_bucket_key, hud_type, x, y)
 
-        set_player_position(self.hud_positions, player_color_str, hud_type, x, y)
-
-    def get_default_position(self, player_color, hud_type, player_count, hud_positions):
-        if not isinstance(player_color, str):
-            player_color_str = player_color.name()
-        else:
-            player_color_str = player_color
+    def get_default_position(self, hud_type, player_count, hud_positions):
 
         legacy_keys = []
         if hud_type == 'superweapons':
@@ -272,9 +270,10 @@ class ResourceWindow(QMainWindow):
 
         return get_player_position(
             hud_positions,
-            player_color_str,
+            self.player_bucket_key,
             hud_type,
             legacy_root_keys=legacy_keys,
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
         )
 
     def update_labels(self):

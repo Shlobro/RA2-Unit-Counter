@@ -3,11 +3,11 @@ from PySide6.QtWidgets import (
     QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog
 )
 from PySide6.QtCore import Qt
-import json
 import logging
 import os
 
 from UnitWindow import CombinedHudWindow
+from selected_units_utils import load_selected_units_file, save_selected_units_file
 
 
 class ControlPanel(QMainWindow):
@@ -190,6 +190,24 @@ class ControlPanel(QMainWindow):
 
         from hud_manager import create_hud_windows
         create_hud_windows(self.state)
+
+    def toggle_player_number_mode(self, state_val):
+        enabled = (state_val != 0)
+        self.state.hud_positions['use_player_numbers'] = enabled
+        logging.info(f"Toggled use_player_numbers to: {enabled}")
+
+        from hud_manager import create_hud_windows
+        create_hud_windows(self.state)
+
+    def update_reserved_player_name(self, slot, text):
+        key = f'player_{slot}_name'
+        value = text.strip()
+        self.state.hud_positions[key] = value
+        logging.info(f"Updated reserved player name for Player {slot}: {value!r}")
+
+        if self.state.hud_windows:
+            from hud_manager import create_hud_windows
+            create_hud_windows(self.state)
 
     def update_flag_widget_size(self):
         new_size = self.flag_size_spinbox.value()
@@ -568,6 +586,19 @@ class ControlPanel(QMainWindow):
         self.combined_hud_checkbox.setChecked(self.state.hud_positions.get('combined_hud', False))
         self.combined_hud_checkbox.stateChanged.connect(self.toggle_combined_hud)
         hud_mode_layout.addRow(self.combined_hud_checkbox)
+        self.use_player_numbers_checkbox = QCheckBox("Use Player Numbers Instead of Colors")
+        self.use_player_numbers_checkbox.setChecked(self.state.hud_positions.get('use_player_numbers', False))
+        self.use_player_numbers_checkbox.stateChanged.connect(self.toggle_player_number_mode)
+        hud_mode_layout.addRow(self.use_player_numbers_checkbox)
+        for slot in range(1, 9):
+            reserved_name_edit = QLineEdit()
+            reserved_name_edit.setPlaceholderText(f"Reserved name for Player {slot}")
+            reserved_name_edit.setText(self.state.hud_positions.get(f'player_{slot}_name', ''))
+            reserved_name_edit.textChanged.connect(
+                lambda text, current_slot=slot: self.update_reserved_player_name(current_slot, text)
+            )
+            setattr(self, f'player_{slot}_name_edit', reserved_name_edit)
+            hud_mode_layout.addRow(f"Player {slot} Name:", reserved_name_edit)
         hud_mode_group.setLayout(hud_mode_layout)
         layout.addWidget(hud_mode_group)
 
@@ -873,13 +904,11 @@ class ControlPanel(QMainWindow):
 
     def load_selected_units(self):
         json_file = 'unit_selection.json'
-        if os.path.exists(json_file):
-            with open(json_file, 'r') as file:
-                data = json.load(file)
-                if 'selected_units' not in data:
-                    data['selected_units'] = {}
-                return data
-        return {'selected_units': {}}
+        data, changed = load_selected_units_file(json_file)
+        if changed:
+            save_selected_units_file(data, json_file)
+            logging.info("Normalized legacy selected units data in %s", json_file)
+        return data
 
     def close_all_counter_windows(self):
         """Close all HUD counter windows in both single and multiple window modes."""
@@ -937,7 +966,5 @@ class ControlPanel(QMainWindow):
 
 def save_selected_units(state):
     json_file = 'unit_selection.json'
-    import json
-    with open(json_file, 'w') as file:
-        json.dump(state.selected_units_dict, file, indent=4)
+    state.selected_units_dict = save_selected_units_file(state.selected_units_dict, json_file)
     logging.info("Saved selected units.")

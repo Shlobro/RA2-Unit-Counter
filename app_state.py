@@ -36,6 +36,7 @@ class AppState:
         self.scoreboard_window = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
+        self.player_color_export_cache = {}
         initialize_oil_count_files()
 
 

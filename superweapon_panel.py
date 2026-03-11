@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QHBoxLayout, QLayout, QSizePolicy, QVBoxLayout, QW
 
 from superweapon_widget import SuperweaponWidget
 from hud_position_utils import get_player_setting, set_player_setting, get_player_position, set_player_position
+from player_identity import get_player_bucket_key, get_player_legacy_bucket_keys
 
 
 class SuperweaponTimerPanel(QWidget):
@@ -14,6 +15,8 @@ class SuperweaponTimerPanel(QWidget):
         self.hud_positions = hud_positions
         self.widgets = {}
         self.layout_type = hud_positions.get('superweapon_layout', 'Horizontal')
+        self.player_bucket_key = get_player_bucket_key(self.player, self.hud_positions)
+        self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_positions)
 
         if self.layout_type == 'Vertical':
             self.main_layout = QVBoxLayout()
@@ -30,17 +33,13 @@ class SuperweaponTimerPanel(QWidget):
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self._build_widgets()
 
-    def _get_player_color_key(self):
-        if isinstance(self.player.color_name, str):
-            return self.player.color_name
-        return self.player.color_name.name()
-
     def _is_reverse_expansion(self):
         return get_player_setting(
             self.hud_positions,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.EXPANSION_SETTING_KEY,
             'forward',
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
         ) == 'reverse'
 
     def _apply_layout_direction(self, layout):
@@ -56,7 +55,7 @@ class SuperweaponTimerPanel(QWidget):
             anchor = None
         set_player_setting(
             self.hud_positions,
-            self._get_player_color_key(),
+            self.player_bucket_key,
             self.EXPANSION_SETTING_KEY,
             direction,
         )
@@ -71,10 +70,16 @@ class SuperweaponTimerPanel(QWidget):
             self._move_container_to_saved_anchor()
 
     def get_saved_anchor_position(self):
-        return get_player_position(self.hud_positions, self._get_player_color_key(), 'superweapons', legacy_root_keys=['superweapon'])
+        return get_player_position(
+            self.hud_positions,
+            self.player_bucket_key,
+            'superweapons',
+            legacy_root_keys=['superweapon'],
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
+        )
 
     def save_anchor_position(self, anchor):
-        set_player_position(self.hud_positions, self._get_player_color_key(), 'superweapons', anchor['x'], anchor['y'])
+        set_player_position(self.hud_positions, self.player_bucket_key, 'superweapons', anchor['x'], anchor['y'])
 
     def top_left_to_anchor(self, x, y, size, direction=None):
         direction = direction or ('reverse' if self._is_reverse_expansion() else 'forward')

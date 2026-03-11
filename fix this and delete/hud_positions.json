@@ -1,0 +1,522 @@
+{
+    "unit_counter_size": 75,
+    "image_size": 73,
+    "number_size": 18,
+    "distance_between_numbers": 36,
+    "show_name": false,
+    "show_money": true,
+    "show_power": true,
+    "unit_layout": "Vertical",
+    "money_color": "White",
+    "show_flag": true,
+    "flag_widget_size": 80,
+    "show_unit_frames": true,
+    "name_widget_size": 50,
+    "money_widget_size": 38,
+    "power_widget_size": 32,
+    "separate_unit_counters": true,
+    "show_money_spent": true,
+    "money_spent_widget_size": 30,
+    "combined_hud": false,
+    "show_factory_window": true,
+    "show_factory_queue": false,
+    "factory_size": 75,
+    "factory_layout": "Horizontal",
+    "show_factory_frames": false,
+    "game_path": "D:/SteamLibrary/steamapps/common/Command & Conquer Red Alert II",
+    "yellow": {
+        "name": {
+            "x": 718,
+            "y": 31
+        },
+        "flag": {
+            "x": 2378,
+            "y": 724
+        },
+        "money": {
+            "x": 2368,
+            "y": 476
+        },
+        "power": {
+            "x": 2387,
+            "y": 688
+        },
+        "money_spent": {
+            "x": 2407,
+            "y": 509
+        },
+        "unit_counter_combined": {
+            "x": 2399,
+            "y": 585
+        },
+        "combined": {
+            "x": 2397,
+            "y": 581
+        },
+        "factory": {
+            "x": 816,
+            "y": 3
+        },
+        "unit_counter_images": {
+            "x": 2402,
+            "y": 780
+        },
+        "unit_counter_numbers": {
+            "x": 2393,
+            "y": 813
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "superweapons": {
+            "x": 456,
+            "y": 1
+        }
+    },
+    "factory": {
+        "x": 1248,
+        "y": 1
+    },
+    "red": {
+        "name": {
+            "x": 719,
+            "y": 77
+        },
+        "flag": {
+            "x": 2461,
+            "y": 722
+        },
+        "money": {
+            "x": 2368,
+            "y": 588
+        },
+        "power": {
+            "x": 2475,
+            "y": 689
+        },
+        "money_spent": {
+            "x": 2404,
+            "y": 619
+        },
+        "unit_counter_combined": {
+            "x": 2476,
+            "y": 580
+        },
+        "combined": {
+            "x": 2476,
+            "y": 580
+        },
+        "factory": {
+            "x": 1248,
+            "y": 1
+        },
+        "unit_counter_images": {
+            "x": 2480,
+            "y": 781
+        },
+        "unit_counter_numbers": {
+            "x": 2471,
+            "y": 814
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        }
+    },
+    "data_update_frequency": 500,
+    "green": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "cyan": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "orange": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_images": {
+            "x": 716,
+            "y": -57
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "purple": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "pink": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "blue": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "white": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 2368,
+            "y": 721
+        },
+        "money": {
+            "x": 2363,
+            "y": 460
+        },
+        "power": {
+            "x": 2394,
+            "y": 691
+        },
+        "money_spent": {
+            "x": 2404,
+            "y": 486
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory_size": 75,
+        "factory_layout": "Horizontal",
+        "show_factory_frames": false,
+        "show_factory_window": true,
+        "show_factory_queue": false,
+        "factory": {
+            "x": 701,
+            "y": -1
+        },
+        "unit_counter_images": {
+            "x": 2400,
+            "y": 778
+        },
+        "unit_counter_numbers": {
+            "x": 2389,
+            "y": 814
+        }
+    },
+    "distance_between_images": 0,
+    "superweapon_widget_size": 100,
+    "show_superweapons": true,
+    "show_superweapon_frames": true,
+    "superweapon_layout": "Horizontal",
+    "show_post_game_scoreboard": true,
+    "superweapons": {
+        "x": 1687,
+        "y": -7
+    },
+    "save_flags_as_images": true,
+    "magenta": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory": {
+            "x": 1248,
+            "y": 1
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "pistachio": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 1687,
+            "y": -7
+        },
+        "factory": {
+            "x": 1248,
+            "y": 1
+        },
+        "unit_counter_images": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_numbers": {
+            "x": 100,
+            "y": 100
+        }
+    }
+}
