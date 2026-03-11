@@ -133,7 +133,6 @@ def enforce_global_selected_unit_positions(selected_units):
                     selected_entries.append((faction, unit_type, unit_name, unit_info))
 
     used_positions = set()
-    deferred_entries = []
     changed = False
 
     for _, _, _, unit_info in selected_entries:
@@ -141,20 +140,14 @@ def enforce_global_selected_unit_positions(selected_units):
         if position != unit_info.get('position', -1):
             unit_info['position'] = position
             changed = True
-        if position == -1 or position in used_positions:
-            deferred_entries.append(unit_info)
+        if position == -1:
             continue
-        used_positions.add(position)
-
-    next_available = 0
-    for unit_info in deferred_entries:
-        while next_available in used_positions:
-            next_available += 1
-        if unit_info.get('position', -1) != next_available:
-            unit_info['position'] = next_available
+        while position in used_positions:
+            position += 1
+        if position != unit_info.get('position', -1):
+            unit_info['position'] = position
             changed = True
-        used_positions.add(next_available)
-        next_available += 1
+        used_positions.add(position)
 
     return changed
 

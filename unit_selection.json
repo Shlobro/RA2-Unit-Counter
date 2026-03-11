@@ -117,9 +117,9 @@
                     "unit_type": "Structure"
                 },
                 "Allied Grand Cannon": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": -1,
+                    "position": 1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
@@ -138,9 +138,9 @@
                     "unit_type": "Structure"
                 },
                 "Allied Pill Box": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": -1,
+                    "position": 13,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
@@ -325,7 +325,7 @@
                 "conscript": {
                     "selected": true,
                     "locked": false,
-                    "position": 13,
+                    "position": 14,
                     "faction": "Soviet",
                     "unit_type": "Infantry"
                 },
@@ -353,7 +353,7 @@
                 "Attack Dog": {
                     "selected": true,
                     "locked": true,
-                    "position": 14,
+                    "position": 15,
                     "faction": "Soviet",
                     "unit_type": "Infantry"
                 },
@@ -397,7 +397,7 @@
                 "Soviet War Factory": {
                     "selected": true,
                     "locked": true,
-                    "position": 15,
+                    "position": 16,
                     "faction": "Soviet",
                     "unit_type": "Structure"
                 },
@@ -439,14 +439,14 @@
                 "Soviet Radar Tower": {
                     "selected": true,
                     "locked": false,
-                    "position": 16,
+                    "position": 17,
                     "faction": "Soviet",
                     "unit_type": "Structure"
                 },
                 "Soviet Nuclear Reactor": {
                     "selected": true,
                     "locked": false,
-                    "position": 17,
+                    "position": 18,
                     "faction": "Soviet",
                     "unit_type": "Structure"
                 },
@@ -460,7 +460,7 @@
                 "Soviet Service Depot": {
                     "selected": true,
                     "locked": false,
-                    "position": 18,
+                    "position": 19,
                     "faction": "Soviet",
                     "unit_type": "Structure"
                 },
@@ -490,7 +490,7 @@
                 "Rhino Heavy Tank": {
                     "selected": true,
                     "locked": true,
-                    "position": 19,
+                    "position": 20,
                     "faction": "Soviet",
                     "unit_type": "Tank"
                 },
@@ -504,14 +504,14 @@
                 "Terror Drone": {
                     "selected": true,
                     "locked": false,
-                    "position": 20,
+                    "position": 21,
                     "faction": "Soviet",
                     "unit_type": "Tank"
                 },
                 "Soviet Siege Chopper": {
                     "selected": true,
                     "locked": false,
-                    "position": 21,
+                    "position": 22,
                     "faction": "Soviet",
                     "unit_type": "Tank"
                 },
@@ -553,7 +553,7 @@
                 "Flak Track": {
                     "selected": true,
                     "locked": true,
-                    "position": 22,
+                    "position": 23,
                     "faction": "Soviet",
                     "unit_type": "Tank"
                 }
@@ -629,7 +629,7 @@
                 "Yuri Brute": {
                     "selected": true,
                     "locked": false,
-                    "position": 23,
+                    "position": 24,
                     "faction": "Yuri",
                     "unit_type": "Infantry"
                 }
@@ -738,7 +738,7 @@
                 "Floating Disk": {
                     "selected": true,
                     "locked": false,
-                    "position": 24,
+                    "position": 25,
                     "faction": "Yuri",
                     "unit_type": "Tank"
                 },
@@ -752,14 +752,14 @@
                 "Master Mind": {
                     "selected": true,
                     "locked": false,
-                    "position": 25,
+                    "position": 26,
                     "faction": "Yuri",
                     "unit_type": "Tank"
                 },
                 "Lasher Light Tank": {
                     "selected": true,
                     "locked": false,
-                    "position": 26,
+                    "position": 27,
                     "faction": "Yuri",
                     "unit_type": "Tank"
                 },
@@ -780,7 +780,7 @@
                 "Slave miner": {
                     "selected": true,
                     "locked": false,
-                    "position": 27,
+                    "position": 28,
                     "faction": "Yuri",
                     "unit_type": "Tank"
                 }
@@ -789,7 +789,7 @@
                 "Yuri Boomer": {
                     "selected": true,
                     "locked": false,
-                    "position": 28,
+                    "position": 29,
                     "faction": "Yuri",
                     "unit_type": "Naval"
                 },

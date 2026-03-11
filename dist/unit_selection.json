@@ -5,12 +5,11 @@
                 "Slave miner": {
                     "selected": true,
                     "locked": false,
-                    "position": -1,
-                    "unit_type": "Tank",
-                    "faction": "Yuri"
+                    "position": 0,
+                    "faction": "Yuri",
+                    "unit_type": "Tank"
                 }
-            },
-            "Structure": {}
+            }
         }
     }
 }

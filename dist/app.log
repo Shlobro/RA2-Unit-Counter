@@ -1057,3 +1057,25 @@
 2026-03-11 21:08:01,336 - INFO - Saving selected units and HUD positions
 2026-03-11 21:08:01,337 - INFO - Saved selected units.
 2026-03-11 21:08:01,338 - INFO - HUD positions saved successfully.
+2026-03-11 21:16:21,092 - INFO - Logging setup complete
+2026-03-11 21:16:21,139 - INFO - Starting Resource HUD Application
+2026-03-11 21:16:21,161 - INFO - Loading HUD positions
+2026-03-11 21:16:21,164 - INFO - HUD positions loaded successfully.
+2026-03-11 21:16:21,164 - INFO - Creating control panel
+2026-03-11 21:16:21,165 - INFO - Normalized legacy selected units data in unit_selection.json
+2026-03-11 21:16:21,235 - INFO - Waiting for a valid game path to be selected
+2026-03-11 21:16:21,235 - INFO - Game path confirmed: D:/ra2/Red Alert 2/Red Alert 2
+2026-03-11 21:16:21,235 - INFO - Starting data update thread
+2026-03-11 21:16:21,235 - INFO - Entering application event loop
+2026-03-11 21:16:21,236 - INFO - Waiting for the game to start and players to load...
+2026-03-11 21:16:21,236 - INFO - Waiting for the game to start...
+2026-03-11 21:16:22,249 - INFO - Saved selected units.
+2026-03-11 21:16:22,250 - INFO - HUD positions saved successfully.
+2026-03-11 21:16:22,251 - INFO - Settings saved on control panel close
+2026-03-11 21:16:22,251 - INFO - All counter windows closed
+2026-03-11 21:16:22,256 - INFO - Exiting application, stopping data update thread
+2026-03-11 21:16:22,731 - INFO - Stop event set. Exiting thread.
+2026-03-11 21:16:22,731 - INFO - Data update thread has exited.
+2026-03-11 21:16:22,731 - INFO - Saving selected units and HUD positions
+2026-03-11 21:16:22,732 - INFO - Saved selected units.
+2026-03-11 21:16:22,733 - INFO - HUD positions saved successfully.

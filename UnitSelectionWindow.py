@@ -380,8 +380,6 @@ class UnitSelectionWindow(QMainWindow):
                 unit_type,
                 unit_name,
             )
-        elif new_state and unit_info.get('position', -1) == -1 and enforce_global_selected_unit_positions(self.units_data):
-            self.refresh_position_widgets_for_selected_units()
         is_locked = self.is_unit_locked(faction, unit_type, unit_name)
         position = self.get_unit_position(faction, unit_type, unit_name)
         self.update_image_selection(label, new_state, is_locked, position)
