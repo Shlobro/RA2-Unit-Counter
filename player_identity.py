@@ -22,6 +22,27 @@ def get_player_color_name(player):
     return color_name.name()
 
 
+def get_player_flag_export_stem(player, hud_positions):
+    if use_player_number_mode(hud_positions):
+        return f"Player {get_player_number(player)}"
+
+    if hasattr(player, "get_normalized_color_name_for_file"):
+        return player.get_normalized_color_name_for_file()
+    return get_player_color_name(player)
+
+
+def get_player_flag_legacy_stems(player, hud_positions):
+    current_stem = get_player_flag_export_stem(player, hud_positions)
+    candidate_stems = [f"Player {get_player_number(player)}"]
+
+    if hasattr(player, "get_normalized_color_name_for_file"):
+        candidate_stems.append(player.get_normalized_color_name_for_file())
+    else:
+        candidate_stems.append(get_player_color_name(player))
+
+    return [stem for stem in candidate_stems if stem and stem != current_stem]
+
+
 def get_player_display_label(player, hud_positions):
     if use_player_number_mode(hud_positions):
         return f"Player {get_player_number(player)}"

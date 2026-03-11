@@ -11,6 +11,8 @@ from player_identity import (
     get_combined_hud_title,
     get_player_bucket_key,
     get_player_display_label,
+    get_player_flag_export_stem,
+    get_player_flag_legacy_stems,
     get_player_legacy_bucket_keys,
 )
 from superweapon_panel import SuperweaponTimerPanel
@@ -301,12 +303,12 @@ class ResourceWindow(QMainWindow):
         try:
             folder_name = "player flags"
             os.makedirs(folder_name, exist_ok=True)
-            color_name = self.player.get_normalized_color_name_for_file()
+            flag_export_stem = get_player_flag_export_stem(self.player, self.hud_positions)
             flag_image_path = self.get_flag_image_path()
-            export_key = (color_name, flag_image_path, self.flag_widget.size)
+            export_key = (flag_export_stem, flag_image_path, self.flag_widget.size)
             if self._last_exported_flag_key == export_key:
                 return
-            filename = os.path.join(folder_name, f"{color_name}_flag.png")
+            filename = os.path.join(folder_name, f"{flag_export_stem}_flag.png")
             pixmap = QPixmap(flag_image_path).scaled(
                 self.flag_widget.size,
                 self.flag_widget.size,
@@ -319,6 +321,10 @@ class ResourceWindow(QMainWindow):
             if not pixmap.save(filename, "PNG"):
                 logging.warning("Failed to save flag image for %s to %s", self.player.username.value, filename)
                 return
+            for legacy_stem in get_player_flag_legacy_stems(self.player, self.hud_positions):
+                legacy_filename = os.path.join(folder_name, f"{legacy_stem}_flag.png")
+                if os.path.exists(legacy_filename):
+                    os.remove(legacy_filename)
             self._last_exported_flag_key = export_key
             logging.debug("Saved flag image for %s to %s", self.player.username.value, filename)
         except Exception as e:

@@ -1,4 +1,5 @@
 import logging
+import random
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu
 
@@ -100,29 +101,52 @@ class UnitWindowBase(QMainWindow):
         self.layout.update()
 
     def load_selected_units_and_create_counters(self):
-        # First pass: collect all selected units with their positions
-        selected_units_with_positions = []
+        for unit_name in self.get_selected_counter_names_in_display_order():
+            unit_info = self.unit_info_by_name.get(unit_name, {})
+            unit_type = unit_info.get('unit_type')
+            counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
+            counter_widget.hide()
+            self.layout.addWidget(counter_widget)
+            self.counters[unit_name] = (counter_widget, unit_type)
+
+    def get_selected_counter_names_in_display_order(self):
+        selected_units = []
         seen_units = set()
         for unit_name, unit_info in self.unit_info_by_name.items():
             canonical_name = canonicalize_unit_name(unit_name)
-            if canonical_name in seen_units:
+            if canonical_name in seen_units or not unit_info.get('selected', False):
                 continue
-            is_selected = unit_info.get('selected', False)
-            if is_selected:
-                position = unit_info.get('position', -1)
-                unit_type = unit_info.get('unit_type')
-                selected_units_with_positions.append((canonical_name, unit_info, unit_type, position))
-                seen_units.add(canonical_name)
-        
-        # Sort by position: numbered positions first (0,1,2...), then -1 positions at end
-        selected_units_with_positions.sort(key=lambda x: (x[3] == -1, x[3] if x[3] != -1 else float('inf')))
-        
-        # Second pass: create and add widgets in the correct order
-        for unit_name, unit_info, unit_type, position in selected_units_with_positions:
-            counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
-            counter_widget.hide()
-            self.layout.addWidget(counter_widget)  # Always add to end since we're adding in sorted order
-            self.counters[unit_name] = (counter_widget, unit_type)
+            selected_units.append((canonical_name, unit_info))
+            seen_units.add(canonical_name)
+
+        numbered_groups = {}
+        end_group = []
+        for unit_name, unit_info in selected_units:
+            position = unit_info.get('position', -1)
+            if position == -1:
+                end_group.append(unit_name)
+            else:
+                numbered_groups.setdefault(position, []).append(unit_name)
+
+        ordered_names = []
+        for position in sorted(numbered_groups):
+            group = list(numbered_groups[position])
+            random.shuffle(group)
+            ordered_names.extend(group)
+
+        random.shuffle(end_group)
+        ordered_names.extend(end_group)
+        return ordered_names
+
+    def rebuild_counter_order(self):
+        ordered_names = self.get_selected_counter_names_in_display_order()
+        for unit_name in ordered_names:
+            counter_widget, _ = self.counters[unit_name]
+            self.layout.removeWidget(counter_widget)
+        for unit_name in ordered_names:
+            counter_widget, _ = self.counters[unit_name]
+            self.layout.addWidget(counter_widget)
+        self.updateGeometry()
 
     def update_all_counters_size(self, new_size):
         self.size = new_size
@@ -310,14 +334,10 @@ class UnitWindowBase(QMainWindow):
             # Unit was selected - add counter widget if not already present
             if unit_name not in self.counters:
                 unit_info = self.unit_info_by_name.get(unit_name, {})
-                position = unit_info.get('position', -1)
                 counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
                 counter_widget.hide()  # Will be shown when unit_count > 0
-                
-                # Find correct insertion point based on position
-                insert_index = self.find_insertion_index(position)
-                self.layout.insertWidget(insert_index, counter_widget)
                 self.counters[unit_name] = (counter_widget, unit_type)
+                self.layout.addWidget(counter_widget)
         else:
             # Unit was deselected - remove counter widget
             if unit_name in self.counters:
@@ -325,88 +345,15 @@ class UnitWindowBase(QMainWindow):
                 self.layout.removeWidget(counter_widget)
                 counter_widget.setParent(None)
                 del self.counters[unit_name]
-        
-        # Update layout and visibility
-        self.updateGeometry()
-        self.update_labels()
 
-    def find_insertion_index(self, target_position):
-        """Find the correct index to insert a widget based on position values."""
-        if target_position == -1:
-            return self.layout.count()  # Insert at end
-        
-        # Find the correct insertion point by comparing positions
-        insert_index = 0
-        for i in range(self.layout.count()):
-            widget = self.layout.itemAt(i).widget()
-            if widget is None:
-                continue
-                
-            # Find the unit name for this widget
-            widget_unit_name = None
-            for unit_name, (counter_widget, _) in self.counters.items():
-                if counter_widget == widget:
-                    widget_unit_name = unit_name
-                    break
-            
-            if widget_unit_name:
-                widget_unit_info = self.unit_info_by_name.get(widget_unit_name, {})
-                widget_position = widget_unit_info.get('position', -1)
-                
-                # Logic: positioned units (0,1,2...) come first, -1 positions go to end
-                # Insert before widgets that:
-                # 1. Have -1 position (target has numbered position)
-                # 2. Have higher numbered position than target
-                if widget_position == -1 or (widget_position > target_position):
-                    break
-                insert_index = i + 1
-        
-        return insert_index
+        self.rebuild_counter_order()
+        self.update_labels()
 
     def update_position_widgets(self, faction, unit_type, unit_name):
         """Update counter position when changed from UnitSelectionWindow."""
         unit_name = canonicalize_unit_name(unit_name)
         if unit_name in self.counters:
-            counter_widget, _ = self.counters[unit_name]
-            unit_info = self.unit_info_by_name.get(unit_name, {})
-            position = unit_info.get('position', -1)
-            
-            # Remove from current position
-            self.layout.removeWidget(counter_widget)
-            
-            # Find correct insertion index based on position
-            insert_index = self.find_insertion_index_for_reposition(position, unit_name)
-            self.layout.insertWidget(insert_index, counter_widget)
-            
-            self.updateGeometry()
-            print(f"Repositioned {unit_name} to position {position} (index {insert_index})")
-
-    def find_insertion_index_for_reposition(self, target_position, target_unit_name):
-        """Find insertion index when repositioning an existing widget."""
-        if target_position == -1:
-            return self.layout.count()  # Insert at end
-        
-        # Get all units with their positions (excluding the target unit)
-        other_units = []
-        for unit_name, (counter_widget, _) in self.counters.items():
-            if unit_name == target_unit_name:
-                continue  # Skip the unit being repositioned
-                
-            unit_info = self.unit_info_by_name.get(unit_name, {})
-            widget_position = unit_info.get('position', -1)
-            other_units.append((unit_name, widget_position))
-        
-        # Sort other units by position (numbered positions first, then -1)
-        other_units.sort(key=lambda x: (x[1] == -1, x[1] if x[1] != -1 else float('inf')))
-        
-        # Find insertion point: count units that should come before target position
-        insert_index = 0
-        for unit_name, widget_position in other_units:
-            if widget_position == -1 or widget_position > target_position:
-                break
-            insert_index += 1
-        
-        return insert_index
+            self.rebuild_counter_order()
 
     def update_locked_widgets(self, faction, unit_type, unit_name, new_state):
         """Update counter when lock state changes from UnitSelectionWindow."""

@@ -199,6 +199,8 @@ class UnitSelectionWindow(QMainWindow):
         for current_faction, current_unit_type, current_unit_name, unit_info in self.iter_selected_units():
             if (current_faction, current_unit_type, current_unit_name) == target_key:
                 continue
+            if current_faction != faction:
+                continue
             if unit_info.get('position', -1) == requested_position:
                 self.resolve_position_conflict(requested_position, faction, unit_type, target_unit_name)
                 return requested_position
@@ -208,11 +210,13 @@ class UnitSelectionWindow(QMainWindow):
         return requested_position
 
     def resolve_position_conflict(self, target_position, faction, unit_type, target_unit_name):
-        """Resolve position conflicts by shifting other units' positions."""
+        """Resolve position conflicts by shifting other selected units in the same faction."""
         units_to_shift = []
         target_key = (faction, unit_type, target_unit_name)
         for current_faction, current_unit_type, current_unit_name, unit_info in self.iter_selected_units():
             if (current_faction, current_unit_type, current_unit_name) == target_key:
+                continue
+            if current_faction != faction:
                 continue
             current_pos = unit_info.get('position', -1)
             if current_pos >= target_position and current_pos != -1:

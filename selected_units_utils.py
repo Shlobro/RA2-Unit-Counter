@@ -132,22 +132,23 @@ def enforce_global_selected_unit_positions(selected_units):
                 if unit_info.get('selected', False):
                     selected_entries.append((faction, unit_type, unit_name, unit_info))
 
-    used_positions = set()
     changed = False
+    used_positions_by_faction = {}
 
-    for _, _, _, unit_info in selected_entries:
+    for faction, _, _, unit_info in selected_entries:
         position = _normalize_position(unit_info.get('position', -1))
         if position != unit_info.get('position', -1):
             unit_info['position'] = position
             changed = True
         if position == -1:
             continue
-        while position in used_positions:
+        faction_positions = used_positions_by_faction.setdefault(faction, set())
+        while position in faction_positions:
             position += 1
         if position != unit_info.get('position', -1):
             unit_info['position'] = position
             changed = True
-        used_positions.add(position)
+        faction_positions.add(position)
 
     return changed
 

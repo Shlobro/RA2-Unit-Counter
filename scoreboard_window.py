@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from constants import _existing_asset_paths, resolve_factory_image_path
+from player_identity import get_player_flag_export_stem
 
 
 COUNTRY_TO_FLAG = {
@@ -102,9 +103,9 @@ def _country_flag_path(country_name):
 
 
 def _player_flag_path(player_snapshot):
-    color_name = (player_snapshot.get("color_name") or "").strip()
-    if color_name:
-        filename = f"{color_name}_flag.png"
+    flag_file_stem = (player_snapshot.get("flag_file_stem") or "").strip()
+    if flag_file_stem:
+        filename = f"{flag_file_stem}_flag.png"
         for candidate in _existing_asset_paths("player flags", filename):
             return candidate
     return _country_flag_path(player_snapshot.get("country"))
@@ -126,7 +127,8 @@ def _result_rank(result):
     return 2
 
 
-def build_post_game_snapshot(players):
+def build_post_game_snapshot(players, hud_positions=None):
+    hud_positions = hud_positions or {}
     snapshot_players = []
     for player in players:
         built_units = player.get_built_unit_totals()
@@ -144,6 +146,7 @@ def build_post_game_snapshot(players):
             "faction": player.faction,
             "country": country_name,
             "color_name": player.color_name if isinstance(player.color_name, str) else player.color_name.name(),
+            "flag_file_stem": get_player_flag_export_stem(player, hud_positions),
             "accent_color": _color_to_hex(player.color),
             "result": result,
             "result_label": RESULT_LABELS.get(result, result.title()),

@@ -515,10 +515,10 @@ def maybe_show_post_game_scoreboard(state):
     all_players_resolved = resolved_count == player_count
 
     if not has_final_result_bits or not all_players_resolved:
-        state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players)
+        state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players, state.hud_positions)
         return
 
-    snapshot = build_post_game_snapshot(state.players)
+    snapshot = build_post_game_snapshot(state.players, state.hud_positions)
     if not snapshot["players"]:
         snapshot = state.last_live_scoreboard_snapshot or {"players": []}
     if not snapshot["players"]:
