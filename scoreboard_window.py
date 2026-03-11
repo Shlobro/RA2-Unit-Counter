@@ -101,6 +101,15 @@ def _country_flag_path(country_name):
     return None
 
 
+def _player_flag_path(player_snapshot):
+    color_name = (player_snapshot.get("color_name") or "").strip()
+    if color_name:
+        filename = f"{color_name}_flag.png"
+        for candidate in _existing_asset_paths("player flags", filename):
+            return candidate
+    return _country_flag_path(player_snapshot.get("country"))
+
+
 def _sort_units(unit_counts):
     return sorted(unit_counts.items(), key=lambda item: (-item[1], item[0]))
 
@@ -258,7 +267,7 @@ class PlayerReportCard(QFrame):
 
         flag_label = QLabel()
         flag_label.setObjectName("flagBadge")
-        flag_pixmap = _load_pixmap(_country_flag_path(self.player_snapshot["country"]), 84, 56)
+        flag_pixmap = _load_pixmap(_player_flag_path(self.player_snapshot), 84, 56)
         if flag_pixmap is not None:
             flag_label.setPixmap(flag_pixmap)
         else:
@@ -276,10 +285,7 @@ class PlayerReportCard(QFrame):
         title = QLabel(self.player_snapshot["username"])
         title.setObjectName("playerName")
         title.setStyleSheet(f'color: {self.player_snapshot["accent_color"]};')
-        faction_label = QLabel(self.player_snapshot["country"] or self.player_snapshot["faction"])
-        faction_label.setObjectName("playerMeta")
         title_block.addWidget(title)
-        title_block.addWidget(faction_label)
         header.addLayout(title_block)
         header.addStretch()
 

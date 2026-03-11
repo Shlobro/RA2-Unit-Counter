@@ -48,6 +48,17 @@ def set_player_position(hud_positions, player_color, hud_type, x, y):
     return bucket[hud_type]
 
 
+def get_player_setting(hud_positions, player_color, setting_key, default=None):
+    bucket = ensure_player_bucket(hud_positions, player_color)
+    return bucket.get(setting_key, default)
+
+
+def set_player_setting(hud_positions, player_color, setting_key, value):
+    bucket = ensure_player_bucket(hud_positions, player_color)
+    bucket[setting_key] = value
+    return value
+
+
 def get_player_position(hud_positions, player_color, hud_type, legacy_root_keys=None, default=None):
     bucket = ensure_player_bucket(hud_positions, player_color)
     fallback = dict(default or DEFAULT_HUD_POSITION)

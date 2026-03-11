@@ -2,18 +2,23 @@
 import logging
 from collections import Counter
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QLayout
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QLayout, QMenu
 
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
+from hud_position_utils import get_player_setting, set_player_setting
 
 class FactoryPanel(QWidget):
+    EXPANSION_SETTING_KEY = 'factory_expansion_direction'
+
     def __init__(self, player, hud_pos, parent=None):
         super().__init__(parent)
         self.player = player
         self.hud_pos = hud_pos
 
         self.factory_data = {}
+        self.factory_type_order = []
+        self._current_layout_order = []
         self.layout_type = hud_pos.get('factory_layout', 'Horizontal')
         self.show_factory_queue = hud_pos.get('show_factory_queue', True)
 
@@ -28,6 +33,7 @@ class FactoryPanel(QWidget):
         self.main_layout.setSpacing(0)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSizeConstraint(QLayout.SetFixedSize)
+        self._apply_layout_direction(self.main_layout)
         self.setLayout(self.main_layout)
         
         # Set tight size policy for the panel itself
@@ -38,11 +44,63 @@ class FactoryPanel(QWidget):
     def get_default_size(self):
         return self.hud_pos.get('factory_size', 100)
 
+    def _get_player_color_key(self):
+        if isinstance(self.player.color_name, str):
+            return self.player.color_name
+        return self.player.color_name.name()
+
+    def _is_reverse_expansion(self):
+        return get_player_setting(
+            self.hud_pos,
+            self._get_player_color_key(),
+            self.EXPANSION_SETTING_KEY,
+            'forward',
+        ) == 'reverse'
+
+    def _apply_layout_direction(self, layout):
+        if self.layout_type == 'Horizontal':
+            layout.setDirection(QHBoxLayout.RightToLeft if self._is_reverse_expansion() else QHBoxLayout.LeftToRight)
+        else:
+            layout.setDirection(QVBoxLayout.BottomToTop if self._is_reverse_expansion() else QVBoxLayout.TopToBottom)
+
+    def _set_expansion_direction(self, direction):
+        set_player_setting(
+            self.hud_pos,
+            self._get_player_color_key(),
+            self.EXPANSION_SETTING_KEY,
+            direction,
+        )
+        self._apply_layout_direction(self.main_layout)
+        self.main_layout.invalidate()
+        self.adjustSize()
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        if self.layout_type == 'Horizontal':
+            expand_forward = menu.addAction("Expand Right")
+            expand_reverse = menu.addAction("Expand Left")
+        else:
+            expand_forward = menu.addAction("Expand Down")
+            expand_reverse = menu.addAction("Expand Up")
+        expand_forward.setCheckable(True)
+        expand_reverse.setCheckable(True)
+        if self._is_reverse_expansion():
+            expand_reverse.setChecked(True)
+        else:
+            expand_forward.setChecked(True)
+
+        selected_action = menu.exec(event.globalPos())
+        if selected_action == expand_forward:
+            self._set_expansion_direction('forward')
+        elif selected_action == expand_reverse:
+            self._set_expansion_direction('reverse')
+
     def load_factories_and_create_widgets(self):
         show_frames = self.hud_pos.get('show_factory_frames', True)
         default_size = self.get_default_size()
 
         for factory_name, factory_obj in self.player.factories.items():
+            self.factory_type_order.append(factory_name)
             # Container for this factory's row/column
             container = QWidget(self)
             container.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
@@ -84,11 +142,13 @@ class FactoryPanel(QWidget):
         self.player.update_factories()
         show_queue = self.hud_pos.get('show_factory_queue', True)
         default_size = self.get_default_size()
+        currently_visible = set()
 
         for factory_name, data in self.factory_data.items():
             current_widget = data["current_widget"]
             queue_widgets = data["queue_widgets"]
             sub_layout = data["layout"]
+            container = data["container"]
 
             # Update the main factory widget
             status = self.player.factory_status.get(factory_name, {"producing": False})
@@ -102,12 +162,18 @@ class FactoryPanel(QWidget):
 
             # If queue is off or not producing, skip building new queue widgets
             if not show_queue:
+                container.setVisible(status.get("producing", False))
+                if status.get("producing", False):
+                    currently_visible.add(factory_name)
                 continue
             if not status.get("producing"):
+                container.hide()
                 continue
 
             # Create new queue widgets
             queued_list = status.get("queued_units", [])
+            container.show()
+            currently_visible.add(factory_name)
             if not queued_list:
                 continue
 
@@ -128,8 +194,35 @@ class FactoryPanel(QWidget):
                 queue_widgets.append(item_widget)
                 sub_layout.addWidget(item_widget)
 
+        self._sync_display_order(currently_visible)
+
         self.layout().update()
         self.updateGeometry()
+
+    def _sync_display_order(self, currently_visible):
+        visible_names = [
+            name for name in self.factory_type_order
+            if name in currently_visible
+        ]
+        hidden_names = [
+            name for name in self.factory_type_order
+            if name not in currently_visible
+        ]
+        ordered_names = visible_names + hidden_names
+
+        if ordered_names == self._current_layout_order:
+            return
+
+        while self.main_layout.count():
+            item = self.main_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.setParent(None)
+
+        for factory_name in ordered_names:
+            self.main_layout.addWidget(self.factory_data[factory_name]["container"])
+
+        self._current_layout_order = list(ordered_names)
 
     def set_layout_type(self, new_layout_type):
         """Same logic as your old set_layout_type, but for QWidget instead of QMainWindow."""
@@ -147,6 +240,7 @@ class FactoryPanel(QWidget):
         new_main_layout.setSpacing(0)
         new_main_layout.setContentsMargins(0, 0, 0, 0)
         new_main_layout.setSizeConstraint(QLayout.SetFixedSize)
+        self._apply_layout_direction(new_main_layout)
 
         # Move each factory container from old layout to new
         while self.main_layout.count():

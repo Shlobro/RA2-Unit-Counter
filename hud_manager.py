@@ -444,10 +444,11 @@ def maybe_show_post_game_scoreboard(state):
     player_count = len(state.players)
     winner_count = sum(1 for player in state.players if player.is_winner)
     loser_count = sum(1 for player in state.players if player.is_loser)
-    active_count = max(0, player_count - loser_count)
-    game_over = any(getattr(player, 'post_game_triggered', False) for player in state.players)
-    result_state_complete = winner_count > 0 or (player_count > 1 and loser_count > 0 and active_count <= 1)
-    if not game_over and not result_state_complete:
+    resolved_count = sum(1 for player in state.players if player.is_winner or player.is_loser)
+    has_final_result_bits = winner_count > 0 and loser_count > 0
+    all_players_resolved = resolved_count == player_count
+
+    if not has_final_result_bits or not all_players_resolved:
         state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players)
         return
 

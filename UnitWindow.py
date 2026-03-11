@@ -1,6 +1,6 @@
 import logging
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu
 
 from CounterWidget import (CounterWidgetImagesAndNumber, CounterWidgetNumberOnly, CounterWidgetImageOnly)
 from constants import (
@@ -12,13 +12,15 @@ from constants import (
 )
 from DataTracker import ResourceWindow
 from factory_panel import FactoryPanel
-from hud_position_utils import get_player_position, set_player_position
+from hud_position_utils import get_player_position, set_player_position, get_player_setting, set_player_setting
 
 
 # =============================================================================
 # UnitWindowBase: Shared functionality for unit counter windows.
 # =============================================================================
 class UnitWindowBase(QMainWindow):
+    EXPANSION_SETTING_KEY = 'unit_expansion_direction'
+
     def __init__(self, player, hud_pos, selected_units_dict, spacing=0):
         super().__init__()
         self.player = player
@@ -41,8 +43,7 @@ class UnitWindowBase(QMainWindow):
         self.spacing = spacing
 
         # Set geometry and flags.
-        pos = self.get_default_position()
-        self.setGeometry(pos['x'], pos['y'], 120, 120)
+        self.setGeometry(0, 0, 120, 120)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.make_hud_movable()
@@ -52,6 +53,8 @@ class UnitWindowBase(QMainWindow):
         self.set_layout(self.layout_type, self.spacing)
         self.setCentralWidget(self.unit_frame)
         self.load_selected_units_and_create_counters()
+        self.adjustSize()
+        self._move_to_saved_anchor()
         self.show()
 
     def get_default_size(self):
@@ -61,6 +64,7 @@ class UnitWindowBase(QMainWindow):
         self.layout = QVBoxLayout() if layout_type == 'Vertical' else QHBoxLayout()
         self.layout.setSpacing(spacing)
         self.layout.setContentsMargins(0, 0, 0, 0)
+        self._apply_layout_direction(self.layout)
         self.unit_frame.setLayout(self.layout)
 
     def update_show_unit_frames(self, show_frame):
@@ -74,6 +78,7 @@ class UnitWindowBase(QMainWindow):
             new_layout = QVBoxLayout() if layout_type == 'Vertical' else QHBoxLayout()
             new_layout.setSpacing(spacing if spacing is not None else self.layout.spacing())
             new_layout.setContentsMargins(0, 0, 0, 0)
+            self._apply_layout_direction(new_layout)
             for counter_widget, _ in self.counters.values():
                 self.layout.removeWidget(counter_widget)
                 new_layout.addWidget(counter_widget)
@@ -172,19 +177,116 @@ class UnitWindowBase(QMainWindow):
         self.mousePressEvent = mouse_press_event
         self.mouseMoveEvent = mouse_move_event
 
-    def get_default_position(self):
+    def _get_player_color_key(self):
         if not isinstance(self.player.color_name, str):
-            player_color_str = self.player.color_name.name()
+            return self.player.color_name.name()
+        return self.player.color_name
+
+    def _is_reverse_expansion(self):
+        return get_player_setting(
+            self.hud_pos,
+            self._get_player_color_key(),
+            self.EXPANSION_SETTING_KEY,
+            'forward',
+        ) == 'reverse'
+
+    def _apply_layout_direction(self, layout):
+        if self.layout_type == 'Horizontal':
+            layout.setDirection(QHBoxLayout.RightToLeft if self._is_reverse_expansion() else QHBoxLayout.LeftToRight)
         else:
-            player_color_str = self.player.color_name
-        return get_player_position(self.hud_pos, player_color_str, self.get_hud_type())
+            layout.setDirection(QVBoxLayout.BottomToTop if self._is_reverse_expansion() else QVBoxLayout.TopToBottom)
+
+    def _set_expansion_direction(self, direction):
+        anchor = self._get_anchor_position(direction)
+        set_player_setting(
+            self.hud_pos,
+            self._get_player_color_key(),
+            self.EXPANSION_SETTING_KEY,
+            direction,
+        )
+        set_player_position(
+            self.hud_pos,
+            self._get_player_color_key(),
+            self.get_hud_type(),
+            anchor['x'],
+            anchor['y'],
+        )
+        self._apply_layout_direction(self.layout)
+        self.layout.invalidate()
+        self.adjustSize()
+        if self.isWindow():
+            self._move_to_saved_anchor()
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        if self.layout_type == 'Horizontal':
+            expand_forward = menu.addAction("Expand Right")
+            expand_reverse = menu.addAction("Expand Left")
+        else:
+            expand_forward = menu.addAction("Expand Down")
+            expand_reverse = menu.addAction("Expand Up")
+        expand_forward.setCheckable(True)
+        expand_reverse.setCheckable(True)
+        if self._is_reverse_expansion():
+            expand_reverse.setChecked(True)
+        else:
+            expand_forward.setChecked(True)
+
+        selected_action = menu.exec(event.globalPos())
+        if selected_action == expand_forward:
+            self._set_expansion_direction('forward')
+        elif selected_action == expand_reverse:
+            self._set_expansion_direction('reverse')
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if not self.isWindow():
+            return
+        self._move_to_saved_anchor()
+
+    def get_default_position(self):
+        anchor = self._get_saved_anchor_position()
+        return self._anchor_to_top_left(anchor)
 
     def update_hud_position(self, x, y):
-        if not isinstance(self.player.color_name, str):
-            player_color_str = self.player.color_name.name()
-        else:
-            player_color_str = self.player.color_name
-        set_player_position(self.hud_pos, player_color_str, self.get_hud_type(), x, y)
+        anchor = self._get_anchor_position(origin_x=x, origin_y=y)
+        set_player_position(
+            self.hud_pos,
+            self._get_player_color_key(),
+            self.get_hud_type(),
+            anchor['x'],
+            anchor['y'],
+        )
+
+    def _get_saved_anchor_position(self):
+        return get_player_position(self.hud_pos, self._get_player_color_key(), self.get_hud_type())
+
+    def _get_anchor_position(self, direction=None, origin_x=None, origin_y=None):
+        direction = direction or ('reverse' if self._is_reverse_expansion() else 'forward')
+        origin_x = self.x() if origin_x is None else origin_x
+        origin_y = self.y() if origin_y is None else origin_y
+
+        anchor_x = origin_x
+        anchor_y = origin_y
+        if self.layout_type == 'Horizontal' and direction == 'reverse':
+            anchor_x += self.width()
+        elif self.layout_type == 'Vertical' and direction == 'reverse':
+            anchor_y += self.height()
+        return {'x': anchor_x, 'y': anchor_y}
+
+    def _anchor_to_top_left(self, anchor):
+        x = anchor['x']
+        y = anchor['y']
+        if self.layout_type == 'Horizontal' and self._is_reverse_expansion():
+            x -= self.width()
+        elif self.layout_type == 'Vertical' and self._is_reverse_expansion():
+            y -= self.height()
+        return {'x': x, 'y': y}
+
+    def _move_to_saved_anchor(self):
+        pos = self.get_default_position()
+        if pos['x'] != self.x() or pos['y'] != self.y():
+            self.move(pos['x'], pos['y'])
 
     def get_hud_type(self):
         raise NotImplementedError("Subclasses must implement get_hud_type().")

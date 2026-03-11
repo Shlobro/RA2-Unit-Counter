@@ -193,12 +193,13 @@ class ResourceWindow(QMainWindow):
 
         # Get the initial position of the HUD using hud_type parameter
         pos = self.get_default_position(player_color, hud_type, player_count, self.hud_positions)
-        window.setGeometry(pos['x'], pos['y'], widget.sizeHint().width(), widget.sizeHint().height())
+        window.setGeometry(0, 0, widget.sizeHint().width(), widget.sizeHint().height())
 
         # Create layout and add widget
         layout = QVBoxLayout()
         layout.addWidget(widget)
         window.setLayout(layout)
+        widget._container_window = window
 
         # Implement movable functionality with hud_type in closure:
         offset = None
@@ -212,12 +213,42 @@ class ResourceWindow(QMainWindow):
                 x = event.globalX() - offset.x()
                 y = event.globalY() - offset.y()
                 window.move(x, y)
-                self.update_hud_position_for_type(hud_type, x, y)
+                if hasattr(widget, 'top_left_to_anchor') and hasattr(widget, 'save_anchor_position'):
+                    widget.save_anchor_position(widget.top_left_to_anchor(x, y, window.size()))
+                else:
+                    self.update_hud_position_for_type(hud_type, x, y)
         window.mousePressEvent = mouse_press_event
         window.mouseMoveEvent = mouse_move_event
 
+        def resize_event(event):
+            QWidget.resizeEvent(window, event)
+            if not hasattr(widget, 'anchor_to_top_left'):
+                return
+
+            anchor = None
+            if hasattr(widget, 'get_saved_anchor_position'):
+                anchor = widget.get_saved_anchor_position()
+            if not anchor:
+                return
+
+            pos = widget.anchor_to_top_left(anchor, window.size())
+            new_x = pos['x']
+            new_y = pos['y']
+            if new_x != window.x() or new_y != window.y():
+                window.move(new_x, new_y)
+                if hasattr(widget, 'save_anchor_position'):
+                    widget.save_anchor_position(anchor)
+                else:
+                    self.update_hud_position_for_type(hud_type, new_x, new_y)
+
+        window.resizeEvent = resize_event
+
         window.show()  # Show the window immediately
         window.adjustSize()
+        if hasattr(widget, 'anchor_to_top_left') and hasattr(widget, 'get_saved_anchor_position'):
+            anchor = widget.get_saved_anchor_position() or pos
+            widget.save_anchor_position(anchor)
+            pos = widget.anchor_to_top_left(anchor, window.size())
         window.move(pos['x'], pos['y'])
         return window
 
