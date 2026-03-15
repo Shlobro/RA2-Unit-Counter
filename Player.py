@@ -1,4 +1,5 @@
 import ctypes
+from datetime import datetime
 import logging
 import os
 import traceback
@@ -38,9 +39,19 @@ def get_color_name(color_scheme):
     return COLOR_NAME_MAPPING.get(color_scheme, "white")
 
 OIL_DERRICK_NAMES = {"Oil", "Oil Derrick", "Tech Oil Derrick"}
+PRESENT_COUNT_POINTER_OFFSET_DELTA = 0x50
+COUNTER_CLASS_SIZE = 0x14
+TRACKED_MISMATCH_UNITS = {
+    "Chrono Legionnaire": ("infantry", 0x3C),
+    "Rocketeer": ("infantry", 0x10),
+    "Mirage Tank": ("unit", 0x94),
+}
 
 
 class Player:
+    mismatch_logger = None
+    mismatch_log_path = None
+
     def __init__(self, index, process_handle, real_class_base):
         self.index = index
         self.display_slot = index + 1
@@ -92,6 +103,19 @@ class Player:
         self.building_array_ptr = None
         self.infantry_array_ptr = None
         self.aircraft_array_ptr = None
+        self.unit_array_capacity = 0
+        self.building_array_capacity = 0
+        self.infantry_array_capacity = 0
+        self.aircraft_array_capacity = 0
+        self.unit_present_array_ptr = None
+        self.building_present_array_ptr = None
+        self.infantry_present_array_ptr = None
+        self.aircraft_present_array_ptr = None
+        self.unit_present_array_capacity = 0
+        self.building_present_array_capacity = 0
+        self.infantry_present_array_capacity = 0
+        self.aircraft_present_array_capacity = 0
+        self._last_mismatch_states = {}
 
         # Test addresses for validation
         self.test_addresses = {
@@ -112,34 +136,143 @@ class Player:
             "Defenses": BuildingFactory(process_handle, self.real_class_base, "Defenses")
         }
 
+    @classmethod
+    def _get_mismatch_logger(cls):
+        if cls.mismatch_logger is not None:
+            return cls.mismatch_logger
+
+        log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+        os.makedirs(log_dir, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        cls.mismatch_log_path = os.path.join(log_dir, f"count_mismatch_{timestamp}.log")
+
+        logger = logging.getLogger("count_mismatch")
+        logger.setLevel(logging.INFO)
+        logger.propagate = False
+
+        if not logger.handlers:
+            handler = logging.FileHandler(cls.mismatch_log_path, encoding="utf-8")
+            handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+            logger.addHandler(handler)
+
+        cls.mismatch_logger = logger
+        logging.info("Count mismatch log file initialized at %s", cls.mismatch_log_path)
+        return cls.mismatch_logger
+
     def initialize_pointers(self):
         """
-        Read pointers for building, unit (tank), infantry, and aircraft in one contiguous memory chunk.
+        Read CounterClass headers for building, unit (tank), infantry, and aircraft.
         """
         start_offset = BUILDINGOFFSET
-        end_offset = AIRCRAFTOFFSET + 4  # include 4 bytes for the last pointer
+        end_offset = AIRCRAFTOFFSET + COUNTER_CLASS_SIZE
         total_bytes = end_offset - start_offset
         pointers_data = read_process_memory(self.process_handle, self.real_class_base + start_offset, total_bytes)
         if pointers_data and len(pointers_data) >= total_bytes:
             self.building_array_ptr = int.from_bytes(pointers_data[0:4], byteorder='little')
+            self.building_array_capacity = int.from_bytes(pointers_data[4:8], byteorder='little')
             tank_offset_relative = TANKOFFSET - BUILDINGOFFSET
-            self.unit_array_ptr = int.from_bytes(pointers_data[tank_offset_relative:tank_offset_relative+4], byteorder='little')
+            self.unit_array_ptr = int.from_bytes(
+                pointers_data[tank_offset_relative:tank_offset_relative + 4],
+                byteorder='little'
+            )
+            self.unit_array_capacity = int.from_bytes(
+                pointers_data[tank_offset_relative + 4:tank_offset_relative + 8],
+                byteorder='little'
+            )
             infantry_offset_relative = INFOFFSET - BUILDINGOFFSET
-            self.infantry_array_ptr = int.from_bytes(pointers_data[infantry_offset_relative:infantry_offset_relative+4], byteorder='little')
+            self.infantry_array_ptr = int.from_bytes(
+                pointers_data[infantry_offset_relative:infantry_offset_relative + 4],
+                byteorder='little'
+            )
+            self.infantry_array_capacity = int.from_bytes(
+                pointers_data[infantry_offset_relative + 4:infantry_offset_relative + 8],
+                byteorder='little'
+            )
             aircraft_offset_relative = AIRCRAFTOFFSET - BUILDINGOFFSET
-            self.aircraft_array_ptr = int.from_bytes(pointers_data[aircraft_offset_relative:aircraft_offset_relative+4], byteorder='little')
+            self.aircraft_array_ptr = int.from_bytes(
+                pointers_data[aircraft_offset_relative:aircraft_offset_relative + 4],
+                byteorder='little'
+            )
+            self.aircraft_array_capacity = int.from_bytes(
+                pointers_data[aircraft_offset_relative + 4:aircraft_offset_relative + 8],
+                byteorder='little'
+            )
         logging.debug(f"Initialized unit array pointer: {self.unit_array_ptr}")
         logging.debug(f"Initialized building array pointer: {self.building_array_ptr}")
         logging.debug(f"Initialized infantry array pointer: {self.infantry_array_ptr}")
         logging.debug(f"Initialized aircraft array pointer: {self.aircraft_array_ptr}")
+        present_start_offset = BUILDINGOFFSET + PRESENT_COUNT_POINTER_OFFSET_DELTA
+        present_end_offset = AIRCRAFTOFFSET + PRESENT_COUNT_POINTER_OFFSET_DELTA + COUNTER_CLASS_SIZE
+        present_total_bytes = present_end_offset - present_start_offset
+        present_pointers_data = read_process_memory(
+            self.process_handle,
+            self.real_class_base + present_start_offset,
+            present_total_bytes
+        )
+        if present_pointers_data and len(present_pointers_data) >= present_total_bytes:
+            self.building_present_array_ptr = int.from_bytes(present_pointers_data[0:4], byteorder='little')
+            self.building_present_array_capacity = int.from_bytes(present_pointers_data[4:8], byteorder='little')
+            tank_offset_relative = TANKOFFSET - BUILDINGOFFSET
+            self.unit_present_array_ptr = int.from_bytes(
+                present_pointers_data[tank_offset_relative:tank_offset_relative + 4],
+                byteorder='little'
+            )
+            self.unit_present_array_capacity = int.from_bytes(
+                present_pointers_data[tank_offset_relative + 4:tank_offset_relative + 8],
+                byteorder='little'
+            )
+            infantry_offset_relative = INFOFFSET - BUILDINGOFFSET
+            self.infantry_present_array_ptr = int.from_bytes(
+                present_pointers_data[infantry_offset_relative:infantry_offset_relative + 4],
+                byteorder='little'
+            )
+            self.infantry_present_array_capacity = int.from_bytes(
+                present_pointers_data[infantry_offset_relative + 4:infantry_offset_relative + 8],
+                byteorder='little'
+            )
+            aircraft_offset_relative = AIRCRAFTOFFSET - BUILDINGOFFSET
+            self.aircraft_present_array_ptr = int.from_bytes(
+                present_pointers_data[aircraft_offset_relative:aircraft_offset_relative + 4],
+                byteorder='little'
+            )
+            self.aircraft_present_array_capacity = int.from_bytes(
+                present_pointers_data[aircraft_offset_relative + 4:aircraft_offset_relative + 8],
+                byteorder='little'
+            )
+        logging.debug(f"Initialized present unit array pointer: {self.unit_present_array_ptr}")
+        logging.debug(f"Initialized present building array pointer: {self.building_present_array_ptr}")
+        logging.debug(f"Initialized present infantry array pointer: {self.infantry_present_array_ptr}")
+        logging.debug(f"Initialized present aircraft array pointer: {self.aircraft_present_array_ptr}")
 
-    def read_and_store_inf_units_buildings(self, category_dict, array_ptr, count_type):
+    def read_and_store_inf_units_buildings(
+        self,
+        category_dict,
+        array_ptr,
+        array_capacity,
+        present_array_ptr,
+        present_array_capacity,
+        count_type
+    ):
         try:
             if array_ptr is None:
                 return {}
             counts = {}
             for offset, name in category_dict.items():
+                if array_capacity <= 0 or offset >= array_capacity * 4:
+                    logging.debug(
+                        "Skipping %s for player %s because offset 0x%x exceeds %s capacity %s",
+                        name,
+                        self.username.value,
+                        offset,
+                        count_type,
+                        array_capacity,
+                    )
+                    counts[name] = 0
+                    continue
                 count_bytes = read_process_memory(self.process_handle, array_ptr + offset, 4)
+                present_count_bytes = None
+                if present_array_ptr not in (None, 0) and present_array_capacity > 0 and offset < present_array_capacity * 4:
+                    present_count_bytes = read_process_memory(self.process_handle, present_array_ptr + offset, 4)
                 test_bytes = read_process_memory(
                     self.process_handle,
                     self.test_addresses[count_type] + offset,
@@ -148,6 +281,18 @@ class Player:
                 if count_bytes and test_bytes and len(count_bytes) == 4 and len(test_bytes) == 4:
                     count = int.from_bytes(count_bytes, byteorder='little')
                     test = int.from_bytes(test_bytes, byteorder='little')
+                    present_count = None
+                    if present_count_bytes and len(present_count_bytes) == 4:
+                        present_count = int.from_bytes(present_count_bytes, byteorder='little')
+                        if present_count < count:
+                            logging.warning(
+                                "%s present-on-map count %s is lower than owned count %s for player %s",
+                                name,
+                                present_count,
+                                count,
+                                self.username.value,
+                            )
+
                     if name in ["Allied War Factory", "Soviet War Factory", "Yuri War Factory"]:
                         warFactories_ptr = self.real_class_base + NUMBEROFWFOFFSET
                         warFactories_data = read_process_memory(self.process_handle, warFactories_ptr, 4)
@@ -161,20 +306,21 @@ class Player:
                             counts[name] = 0
                     elif name == "Psychic Beacon" and 15 > count > 0:
                         counts[name] = count
-                    elif count <= test:
-                        counts[name] = count
-                        if name in OIL_DERRICK_NAMES:
-                            self.write_oil_count_to_file(count)
                     else:
-                        counts[name] = 0
-                        if count > test:
-                            logging.debug(
-                                "Rejected %s count %s for player %s because it exceeded total made %s",
-                                name,
-                                count,
-                                self.username.value,
-                                test,
-                            )
+                        if count <= test:
+                            counts[name] = count
+                            if name in OIL_DERRICK_NAMES:
+                                self.write_oil_count_to_file(count)
+                        else:
+                            counts[name] = 0
+                            if count > test:
+                                logging.debug(
+                                    "Rejected %s count %s for player %s because it exceeded total made %s",
+                                    name,
+                                    count,
+                                    self.username.value,
+                                    test,
+                                )
                 else:
                     logging.warning(f"Failed to read 4 bytes for {name} in category {count_type}.")
             return counts
@@ -214,6 +360,108 @@ class Player:
             logging.error(f"Exception in read_score_struct_counts for player {self.username.value}: {e}")
             traceback.print_exc()
             return {}
+
+    def _get_counter_context(self, count_type):
+        if count_type == "infantry":
+            return {
+                "owned_ptr": self.infantry_array_ptr,
+                "owned_capacity": self.infantry_array_capacity,
+                "present_ptr": self.infantry_present_array_ptr,
+                "present_capacity": self.infantry_present_array_capacity,
+                "built_counts": self.built_infantry_counts,
+                "lost_counts": self.lost_infantry_counts,
+            }
+        if count_type == "unit":
+            return {
+                "owned_ptr": self.unit_array_ptr,
+                "owned_capacity": self.unit_array_capacity,
+                "present_ptr": self.unit_present_array_ptr,
+                "present_capacity": self.unit_present_array_capacity,
+                "built_counts": self.built_tank_counts,
+                "lost_counts": self.lost_tank_counts,
+            }
+        return None
+
+    def _log_tracked_count_mismatches(self):
+        mismatch_logger = None
+        for unit_name, (count_type, offset) in TRACKED_MISMATCH_UNITS.items():
+            context = self._get_counter_context(count_type)
+            if context is None:
+                continue
+
+            owned_count = None
+            if (
+                context["owned_ptr"] not in (None, 0)
+                and context["owned_capacity"] > 0
+                and offset < context["owned_capacity"] * 4
+            ):
+                owned_bytes = read_process_memory(self.process_handle, context["owned_ptr"] + offset, 4)
+                if owned_bytes and len(owned_bytes) == 4:
+                    owned_count = int.from_bytes(owned_bytes, byteorder="little")
+
+            present_count = None
+            if (
+                context["present_ptr"] not in (None, 0)
+                and context["present_capacity"] > 0
+                and offset < context["present_capacity"] * 4
+            ):
+                present_bytes = read_process_memory(self.process_handle, context["present_ptr"] + offset, 4)
+                if present_bytes and len(present_bytes) == 4:
+                    present_count = int.from_bytes(present_bytes, byteorder="little")
+
+            built_count = context["built_counts"].get(unit_name, 0)
+            lost_count = context["lost_counts"].get(unit_name, 0)
+            displayed_count = None
+            if count_type == "infantry":
+                displayed_count = self.infantry_counts.get(unit_name, 0)
+            elif count_type == "unit":
+                displayed_count = self.tank_counts.get(unit_name, 0)
+
+            mismatch = (
+                owned_count is not None and present_count is not None and owned_count != present_count
+            )
+            state = (
+                owned_count,
+                present_count,
+                built_count,
+                lost_count,
+                displayed_count,
+                context["owned_ptr"],
+                context["owned_capacity"],
+                context["present_ptr"],
+                context["present_capacity"],
+            )
+
+            if not mismatch:
+                self._last_mismatch_states.pop(unit_name, None)
+                continue
+
+            if self._last_mismatch_states.get(unit_name) == state:
+                continue
+
+            self._last_mismatch_states[unit_name] = state
+            mismatch_logger = mismatch_logger or self._get_mismatch_logger()
+            mismatch_logger.info(
+                (
+                    "player=%s slot=%s unit=%s type=%s displayed=%s owned=%s present=%s "
+                    "built=%s lost=%s owned_ptr=0x%08X owned_capacity=%s "
+                    "present_ptr=0x%08X present_capacity=%s offset=0x%X"
+                ),
+                self.username.value or "<empty>",
+                self.display_slot,
+                unit_name,
+                count_type,
+                displayed_count,
+                owned_count,
+                present_count,
+                built_count,
+                lost_count,
+                context["owned_ptr"] or 0,
+                context["owned_capacity"],
+                context["present_ptr"] or 0,
+                context["present_capacity"],
+                offset,
+            )
 
     @staticmethod
     def merge_counts(*count_dicts):
@@ -359,22 +607,42 @@ class Player:
 
             if self.infantry_array_ptr not in (None, 0):
                 self.infantry_counts = self.read_and_store_inf_units_buildings(
-                    infantry_offsets, self.infantry_array_ptr, "infantry"
+                    infantry_offsets,
+                    self.infantry_array_ptr,
+                    self.infantry_array_capacity,
+                    self.infantry_present_array_ptr,
+                    self.infantry_present_array_capacity,
+                    "infantry"
                 )
 
             if self.unit_array_ptr not in (None, 0):
                 self.tank_counts = self.read_and_store_inf_units_buildings(
-                    tank_offsets, self.unit_array_ptr, "unit"
+                    tank_offsets,
+                    self.unit_array_ptr,
+                    self.unit_array_capacity,
+                    self.unit_present_array_ptr,
+                    self.unit_present_array_capacity,
+                    "unit"
                 )
 
             if self.building_array_ptr not in (None, 0):
                 self.building_counts = self.read_and_store_inf_units_buildings(
-                    structure_offsets, self.building_array_ptr, "building"
+                    structure_offsets,
+                    self.building_array_ptr,
+                    self.building_array_capacity,
+                    self.building_present_array_ptr,
+                    self.building_present_array_capacity,
+                    "building"
                 )
 
             if self.aircraft_array_ptr not in (None, 0):
                 self.aircraft_counts = self.read_and_store_inf_units_buildings(
-                    aircraft_offsets, self.aircraft_array_ptr, "aircraft"
+                    aircraft_offsets,
+                    self.aircraft_array_ptr,
+                    self.aircraft_array_capacity,
+                    self.aircraft_present_array_ptr,
+                    self.aircraft_present_array_capacity,
+                    "aircraft"
                 )
 
             self.built_infantry_counts = self.read_score_struct_counts(BUILT_INFANTRY_TOTAL_OFFSETS)
@@ -388,6 +656,7 @@ class Player:
             lost_buildings = self.read_score_struct_counts(LOST_BUILDING_TOTAL_OFFSETS)
             self.lost_building_counts = lost_buildings
             self.lost_aircraft_counts = self.read_score_struct_counts(LOST_AIRCRAFT_TOTAL_OFFSETS)
+            self._log_tracked_count_mismatches()
             self.update_superweapon_timers()
 
             # Update factory production data and log each factory's update status.
