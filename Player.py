@@ -10,8 +10,8 @@ from constants import (
     country_name_to_faction, COLOR_NAME_MAPPING, NUMBEROFWFOFFSET,
     QUEUED_FACTORIES_OFFSETS, BUILDING_FACTORIES_OFFSETS,
     MAXPLAYERS, INVALIDCLASS, INFOFFSET, AIRCRAFTOFFSET, TANKOFFSET, BUILDINGOFFSET,
-    CREDITSPENT_OFFSET, HARVESTED_CREDITS_OFFSET, CAPTURED_BUILDING_CREDITS_OFFSET,
-    BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET, ISLOSEROFFSET,
+    CREDITSPENT_OFFSET, HARVESTED_CREDITS_OFFSET, CAPTURED_BUILDING_CREDITS_OFFSET, OWNED_BUILDING_COUNT_OFFSET,
+    BALANCEOFFSET, USERNAMEOFFSET, ISWINNEROFFSET, ISLOSEROFFSET, ISDEFEATEDFLAGOFFSET,
     POST_GAME_TRIGGER_WIN_OFFSET, POST_GAME_TRIGGER_LOSS_OFFSET,
     POWEROUTPUTOFFSET, HOUSETYPECLASSBASEOFFSET, COUNTRYSTRINGOFFSET, COLORSCHEMEOFFSET,
     infantry_offsets, tank_offsets, structure_offsets, aircraft_offsets,
@@ -46,6 +46,11 @@ TRACKED_MISMATCH_UNITS = {
     "Rocketeer": ("infantry", 0x10),
     "Mirage Tank": ("unit", 0x94),
 }
+MCV_UNIT_NAMES = (
+    "Allied Construction Vehicle",
+    "Soviet Construction Vehicle",
+    "Yuri Construction Vehicle",
+)
 
 
 class Player:
@@ -67,12 +72,14 @@ class Player:
 
         self.is_winner = False
         self.is_loser = False
+        self.is_defeated_flag = False
         self.post_game_triggered = False
 
         self.balance = 0
         self.spent_credit = 0
         self.harvested_credits = 0
         self.captured_building_credits = 0
+        self.owned_building_count = 0
         self.power_output = 0
         self.power_drain = 0
         self.power = 0
@@ -498,6 +505,12 @@ class Player:
     def get_lost_unit_totals(self):
         return self.get_killed_unit_totals()
 
+    def get_mcv_count(self):
+        return sum(self.tank_counts.get(unit_name, 0) for unit_name in MCV_UNIT_NAMES)
+
+    def has_lost_game(self):
+        return self.owned_building_count == 0 and self.get_mcv_count() == 0
+
     def _normalize_color_name_for_oil_file(self):
         if isinstance(self.color_name, str) and self.color_name in COLOR_NAME_MAPPING.values():
             return self.color_name
@@ -540,7 +553,7 @@ class Player:
             logging.debug(f"Updating dynamic data for player {self.index}")
 
             resource_start = CREDITSPENT_OFFSET
-            resource_size = CAPTURED_BUILDING_CREDITS_OFFSET - CREDITSPENT_OFFSET + 4
+            resource_size = OWNED_BUILDING_COUNT_OFFSET - CREDITSPENT_OFFSET + 4
             resource_data = read_process_memory(
                 self.process_handle,
                 self.real_class_base + resource_start,
@@ -559,6 +572,11 @@ class Player:
                     resource_data[captured_index:captured_index + 4],
                     byteorder='little'
                 )
+                owned_building_index = OWNED_BUILDING_COUNT_OFFSET - resource_start
+                self.owned_building_count = int.from_bytes(
+                    resource_data[owned_building_index:owned_building_index + 4],
+                    byteorder='little'
+                )
 
             balance_ptr = self.real_class_base + BALANCEOFFSET
             balance_data = read_process_memory(self.process_handle, balance_ptr, 4)
@@ -573,6 +591,10 @@ class Player:
             if loser_data and len(loser_data) >= 1:
                 self.is_loser = bool(loser_data[0])
 
+            defeated_flag_data = read_process_memory(self.process_handle, self.real_class_base + ISDEFEATEDFLAGOFFSET, 1)
+            if defeated_flag_data and len(defeated_flag_data) >= 1:
+                self.is_defeated_flag = bool(defeated_flag_data[0])
+
             post_game_trigger_data = read_process_memory(
                 self.process_handle,
                 self.real_class_base + POST_GAME_TRIGGER_WIN_OFFSET,
@@ -582,11 +604,6 @@ class Player:
                 win_trigger = bool(post_game_trigger_data[0])
                 loss_trigger = bool(post_game_trigger_data[1])
                 self.post_game_triggered = win_trigger or loss_trigger
-                # Use trigger offsets as authoritative source for win/loss
-                # since ISWINNEROFFSET/ISLOSEROFFSET are unreliable
-                if win_trigger or loss_trigger:
-                    self.is_winner = win_trigger
-                    self.is_loser = loss_trigger
 
             power_data = read_process_memory(self.process_handle, self.real_class_base + POWEROUTPUTOFFSET, 8)
             if power_data and len(power_data) >= 8:

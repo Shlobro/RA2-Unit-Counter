@@ -40,10 +40,12 @@ BUILDINGOFFSET = 0x5554
 CREDITSPENT_OFFSET = 0x2dc
 HARVESTED_CREDITS_OFFSET = 0x2e0
 CAPTURED_BUILDING_CREDITS_OFFSET = 0x2e4
+OWNED_BUILDING_COUNT_OFFSET = 0x2f0
 BALANCEOFFSET = 0x30c
 USERNAMEOFFSET = 0x1602a
 ISWINNEROFFSET = 0x1f3
 ISLOSEROFFSET = 0x1f4
+ISDEFEATEDFLAGOFFSET = 0x1f5
 POST_GAME_TRIGGER_WIN_OFFSET = 0x1f7
 POST_GAME_TRIGGER_LOSS_OFFSET = 0x1f8
 
@@ -366,6 +368,7 @@ BUILT_BUILDING_TOTAL_OFFSETS = {
     0x1c34: "Soviet Shipyard",
     0x1c38: "Allied SpySat Uplink",
     0x1c3c: "Allied Gap Generator",
+    0x1c40: "Allied Grand Cannon",
     0x1c44: "Soviet Nuclear Reactor",
     0x1c48: "Allied Pill Box",
     0x1c4c: "Soviet Flak Cannon",
@@ -392,8 +395,8 @@ BUILT_BUILDING_TOTAL_OFFSETS = {
 }
 
 LOST_AIRCRAFT_TOTAL_OFFSETS = {
-    0x2348: "Intruder",
-    0x2360: "Black Eagle",
+    0x234c: "Intruder",
+    0x2364: "Black Eagle",
 }
 
 LOST_INFANTRY_TOTAL_OFFSETS = {
@@ -495,6 +498,7 @@ LOST_BUILDING_TOTAL_OFFSETS = {
     0x3c4c: "Soviet Shipyard",
     0x3c50: "Allied SpySat Uplink",
     0x3c54: "Allied Gap Generator",
+    0x3c58: "Allied Grand Cannon",
     0x3c5c: "Soviet Nuclear Reactor",
     0x3c60: "Allied Pill Box",
     0x3c64: "Soviet Flak Cannon",

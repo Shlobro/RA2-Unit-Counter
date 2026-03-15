@@ -1,0 +1,927 @@
+{
+  "schema_version": 1,
+  "match_id": "20260315_213350",
+  "started_at": "2026-03-15T21:33:50",
+  "ended_at": "2026-03-15T21:33:55",
+  "duration_ms": 5044,
+  "sample_interval_ms": 1000,
+  "winner_names": [],
+  "players": [
+    {
+      "player_id": "1",
+      "index": 1,
+      "display_slot": 2,
+      "username": "CodSetR",
+      "faction": "Soviet",
+      "country": "Arabs",
+      "color_name": "magenta",
+      "accent_color": "#ff00ff",
+      "owned_building_count": 4,
+      "result": "DEFEATED",
+      "is_winner": false,
+      "is_loser": true,
+      "series": {
+        "income_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "cash": [
+          {
+            "t_ms": 0,
+            "value": 98357
+          },
+          {
+            "t_ms": 381,
+            "value": 98357
+          },
+          {
+            "t_ms": 1002,
+            "value": 98155
+          },
+          {
+            "t_ms": 2006,
+            "value": 97944
+          },
+          {
+            "t_ms": 3008,
+            "value": 97768
+          },
+          {
+            "t_ms": 4013,
+            "value": 97570
+          },
+          {
+            "t_ms": 5018,
+            "value": 97412
+          },
+          {
+            "t_ms": 5044,
+            "value": 97412
+          }
+        ],
+        "money_spent_total": [
+          {
+            "t_ms": 0,
+            "value": 1643
+          },
+          {
+            "t_ms": 381,
+            "value": 1643
+          },
+          {
+            "t_ms": 1002,
+            "value": 1845
+          },
+          {
+            "t_ms": 2006,
+            "value": 2056
+          },
+          {
+            "t_ms": 3008,
+            "value": 2232
+          },
+          {
+            "t_ms": 4013,
+            "value": 2430
+          },
+          {
+            "t_ms": 5018,
+            "value": 2588
+          },
+          {
+            "t_ms": 5044,
+            "value": 2588
+          }
+        ],
+        "units_current_total": [
+          {
+            "t_ms": 0,
+            "value": 5
+          },
+          {
+            "t_ms": 381,
+            "value": 5
+          },
+          {
+            "t_ms": 1002,
+            "value": 6
+          },
+          {
+            "t_ms": 2006,
+            "value": 6
+          },
+          {
+            "t_ms": 3008,
+            "value": 7
+          },
+          {
+            "t_ms": 4013,
+            "value": 8
+          },
+          {
+            "t_ms": 5018,
+            "value": 9
+          },
+          {
+            "t_ms": 5044,
+            "value": 9
+          }
+        ],
+        "units_lost_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "infantry_current": [
+          {
+            "t_ms": 0,
+            "value": 2
+          },
+          {
+            "t_ms": 381,
+            "value": 2
+          },
+          {
+            "t_ms": 1002,
+            "value": 3
+          },
+          {
+            "t_ms": 2006,
+            "value": 3
+          },
+          {
+            "t_ms": 3008,
+            "value": 4
+          },
+          {
+            "t_ms": 4013,
+            "value": 5
+          },
+          {
+            "t_ms": 5018,
+            "value": 6
+          },
+          {
+            "t_ms": 5044,
+            "value": 6
+          }
+        ],
+        "vehicles_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "buildings_current": [
+          {
+            "t_ms": 0,
+            "value": 3
+          },
+          {
+            "t_ms": 381,
+            "value": 3
+          },
+          {
+            "t_ms": 1002,
+            "value": 3
+          },
+          {
+            "t_ms": 2006,
+            "value": 3
+          },
+          {
+            "t_ms": 3008,
+            "value": 3
+          },
+          {
+            "t_ms": 4013,
+            "value": 3
+          },
+          {
+            "t_ms": 5018,
+            "value": 3
+          },
+          {
+            "t_ms": 5044,
+            "value": 3
+          }
+        ],
+        "aircraft_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "infantry_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "vehicles_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "buildings_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "aircraft_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "player_id": "2",
+      "index": 2,
+      "display_slot": 3,
+      "username": "Michael",
+      "faction": "Soviet",
+      "country": "Arabs",
+      "color_name": "yellow",
+      "accent_color": "#ffff00",
+      "owned_building_count": 0,
+      "result": "DEFEATED",
+      "is_winner": false,
+      "is_loser": true,
+      "series": {
+        "income_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "cash": [
+          {
+            "t_ms": 0,
+            "value": 98900
+          },
+          {
+            "t_ms": 381,
+            "value": 98900
+          },
+          {
+            "t_ms": 1002,
+            "value": 100000
+          },
+          {
+            "t_ms": 2006,
+            "value": 100000
+          },
+          {
+            "t_ms": 3008,
+            "value": 100000
+          },
+          {
+            "t_ms": 4013,
+            "value": 100000
+          },
+          {
+            "t_ms": 5018,
+            "value": 100000
+          },
+          {
+            "t_ms": 5044,
+            "value": 100000
+          }
+        ],
+        "money_spent_total": [
+          {
+            "t_ms": 0,
+            "value": 1100
+          },
+          {
+            "t_ms": 381,
+            "value": 1100
+          },
+          {
+            "t_ms": 1002,
+            "value": 1100
+          },
+          {
+            "t_ms": 2006,
+            "value": 1100
+          },
+          {
+            "t_ms": 3008,
+            "value": 1100
+          },
+          {
+            "t_ms": 4013,
+            "value": 1100
+          },
+          {
+            "t_ms": 5018,
+            "value": 1100
+          },
+          {
+            "t_ms": 5044,
+            "value": 1100
+          }
+        ],
+        "units_current_total": [
+          {
+            "t_ms": 0,
+            "value": 1
+          },
+          {
+            "t_ms": 381,
+            "value": 1
+          },
+          {
+            "t_ms": 1002,
+            "value": 1
+          },
+          {
+            "t_ms": 2006,
+            "value": 1
+          },
+          {
+            "t_ms": 3008,
+            "value": 1
+          },
+          {
+            "t_ms": 4013,
+            "value": 1
+          },
+          {
+            "t_ms": 5018,
+            "value": 1
+          },
+          {
+            "t_ms": 5044,
+            "value": 1
+          }
+        ],
+        "units_lost_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "infantry_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "vehicles_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 1
+          },
+          {
+            "t_ms": 2006,
+            "value": 1
+          },
+          {
+            "t_ms": 3008,
+            "value": 1
+          },
+          {
+            "t_ms": 4013,
+            "value": 1
+          },
+          {
+            "t_ms": 5018,
+            "value": 1
+          },
+          {
+            "t_ms": 5044,
+            "value": 1
+          }
+        ],
+        "buildings_current": [
+          {
+            "t_ms": 0,
+            "value": 1
+          },
+          {
+            "t_ms": 381,
+            "value": 1
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "aircraft_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "infantry_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "vehicles_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "buildings_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ],
+        "aircraft_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 381,
+            "value": 0
+          },
+          {
+            "t_ms": 1002,
+            "value": 0
+          },
+          {
+            "t_ms": 2006,
+            "value": 0
+          },
+          {
+            "t_ms": 3008,
+            "value": 0
+          },
+          {
+            "t_ms": 4013,
+            "value": 0
+          },
+          {
+            "t_ms": 5018,
+            "value": 0
+          },
+          {
+            "t_ms": 5044,
+            "value": 0
+          }
+        ]
+      }
+    }
+  ]
+}

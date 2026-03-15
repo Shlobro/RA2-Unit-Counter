@@ -27,7 +27,16 @@ from player_identity import (
     get_combined_hud_title,
     get_player_bucket_key,
     get_player_display_label,
+    get_player_flag_export_stem,
     sync_player_color_exports,
+)
+from match_timeline import (
+    build_scoreboard_timeline,
+    finalize_match_timeline,
+    get_match_elapsed_ms,
+    MINIMUM_MATCH_DURATION_MS,
+    record_match_timeline_sample,
+    start_match_timeline,
 )
 
 
@@ -494,6 +503,7 @@ def update_huds(state):
     if not state.hud_windows:
         return
     try:
+        record_match_timeline_sample(state)
         for player in state.players:
             player.hud_positions_override = state.hud_positions
         assign_player_display_slots(state.players)
@@ -525,14 +535,12 @@ def maybe_show_post_game_scoreboard(state):
     if not state.players:
         return
 
-    player_count = len(state.players)
-    winner_count = sum(1 for player in state.players if player.is_winner)
-    loser_count = sum(1 for player in state.players if player.is_loser)
-    resolved_count = sum(1 for player in state.players if player.is_winner or player.is_loser)
-    has_final_result_bits = winner_count > 0 and loser_count > 0
-    all_players_resolved = resolved_count == player_count
+    if get_match_elapsed_ms(state) < MINIMUM_MATCH_DURATION_MS:
+        state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players, state.hud_positions)
+        return
 
-    if not has_final_result_bits or not all_players_resolved:
+    losing_players = [player for player in state.players if player.has_lost_game()]
+    if not losing_players:
         state.last_live_scoreboard_snapshot = build_post_game_snapshot(state.players, state.hud_positions)
         return
 
@@ -542,10 +550,19 @@ def maybe_show_post_game_scoreboard(state):
     if not snapshot["players"]:
         return
 
+    finalize_match_timeline(state)
+    timeline = build_scoreboard_timeline(state)
+
     if state.scoreboard_window is not None:
         state.scoreboard_window.close()
 
-    state.scoreboard_window = PostGameScoreboardWindow(snapshot)
+    state.scoreboard_window = PostGameScoreboardWindow(
+        {
+            "summary": snapshot,
+            "timeline": timeline,
+            "match_path": state.completed_match_path,
+        }
+    )
     state.scoreboard_window.show()
     state.scoreboard_window.raise_()
     state.scoreboard_window.activateWindow()
@@ -561,6 +578,8 @@ def game_started_handler(state):
     with state.data_lock:
         state.post_game_scoreboard_shown = False
         state.last_live_scoreboard_snapshot = None
+        state.current_match_timeline = None
+        state.completed_match_path = None
         if state.scoreboard_window is not None:
             state.scoreboard_window.close()
             state.scoreboard_window = None
@@ -583,7 +602,11 @@ def game_started_handler(state):
                 msg_box.exec()
                 logging.warning("User is not admin and not spectator - preventing unit counter from starting")
                 return
-        
+
+        for player in state.players:
+            player.post_game_flag_file_stem = get_player_flag_export_stem(player, state.hud_positions)
+
+        start_match_timeline(state)
         create_hud_windows(state)
         # Show unit windows if needed (combined windows are already shown in create_hud_windows)
         for unit_window, resource_window in state.hud_windows:

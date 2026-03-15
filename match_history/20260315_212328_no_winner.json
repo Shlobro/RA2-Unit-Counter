@@ -1,0 +1,2173 @@
+{
+  "schema_version": 1,
+  "match_id": "20260315_212328",
+  "started_at": "2026-03-15T21:23:28",
+  "ended_at": "2026-03-15T21:23:45",
+  "duration_ms": 17242,
+  "sample_interval_ms": 1000,
+  "winner_names": [],
+  "players": [
+    {
+      "player_id": "1",
+      "index": 1,
+      "display_slot": 2,
+      "username": "CodSetR",
+      "faction": "Soviet",
+      "country": "Arabs",
+      "color_name": "magenta",
+      "accent_color": "#ff00ff",
+      "result": "DEFEATED",
+      "is_winner": false,
+      "is_loser": true,
+      "series": {
+        "income_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "cash": [
+          {
+            "t_ms": 0,
+            "value": 100000
+          },
+          {
+            "t_ms": 322,
+            "value": 100000
+          },
+          {
+            "t_ms": 1006,
+            "value": 100000
+          },
+          {
+            "t_ms": 2020,
+            "value": 100000
+          },
+          {
+            "t_ms": 3022,
+            "value": 99934
+          },
+          {
+            "t_ms": 4039,
+            "value": 99824
+          },
+          {
+            "t_ms": 5051,
+            "value": 99658
+          },
+          {
+            "t_ms": 6065,
+            "value": 99439
+          },
+          {
+            "t_ms": 7079,
+            "value": 99202
+          },
+          {
+            "t_ms": 8093,
+            "value": 99010
+          },
+          {
+            "t_ms": 9103,
+            "value": 98891
+          },
+          {
+            "t_ms": 10127,
+            "value": 98783
+          },
+          {
+            "t_ms": 11141,
+            "value": 98675
+          },
+          {
+            "t_ms": 12155,
+            "value": 98550
+          },
+          {
+            "t_ms": 13170,
+            "value": 98680
+          },
+          {
+            "t_ms": 14182,
+            "value": 98650
+          },
+          {
+            "t_ms": 15193,
+            "value": 98650
+          },
+          {
+            "t_ms": 16207,
+            "value": 98561
+          },
+          {
+            "t_ms": 17222,
+            "value": 98370
+          },
+          {
+            "t_ms": 17242,
+            "value": 98370
+          }
+        ],
+        "money_spent_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 66
+          },
+          {
+            "t_ms": 4039,
+            "value": 176
+          },
+          {
+            "t_ms": 5051,
+            "value": 342
+          },
+          {
+            "t_ms": 6065,
+            "value": 561
+          },
+          {
+            "t_ms": 7079,
+            "value": 798
+          },
+          {
+            "t_ms": 8093,
+            "value": 990
+          },
+          {
+            "t_ms": 9103,
+            "value": 1109
+          },
+          {
+            "t_ms": 10127,
+            "value": 1217
+          },
+          {
+            "t_ms": 11141,
+            "value": 1325
+          },
+          {
+            "t_ms": 12155,
+            "value": 1450
+          },
+          {
+            "t_ms": 13170,
+            "value": 1570
+          },
+          {
+            "t_ms": 14182,
+            "value": 1600
+          },
+          {
+            "t_ms": 15193,
+            "value": 1600
+          },
+          {
+            "t_ms": 16207,
+            "value": 1689
+          },
+          {
+            "t_ms": 17222,
+            "value": 1880
+          },
+          {
+            "t_ms": 17242,
+            "value": 1880
+          }
+        ],
+        "units_current_total": [
+          {
+            "t_ms": 0,
+            "value": 1
+          },
+          {
+            "t_ms": 322,
+            "value": 1
+          },
+          {
+            "t_ms": 1006,
+            "value": 1
+          },
+          {
+            "t_ms": 2020,
+            "value": 1
+          },
+          {
+            "t_ms": 3022,
+            "value": 1
+          },
+          {
+            "t_ms": 4039,
+            "value": 1
+          },
+          {
+            "t_ms": 5051,
+            "value": 1
+          },
+          {
+            "t_ms": 6065,
+            "value": 1
+          },
+          {
+            "t_ms": 7079,
+            "value": 1
+          },
+          {
+            "t_ms": 8093,
+            "value": 1
+          },
+          {
+            "t_ms": 9103,
+            "value": 2
+          },
+          {
+            "t_ms": 10127,
+            "value": 3
+          },
+          {
+            "t_ms": 11141,
+            "value": 3
+          },
+          {
+            "t_ms": 12155,
+            "value": 3
+          },
+          {
+            "t_ms": 13170,
+            "value": 2
+          },
+          {
+            "t_ms": 14182,
+            "value": 2
+          },
+          {
+            "t_ms": 15193,
+            "value": 3
+          },
+          {
+            "t_ms": 16207,
+            "value": 3
+          },
+          {
+            "t_ms": 17222,
+            "value": 3
+          },
+          {
+            "t_ms": 17242,
+            "value": 3
+          }
+        ],
+        "units_lost_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "infantry_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "vehicles_current": [
+          {
+            "t_ms": 0,
+            "value": 1
+          },
+          {
+            "t_ms": 322,
+            "value": 1
+          },
+          {
+            "t_ms": 1006,
+            "value": 1
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "buildings_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 1
+          },
+          {
+            "t_ms": 3022,
+            "value": 1
+          },
+          {
+            "t_ms": 4039,
+            "value": 1
+          },
+          {
+            "t_ms": 5051,
+            "value": 1
+          },
+          {
+            "t_ms": 6065,
+            "value": 1
+          },
+          {
+            "t_ms": 7079,
+            "value": 1
+          },
+          {
+            "t_ms": 8093,
+            "value": 1
+          },
+          {
+            "t_ms": 9103,
+            "value": 2
+          },
+          {
+            "t_ms": 10127,
+            "value": 3
+          },
+          {
+            "t_ms": 11141,
+            "value": 3
+          },
+          {
+            "t_ms": 12155,
+            "value": 3
+          },
+          {
+            "t_ms": 13170,
+            "value": 2
+          },
+          {
+            "t_ms": 14182,
+            "value": 2
+          },
+          {
+            "t_ms": 15193,
+            "value": 3
+          },
+          {
+            "t_ms": 16207,
+            "value": 3
+          },
+          {
+            "t_ms": 17222,
+            "value": 3
+          },
+          {
+            "t_ms": 17242,
+            "value": 3
+          }
+        ],
+        "aircraft_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "infantry_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "vehicles_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "buildings_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "aircraft_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ]
+      }
+    },
+    {
+      "player_id": "2",
+      "index": 2,
+      "display_slot": 3,
+      "username": "Michael",
+      "faction": "Allied",
+      "country": "Americans",
+      "color_name": "yellow",
+      "accent_color": "#ffff00",
+      "result": "DEFEATED",
+      "is_winner": false,
+      "is_loser": true,
+      "series": {
+        "income_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "cash": [
+          {
+            "t_ms": 0,
+            "value": 100000
+          },
+          {
+            "t_ms": 322,
+            "value": 100000
+          },
+          {
+            "t_ms": 1006,
+            "value": 100000
+          },
+          {
+            "t_ms": 2020,
+            "value": 100000
+          },
+          {
+            "t_ms": 3022,
+            "value": 100000
+          },
+          {
+            "t_ms": 4039,
+            "value": 100000
+          },
+          {
+            "t_ms": 5051,
+            "value": 100000
+          },
+          {
+            "t_ms": 6065,
+            "value": 100000
+          },
+          {
+            "t_ms": 7079,
+            "value": 100000
+          },
+          {
+            "t_ms": 8093,
+            "value": 100000
+          },
+          {
+            "t_ms": 9103,
+            "value": 100000
+          },
+          {
+            "t_ms": 10127,
+            "value": 100000
+          },
+          {
+            "t_ms": 11141,
+            "value": 100000
+          },
+          {
+            "t_ms": 12155,
+            "value": 100000
+          },
+          {
+            "t_ms": 13170,
+            "value": 100000
+          },
+          {
+            "t_ms": 14182,
+            "value": 100000
+          },
+          {
+            "t_ms": 15193,
+            "value": 100000
+          },
+          {
+            "t_ms": 16207,
+            "value": 100000
+          },
+          {
+            "t_ms": 17222,
+            "value": 101500
+          },
+          {
+            "t_ms": 17242,
+            "value": 101500
+          }
+        ],
+        "money_spent_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "units_current_total": [
+          {
+            "t_ms": 0,
+            "value": 1
+          },
+          {
+            "t_ms": 322,
+            "value": 1
+          },
+          {
+            "t_ms": 1006,
+            "value": 1
+          },
+          {
+            "t_ms": 2020,
+            "value": 1
+          },
+          {
+            "t_ms": 3022,
+            "value": 1
+          },
+          {
+            "t_ms": 4039,
+            "value": 1
+          },
+          {
+            "t_ms": 5051,
+            "value": 1
+          },
+          {
+            "t_ms": 6065,
+            "value": 1
+          },
+          {
+            "t_ms": 7079,
+            "value": 1
+          },
+          {
+            "t_ms": 8093,
+            "value": 1
+          },
+          {
+            "t_ms": 9103,
+            "value": 1
+          },
+          {
+            "t_ms": 10127,
+            "value": 1
+          },
+          {
+            "t_ms": 11141,
+            "value": 1
+          },
+          {
+            "t_ms": 12155,
+            "value": 1
+          },
+          {
+            "t_ms": 13170,
+            "value": 1
+          },
+          {
+            "t_ms": 14182,
+            "value": 1
+          },
+          {
+            "t_ms": 15193,
+            "value": 1
+          },
+          {
+            "t_ms": 16207,
+            "value": 1
+          },
+          {
+            "t_ms": 17222,
+            "value": 3
+          },
+          {
+            "t_ms": 17242,
+            "value": 3
+          }
+        ],
+        "units_lost_total": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "infantry_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 3
+          },
+          {
+            "t_ms": 17242,
+            "value": 3
+          }
+        ],
+        "vehicles_current": [
+          {
+            "t_ms": 0,
+            "value": 1
+          },
+          {
+            "t_ms": 322,
+            "value": 1
+          },
+          {
+            "t_ms": 1006,
+            "value": 1
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "buildings_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 1
+          },
+          {
+            "t_ms": 3022,
+            "value": 1
+          },
+          {
+            "t_ms": 4039,
+            "value": 1
+          },
+          {
+            "t_ms": 5051,
+            "value": 1
+          },
+          {
+            "t_ms": 6065,
+            "value": 1
+          },
+          {
+            "t_ms": 7079,
+            "value": 1
+          },
+          {
+            "t_ms": 8093,
+            "value": 1
+          },
+          {
+            "t_ms": 9103,
+            "value": 1
+          },
+          {
+            "t_ms": 10127,
+            "value": 1
+          },
+          {
+            "t_ms": 11141,
+            "value": 1
+          },
+          {
+            "t_ms": 12155,
+            "value": 1
+          },
+          {
+            "t_ms": 13170,
+            "value": 1
+          },
+          {
+            "t_ms": 14182,
+            "value": 1
+          },
+          {
+            "t_ms": 15193,
+            "value": 1
+          },
+          {
+            "t_ms": 16207,
+            "value": 1
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "aircraft_current": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "infantry_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "vehicles_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "buildings_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ],
+        "aircraft_lost": [
+          {
+            "t_ms": 0,
+            "value": 0
+          },
+          {
+            "t_ms": 322,
+            "value": 0
+          },
+          {
+            "t_ms": 1006,
+            "value": 0
+          },
+          {
+            "t_ms": 2020,
+            "value": 0
+          },
+          {
+            "t_ms": 3022,
+            "value": 0
+          },
+          {
+            "t_ms": 4039,
+            "value": 0
+          },
+          {
+            "t_ms": 5051,
+            "value": 0
+          },
+          {
+            "t_ms": 6065,
+            "value": 0
+          },
+          {
+            "t_ms": 7079,
+            "value": 0
+          },
+          {
+            "t_ms": 8093,
+            "value": 0
+          },
+          {
+            "t_ms": 9103,
+            "value": 0
+          },
+          {
+            "t_ms": 10127,
+            "value": 0
+          },
+          {
+            "t_ms": 11141,
+            "value": 0
+          },
+          {
+            "t_ms": 12155,
+            "value": 0
+          },
+          {
+            "t_ms": 13170,
+            "value": 0
+          },
+          {
+            "t_ms": 14182,
+            "value": 0
+          },
+          {
+            "t_ms": 15193,
+            "value": 0
+          },
+          {
+            "t_ms": 16207,
+            "value": 0
+          },
+          {
+            "t_ms": 17222,
+            "value": 0
+          },
+          {
+            "t_ms": 17242,
+            "value": 0
+          }
+        ]
+      }
+    }
+  ]
+}

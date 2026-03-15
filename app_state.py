@@ -23,6 +23,7 @@ def initialize_oil_count_files():
 class AppState:
     def __init__(self):
         self.HUD_POSITION_FILE = 'hud_positions.json'
+        self.MATCH_HISTORY_DIR = 'match_history'
         self.players = []           # List to store player objects
         self.hud_windows = []       # List to store HUDWindow objects
         self.selected_units_dict = {}    # For unit selection HUD
@@ -36,8 +37,11 @@ class AppState:
         self.scoreboard_window = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
+        self.current_match_timeline = None
+        self.completed_match_path = None
         self.player_color_export_cache = {}
         initialize_oil_count_files()
+        os.makedirs(self.MATCH_HISTORY_DIR, exist_ok=True)
 
 
 def check_spectator_status(state):

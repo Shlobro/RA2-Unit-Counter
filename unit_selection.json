@@ -5,112 +5,140 @@
                 "GI": {
                     "selected": true,
                     "locked": false,
-                    "position": 0,
+                    "position": 8,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Guardian GI": {
                     "selected": true,
                     "locked": false,
-                    "position": 7,
+                    "position": 17,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Engineer": {
                     "selected": true,
                     "locked": false,
-                    "position": 3,
+                    "position": 12,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Chrono Legionnaire": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": 4,
+                    "position": 13,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Spy": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Rocketeer": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Tanya": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "SEAL": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 },
                 "Allied Attack Dog": {
-                    "selected": false,
-                    "locked": true,
-                    "position": 2,
+                    "selected": true,
+                    "locked": false,
+                    "position": 10,
+                    "faction": "Allied",
+                    "unit_type": "Infantry"
+                },
+                "Chrono Commando": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Infantry"
+                },
+                "Chrono Ivan": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Infantry"
+                },
+                "Psi-Corp Trooper": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Infantry"
+                },
+                "Sniper": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
                     "faction": "Allied",
                     "unit_type": "Infantry"
                 }
             },
             "Structure": {
                 "Allied Power Plant": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": 0,
+                    "position": 2,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Barracks": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": 1,
+                    "position": 6,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied SpySat Uplink": {
                     "selected": true,
                     "locked": false,
-                    "position": 8,
+                    "position": 18,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Shipyard": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Chrono Sphere": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Service Depot": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Gap Generator": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
@@ -119,19 +147,19 @@
                 "Allied Grand Cannon": {
                     "selected": true,
                     "locked": false,
-                    "position": 1,
+                    "position": 9,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Ore Processor": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Airforce Command Headquarters": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
@@ -140,33 +168,33 @@
                 "Allied Pill Box": {
                     "selected": true,
                     "locked": false,
-                    "position": 13,
+                    "position": 23,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Battle Lab": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Robot Control Center": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Ore Refinery": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 },
                 "Allied Weather Controller": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
@@ -174,8 +202,22 @@
                 },
                 "Allied War Factory": {
                     "selected": true,
-                    "locked": true,
-                    "position": 2,
+                    "locked": false,
+                    "position": 11,
+                    "faction": "Allied",
+                    "unit_type": "Structure"
+                },
+                "Allied Patriot Missile": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Structure"
+                },
+                "Allied Prism Cannon": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
                     "faction": "Allied",
                     "unit_type": "Structure"
                 }
@@ -184,33 +226,33 @@
                 "Grizzly Battle Tank": {
                     "selected": true,
                     "locked": false,
-                    "position": 9,
+                    "position": 19,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "IFV": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": 0,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "Chrono Miner": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": 1,
+                    "position": 5,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "Battle Fortress": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": 2,
+                    "position": 7,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "Allied Construction Vehicle": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
@@ -226,26 +268,26 @@
                 "Prism Tank": {
                     "selected": true,
                     "locked": false,
-                    "position": 4,
+                    "position": 14,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "Tank Destroyer": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "Robot Tank": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 },
                 "BlackHawk Transport": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
@@ -254,7 +296,7 @@
                 "Mirage Tank": {
                     "selected": true,
                     "locked": false,
-                    "position": 5,
+                    "position": 15,
                     "faction": "Allied",
                     "unit_type": "Tank"
                 }
@@ -263,33 +305,33 @@
                 "Aegis Cruiser": {
                     "selected": true,
                     "locked": false,
-                    "position": 10,
+                    "position": 20,
                     "faction": "Allied",
                     "unit_type": "Naval"
                 },
                 "Aircraft Carrier": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": 1,
                     "faction": "Allied",
                     "unit_type": "Naval"
                 },
                 "Destroyer": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
-                    "position": 2,
+                    "position": 4,
                     "faction": "Allied",
                     "unit_type": "Naval"
                 },
                 "Dolphin": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": 3,
                     "faction": "Allied",
                     "unit_type": "Naval"
                 },
                 "Landing Craft": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
@@ -300,12 +342,12 @@
                 "Black Eagle": {
                     "selected": true,
                     "locked": false,
-                    "position": 11,
+                    "position": 21,
                     "faction": "Allied",
                     "unit_type": "Aircraft"
                 },
                 "Intruder": {
-                    "selected": false,
+                    "selected": true,
                     "locked": false,
                     "position": -1,
                     "faction": "Allied",
