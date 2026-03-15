@@ -138,24 +138,16 @@ class Player:
             if array_ptr is None:
                 return {}
             counts = {}
-            offsets = sorted(category_dict.keys())
-            min_offset = offsets[0]
-            max_offset = offsets[-1]
-            chunk_size = max_offset - min_offset + 4
-            # Read one contiguous chunk for count data and test data.
-            chunk_data = read_process_memory(self.process_handle, array_ptr + min_offset, chunk_size)
-            test_chunk_data = read_process_memory(self.process_handle, self.test_addresses[count_type] + min_offset, chunk_size)
-            if not chunk_data or not test_chunk_data:
-                logging.warning(f"Failed to read memory chunk for {count_type}.")
-                return {}
-            for offset in offsets:
-                relative_index = offset - min_offset
-                count_bytes = chunk_data[relative_index:relative_index + 4]
-                test_bytes = test_chunk_data[relative_index:relative_index + 4]
+            for offset, name in category_dict.items():
+                count_bytes = read_process_memory(self.process_handle, array_ptr + offset, 4)
+                test_bytes = read_process_memory(
+                    self.process_handle,
+                    self.test_addresses[count_type] + offset,
+                    4
+                )
                 if count_bytes and test_bytes and len(count_bytes) == 4 and len(test_bytes) == 4:
                     count = int.from_bytes(count_bytes, byteorder='little')
                     test = int.from_bytes(test_bytes, byteorder='little')
-                    name = category_dict[offset]
                     if name in ["Allied War Factory", "Soviet War Factory", "Yuri War Factory"]:
                         warFactories_ptr = self.real_class_base + NUMBEROFWFOFFSET
                         warFactories_data = read_process_memory(self.process_handle, warFactories_ptr, 4)
@@ -165,17 +157,26 @@ class Player:
                                 counts[name] = count
                             else:
                                 counts[name] = 0
+                        else:
+                            counts[name] = 0
                     elif name == "Psychic Beacon" and 15 > count > 0:
                         counts[name] = count
-                    elif name in OIL_DERRICK_NAMES:
-                        counts[name] = count
-                        self.write_oil_count_to_file(count)
                     elif count <= test:
                         counts[name] = count
+                        if name in OIL_DERRICK_NAMES:
+                            self.write_oil_count_to_file(count)
                     else:
                         counts[name] = 0
+                        if count > test:
+                            logging.debug(
+                                "Rejected %s count %s for player %s because it exceeded total made %s",
+                                name,
+                                count,
+                                self.username.value,
+                                test,
+                            )
                 else:
-                    logging.warning(f"Failed to extract 4 bytes for offset {offset} in category {count_type}.")
+                    logging.warning(f"Failed to read 4 bytes for {name} in category {count_type}.")
             return counts
         except ProcessExitedException:
             raise
@@ -354,30 +355,24 @@ class Player:
                 self.barracks_infiltrated = bool(infiltration_data[0])
                 self.war_factory_infiltrated = bool(infiltration_data[1])
 
-            if self.infantry_array_ptr == 0:
-                self.initialize_pointers()
-            else:
+            self.initialize_pointers()
+
+            if self.infantry_array_ptr not in (None, 0):
                 self.infantry_counts = self.read_and_store_inf_units_buildings(
                     infantry_offsets, self.infantry_array_ptr, "infantry"
                 )
 
-            if self.unit_array_ptr == 0:
-                self.initialize_pointers()
-            else:
+            if self.unit_array_ptr not in (None, 0):
                 self.tank_counts = self.read_and_store_inf_units_buildings(
                     tank_offsets, self.unit_array_ptr, "unit"
                 )
 
-            if self.building_array_ptr == 0:
-                self.initialize_pointers()
-            else:
+            if self.building_array_ptr not in (None, 0):
                 self.building_counts = self.read_and_store_inf_units_buildings(
                     structure_offsets, self.building_array_ptr, "building"
                 )
 
-            if self.aircraft_array_ptr == 0:
-                self.initialize_pointers()
-            else:
+            if self.aircraft_array_ptr not in (None, 0):
                 self.aircraft_counts = self.read_and_store_inf_units_buildings(
                     aircraft_offsets, self.aircraft_array_ptr, "aircraft"
                 )
