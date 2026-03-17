@@ -1,5 +1,4 @@
 import logging
-import random
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu
 
@@ -34,10 +33,15 @@ class UnitWindowBase(QMainWindow):
         self.hud_pos = hud_pos
         self.selected_units = selected_units_dict['selected_units']
         self.unit_info_by_name = {}
+        self.unit_order_index = {}
+        order_index = 0
         for faction, unit_types in self.selected_units.items():
             for unit_type, units in unit_types.items():
                 for unit_name, unit_info in units.items():
                     canonical_name = canonicalize_unit_name(unit_name)
+                    if canonical_name not in self.unit_order_index:
+                        self.unit_order_index[canonical_name] = order_index
+                        order_index += 1
                     unit_info['unit_type'] = unit_type
                     unit_info['faction'] = faction
                     existing_info = self.unit_info_by_name.get(canonical_name)
@@ -119,24 +123,18 @@ class UnitWindowBase(QMainWindow):
             selected_units.append((canonical_name, unit_info))
             seen_units.add(canonical_name)
 
-        numbered_groups = {}
-        end_group = []
-        for unit_name, unit_info in selected_units:
+        def sort_key(item):
+            unit_name, unit_info = item
             position = unit_info.get('position', -1)
-            if position == -1:
-                end_group.append(unit_name)
-            else:
-                numbered_groups.setdefault(position, []).append(unit_name)
+            has_explicit_position = position != -1
+            return (
+                0 if has_explicit_position else 1,
+                position if has_explicit_position else 0,
+                self.unit_order_index.get(unit_name, float('inf')),
+                unit_name.casefold(),
+            )
 
-        ordered_names = []
-        for position in sorted(numbered_groups):
-            group = list(numbered_groups[position])
-            random.shuffle(group)
-            ordered_names.extend(group)
-
-        random.shuffle(end_group)
-        ordered_names.extend(end_group)
-        return ordered_names
+        return [unit_name for unit_name, _ in sorted(selected_units, key=sort_key)]
 
     def rebuild_counter_order(self):
         ordered_names = self.get_selected_counter_names_in_display_order()
