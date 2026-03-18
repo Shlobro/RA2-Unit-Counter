@@ -313,11 +313,13 @@ class Player:
                             counts[name] = 0
                     elif name == "Psychic Beacon" and 15 > count > 0:
                         counts[name] = count
+                    elif name in OIL_DERRICK_NAMES:
+                        # Oil derricks are capturable tech buildings, so built totals are not authoritative.
+                        counts[name] = count
+                        self.write_oil_count_to_file(count)
                     else:
                         if count <= test:
                             counts[name] = count
-                            if name in OIL_DERRICK_NAMES:
-                                self.write_oil_count_to_file(count)
                         else:
                             counts[name] = 0
                             if count > test:
