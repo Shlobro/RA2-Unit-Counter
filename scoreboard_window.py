@@ -66,6 +66,7 @@ METRIC_OPTIONS = [
     {"id": "units_current_total", "label": "Units", "format": "count"},
     {"id": "units_lost_total", "label": "Lost", "format": "count"},
     {"id": "infantry_current", "label": "Infantry", "format": "count"},
+    {"id": "miners_current", "label": "Miners", "format": "count"},
     {"id": "vehicles_current", "label": "Vehicles", "format": "count"},
     {"id": "navy_current", "label": "Navy", "format": "count"},
     {"id": "buildings_current", "label": "Buildings", "format": "count"},
@@ -174,6 +175,15 @@ def _faction_flag_path(faction_name):
 
 
 def _player_flag_path(player_snapshot):
+    direct_flag_path = player_snapshot.get("flag_asset_path")
+    if direct_flag_path and os.path.exists(direct_flag_path):
+        return direct_flag_path
+
+    flag_asset_name = (player_snapshot.get("flag_asset_name") or "").strip()
+    if flag_asset_name:
+        for candidate in _existing_asset_paths("Flags", "PNG", flag_asset_name):
+            return candidate
+
     country_flag = _country_flag_path(player_snapshot.get("country"))
     if country_flag:
         return country_flag
@@ -192,6 +202,9 @@ def _player_flag_path(player_snapshot):
     if color_name:
         for candidate in _existing_asset_paths("player flags", f"{color_name}_flag.png"):
             return candidate
+
+    for candidate in _existing_asset_paths("Flags", "PNG", "RA2_Yuricountry.png"):
+        return candidate
 
     return None
 
@@ -271,6 +284,8 @@ def build_post_game_snapshot(players, hud_positions=None):
             result = "DEFEATED"
 
         country_name = _normalize_country_name(player.country_name.value.decode("utf-8", errors="ignore"))
+        flag_asset_path = _country_flag_path(country_name) or _faction_flag_path(player.faction)
+        flag_asset_name = os.path.basename(flag_asset_path) if flag_asset_path else "RA2_Yuricountry.png"
         snapshot_players.append({
             "player_id": str(player.index),
             "username": player.username.value or f"Player {player.index}",
@@ -278,6 +293,8 @@ def build_post_game_snapshot(players, hud_positions=None):
             "country": country_name,
             "color_name": player.color_name if isinstance(player.color_name, str) else player.color_name.name(),
             "flag_file_stem": getattr(player, "post_game_flag_file_stem", "") or get_player_flag_export_stem(player, hud_positions),
+            "flag_asset_name": flag_asset_name,
+            "flag_asset_path": flag_asset_path,
             "accent_color": _color_to_hex(player.color),
             "result": result,
             "result_label": RESULT_LABELS.get(result, result.title()),
@@ -379,6 +396,9 @@ class FlagBadge(QFrame):
         pixmap = _load_pixmap(flag_path, 84, 56)
         if pixmap is not None:
             self._image_label.setPixmap(pixmap)
+        else:
+            self._image_label.setText("?")
+            self._image_label.setObjectName("flagFallback")
         layout.addWidget(self._image_label)
 
 
@@ -604,6 +624,9 @@ class TimelineChartWidget(QWidget):
         self.setMinimumHeight(540)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
+    def _metric_label(self):
+        return next((item["label"] for item in METRIC_OPTIONS if item["id"] == self.metric_id), self.metric_id)
+
     def set_metric(self, metric_id):
         self.metric_id = metric_id
         self.hover_t_ms = None
@@ -681,8 +704,7 @@ class TimelineChartWidget(QWidget):
         return int(left["value"] + (right["value"] - left["value"]) * ratio)
 
     def _default_hover_text(self):
-        metric_label = next((item["label"] for item in METRIC_OPTIONS if item["id"] == self.metric_id), self.metric_id)
-        return f"{metric_label} over {_format_duration(self.timeline.get('duration_ms') or 0)}"
+        return f"{self._metric_label()} over {_format_duration(self.timeline.get('duration_ms') or 0)}"
 
     def _draw_hover_value(self, painter, x, y, text, color, align_right=False):
         padding_x = 8
@@ -699,6 +721,24 @@ class TimelineChartWidget(QWidget):
         painter.setBrush(QColor(10, 8, 8, 190))
         painter.drawRoundedRect(bubble_rect, 8, 8)
         painter.setPen(QPen(color))
+        painter.drawText(bubble_rect, Qt.AlignmentFlag.AlignCenter, text)
+
+    def _draw_time_bubble(self, painter, plot_rect, hover_x):
+        text = _format_duration(self.hover_t_ms)
+        padding_x = 10
+        padding_y = 6
+        font = QFont("Arial", 9, QFont.Bold)
+        painter.setFont(font)
+        text_width = painter.fontMetrics().horizontalAdvance(text)
+        width = text_width + padding_x * 2
+        height = painter.fontMetrics().height() + padding_y * 2
+        bubble_x = max(plot_rect.left(), min(hover_x - width / 2, plot_rect.right() - width))
+        bubble_y = plot_rect.bottom() + 18
+        bubble_rect = QRectF(bubble_x, bubble_y, width, height)
+        painter.setPen(QPen(QColor(255, 214, 150, 220), 1))
+        painter.setBrush(QColor(10, 8, 8, 225))
+        painter.drawRoundedRect(bubble_rect, 8, 8)
+        painter.setPen(QPen(QColor("#fff1cf")))
         painter.drawText(bubble_rect, Qt.AlignmentFlag.AlignCenter, text)
 
     def _hover_text(self):
@@ -742,8 +782,18 @@ class TimelineChartWidget(QWidget):
         painter.setFont(QFont("Arial", 9, QFont.Bold))
         painter.drawText(QRectF(10, plot_rect.top() - 8, 60, 20), Qt.AlignmentFlag.AlignRight, _format_value(self.metric_id, max_value))
         painter.drawText(QRectF(10, plot_rect.bottom() - 12, 60, 20), Qt.AlignmentFlag.AlignRight, _format_value(self.metric_id, 0))
-        painter.drawText(QRectF(plot_rect.left() - 8, plot_rect.bottom() + 8, 80, 20), Qt.AlignmentFlag.AlignLeft, "0:00")
-        painter.drawText(QRectF(plot_rect.right() - 80, plot_rect.bottom() + 8, 80, 20), Qt.AlignmentFlag.AlignRight, _format_duration(max_t_ms))
+        for step in range(7):
+            ratio = step / 6
+            tick_x = plot_rect.left() + plot_rect.width() * ratio
+            tick_text = _format_duration(int(max_t_ms * ratio))
+            tick_rect = QRectF(tick_x - 40, plot_rect.bottom() + 8, 80, 20)
+            alignment = Qt.AlignmentFlag.AlignCenter
+            if step == 0:
+                alignment = Qt.AlignmentFlag.AlignLeft
+            elif step == 6:
+                alignment = Qt.AlignmentFlag.AlignRight
+            painter.drawText(tick_rect, alignment, tick_text)
+        painter.drawText(QRectF(plot_rect.left(), 0, plot_rect.width(), 20), Qt.AlignmentFlag.AlignCenter, self._metric_label())
 
         painter.setClipRect(plot_rect.adjusted(-2, -2, 2, 2))
         for series_index, (player, points) in enumerate(visible_series):
@@ -782,6 +832,8 @@ class TimelineChartWidget(QWidget):
                     player_color,
                     align_right=align_right,
                 )
+            painter.setClipping(False)
+            self._draw_time_bubble(painter, plot_rect, hover_x)
 
     def mouseMoveEvent(self, event):
         plot_rect = self._plot_rect()

@@ -5,6 +5,8 @@ import tempfile
 import time
 from datetime import datetime
 
+from constants import _existing_asset_paths
+
 
 CORE_METRIC_ORDER = [
     "income_total",
@@ -13,6 +15,7 @@ CORE_METRIC_ORDER = [
     "units_current_total",
     "units_lost_total",
     "infantry_current",
+    "miners_current",
     "vehicles_current",
     "navy_current",
     "buildings_current",
@@ -39,6 +42,31 @@ NAVAL_UNIT_NAMES = {
     "Typhoon Attack Sub",
     "Yuri Boomer",
 }
+MINER_UNIT_NAMES = {
+    "War Miner",
+    "Chrono Miner",
+    "Slave miner",
+    "Slave Miner",
+    "Slave miner undeployed",
+    "Slave Miner Deployed",
+}
+COUNTRY_TO_FLAG = {
+    "British": "RA2_Flag_Britain.png",
+    "Confederation": "RA2_Flag_Cuba.png",
+    "Germans": "RA2_Flag_Germany.png",
+    "Arabs": "RA2_Flag_Iraq.png",
+    "French": "RA2_Flag_France.png",
+    "Alliance": "RA2_Flag_Korea.png",
+    "Africans": "RA2_Flag_Libya.png",
+    "Russians": "RA2_Flag_Russia.png",
+    "Americans": "RA2_Flag_USA.png",
+    "YuriCountry": "RA2_Yuricountry.png",
+}
+FACTION_TO_FLAG = {
+    "Allied": "RA2_Flag_USA.png",
+    "Soviet": "RA2_Flag_Russia.png",
+    "Yuri": "RA2_Yuricountry.png",
+}
 
 
 def _now_iso():
@@ -62,19 +90,40 @@ def _sum_matching_counts(counts, unit_names, include_matches=True):
     return int(total)
 
 
+def _normalize_country_name(country_name):
+    return (country_name or "").split("\x00", 1)[0].strip()
+
+
+def _resolve_flag_asset(country_name, faction_name):
+    normalized_country_name = _normalize_country_name(country_name)
+    flag_name = COUNTRY_TO_FLAG.get(normalized_country_name)
+    if not flag_name:
+        flag_name = FACTION_TO_FLAG.get((faction_name or "").strip())
+    if not flag_name:
+        flag_name = "RA2_Yuricountry.png"
+
+    for candidate in _existing_asset_paths("Flags", "PNG", flag_name):
+        return flag_name, candidate
+    return flag_name, None
+
+
 def _build_player_metadata(player):
     color_name = player.color_name if isinstance(player.color_name, str) else player.color_name.name()
     accent_color = player.color.name() if hasattr(player.color, "name") else str(player.color)
+    country_name = _normalize_country_name(player.country_name.value.decode("utf-8", errors="ignore"))
+    flag_asset_name, flag_asset_path = _resolve_flag_asset(country_name, player.faction)
     return {
         "player_id": _player_id(player),
         "index": player.index,
         "display_slot": getattr(player, "display_slot", player.index),
         "username": player.username.value or f"Player {player.index}",
         "faction": player.faction,
-        "country": player.country_name.value.decode("utf-8", errors="ignore").split("\x00", 1)[0].strip(),
+        "country": country_name,
         "color_name": color_name,
         "accent_color": accent_color,
         "flag_file_stem": getattr(player, "post_game_flag_file_stem", ""),
+        "flag_asset_name": flag_asset_name,
+        "flag_asset_path": flag_asset_path,
         "owned_building_count": int(getattr(player, "owned_building_count", 0)),
     }
 
@@ -119,7 +168,9 @@ def _derive_player_loss_metrics(players):
 
 def _compute_player_metrics(player, player_meta, derived_loss_metrics):
     infantry_current = _sum_counts(player.infantry_counts)
+    miners_current = _sum_matching_counts(player.tank_counts, MINER_UNIT_NAMES, include_matches=True)
     vehicles_current = _sum_matching_counts(player.tank_counts, NAVAL_UNIT_NAMES, include_matches=False)
+    vehicles_current = max(0, vehicles_current - miners_current)
     navy_current = _sum_matching_counts(player.tank_counts, NAVAL_UNIT_NAMES, include_matches=True)
     buildings_current = _sum_counts(player.building_counts)
     aircraft_current = _sum_counts(player.aircraft_counts)
@@ -149,9 +200,10 @@ def _compute_player_metrics(player, player_meta, derived_loss_metrics):
         "income_total": income_total,
         "cash": int(player.balance),
         "money_spent_total": int(player.spent_credit),
-        "units_current_total": infantry_current + vehicles_current + navy_current + buildings_current + aircraft_current,
+        "units_current_total": infantry_current + miners_current + vehicles_current + navy_current + buildings_current + aircraft_current,
         "units_lost_total": infantry_lost + vehicles_lost + navy_lost + buildings_lost + aircraft_lost,
         "infantry_current": infantry_current,
+        "miners_current": miners_current,
         "vehicles_current": vehicles_current,
         "navy_current": navy_current,
         "buildings_current": buildings_current,
@@ -215,11 +267,16 @@ def record_match_timeline_sample(state):
             player_meta["starting_balance"] = int(player.balance)
         if "starting_spent" not in player_meta:
             player_meta["starting_spent"] = int(player.spent_credit)
+        country_name = _normalize_country_name(player.country_name.value.decode("utf-8", errors="ignore"))
+        flag_asset_name, flag_asset_path = _resolve_flag_asset(country_name, player.faction)
         timeline["players"][player_id] = {
             **player_meta,
             "username": player.username.value or f"Player {player.index}",
             "faction": player.faction,
+            "country": country_name,
             "flag_file_stem": getattr(player, "post_game_flag_file_stem", timeline["players"].get(player_id, {}).get("flag_file_stem", "")),
+            "flag_asset_name": flag_asset_name,
+            "flag_asset_path": flag_asset_path,
             "owned_building_count": int(getattr(player, "owned_building_count", 0)),
         }
         series = timeline["series"].setdefault(
