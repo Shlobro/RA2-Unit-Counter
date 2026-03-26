@@ -36,6 +36,9 @@ class AppState:
         self.admin = True
         self.scoreboard_window = None
         self.single_window_workspace = None
+        self.game_time_window = None
+        self.game_time_workspace_item = None
+        self.game_time_widget = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
         self.current_match_timeline = None

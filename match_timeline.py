@@ -466,4 +466,7 @@ def get_match_elapsed_ms(state):
         return 0
     if timeline.get("_finalized"):
         return int(timeline.get("duration_ms") or 0)
-    return int(timeline.get("_last_sample_ms") or 0)
+    start_perf = timeline.get("_start_perf")
+    if start_perf is None:
+        return int(timeline.get("_last_sample_ms") or 0)
+    return max(0, int((time.perf_counter() - start_perf) * 1000))

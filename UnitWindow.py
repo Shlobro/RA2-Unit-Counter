@@ -18,7 +18,14 @@ from constants import (
 )
 from DataTracker import ResourceWindow
 from factory_panel import FactoryPanel
-from hud_position_utils import get_player_position, set_player_position, get_player_setting, set_player_setting
+from hud_position_utils import (
+    get_global_widget_position,
+    get_player_position,
+    set_global_widget_position,
+    set_player_position,
+    get_player_setting,
+    set_player_setting,
+)
 from player_identity import (
     build_player_hud_tooltip,
     get_combined_hud_title,
@@ -1035,6 +1042,141 @@ class WorkspaceWidgetContainer(QWidget):
             x = anchor['x']
             y = anchor['y']
         x, y = self._clamp_to_parent(x, y)
+        self.move(x, y)
+
+    def _sync_to_inner(self):
+        self._sync_pending = False
+        if not isValid(self):
+            return
+        if not self._has_live_inner_widget():
+            self.hide()
+            return
+        if self.inner_widget.isHidden():
+            self.hide()
+            return
+        hint = self.layout().sizeHint()
+        if hint.width() > 0 and hint.height() > 0:
+            self.setFixedSize(hint)
+        self.show()
+        self._refresh_geometry_from_saved_position()
+
+    def _queue_sync_to_inner(self):
+        if self._sync_pending or not self._has_live_inner_widget():
+            return
+        self._sync_pending = True
+        QTimer.singleShot(0, self._sync_to_inner)
+
+    def eventFilter(self, watched, event):
+        event_type = event.type()
+        if event_type == QEvent.ContextMenu and not self._inner_widget_has_custom_context_menu():
+            workspace = self._find_workspace()
+            if workspace is not None:
+                menu = apply_context_menu_style(QMenu(self))
+                workspace.add_window_bar_toggle_action(menu)
+                menu.exec(self._event_global_point(event))
+                return True
+        if event_type == QEvent.MouseButtonPress and event.button() == Qt.LeftButton:
+            self.raise_()
+            global_pos = self._mouse_global_point(event)
+            self._drag_offset = global_pos - self.mapToGlobal(self.rect().topLeft())
+            return False
+        if event_type == QEvent.MouseMove and self._drag_offset is not None:
+            global_pos = self._mouse_global_point(event)
+            new_global_pos = global_pos - self._drag_offset
+            parent_pos = self.parentWidget().mapFromGlobal(new_global_pos)
+            x, y = self._clamp_to_parent(parent_pos.x(), parent_pos.y())
+            self.move(x, y)
+            self._save_position(x, y)
+            return False
+        if event_type == QEvent.MouseButtonRelease and getattr(event, 'button', lambda: None)() == Qt.LeftButton:
+            self._drag_offset = None
+            self._save_position(self.x(), self.y())
+            return False
+        if watched is self.inner_widget and event_type in (QEvent.Resize, QEvent.Show, QEvent.Hide, QEvent.LayoutRequest):
+            self._queue_sync_to_inner()
+        return super().eventFilter(watched, event)
+
+
+class GlobalWorkspaceWidgetContainer(QWidget):
+    def __init__(self, inner_widget, hud_pos, widget_key, parent):
+        super().__init__(parent)
+        self.inner_widget = inner_widget
+        self.hud_pos = hud_pos
+        self.widget_key = widget_key
+        self._drag_offset = None
+        self._sync_pending = False
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.addWidget(self.inner_widget)
+
+        self.inner_widget.destroyed.connect(self._on_inner_destroyed)
+
+        self._install_drag_filters(self)
+        self._install_drag_filters(self.inner_widget)
+        self._refresh_geometry_from_saved_position()
+        self._sync_to_inner()
+
+    def _has_live_inner_widget(self):
+        return self.inner_widget is not None and isValid(self.inner_widget)
+
+    def _on_inner_destroyed(self, *_args):
+        self.inner_widget = None
+        self._sync_pending = False
+        if isValid(self):
+            self.hide()
+
+    def _install_drag_filters(self, widget):
+        widget.installEventFilter(self)
+        for child in widget.findChildren(QWidget):
+            child.installEventFilter(self)
+
+    def _find_workspace(self):
+        current = self.parentWidget()
+        while current is not None:
+            if hasattr(current, 'add_window_bar_toggle_action'):
+                return current
+            current = current.parentWidget()
+        return None
+
+    def _inner_widget_has_custom_context_menu(self):
+        if not self._has_live_inner_widget():
+            return False
+        for cls in type(self.inner_widget).mro():
+            if 'contextMenuEvent' in cls.__dict__:
+                return cls not in (QWidget, QMainWindow)
+        return False
+
+    def _event_global_point(self, event):
+        if hasattr(event, 'globalPos'):
+            return event.globalPos()
+        if hasattr(event, 'globalPosition'):
+            return event.globalPosition().toPoint()
+        return self.mapToGlobal(self.rect().center())
+
+    def _mouse_global_point(self, event):
+        if hasattr(event, 'globalPosition'):
+            return event.globalPosition().toPoint()
+        return event.globalPos()
+
+    def _clamp_to_parent(self, x, y):
+        parent = self.parentWidget()
+        if parent is None:
+            return x, y
+        max_x = max(0, parent.width() - self.width())
+        max_y = max(0, parent.height() - self.height())
+        return max(0, min(x, max_x)), max(0, min(y, max_y))
+
+    def _get_saved_position(self):
+        return get_global_widget_position(self.hud_pos, self.widget_key)
+
+    def _save_position(self, x, y):
+        set_global_widget_position(self.hud_pos, self.widget_key, x, y)
+
+    def _refresh_geometry_from_saved_position(self):
+        pos = self._get_saved_position()
+        x, y = self._clamp_to_parent(pos['x'], pos['y'])
         self.move(x, y)
 
     def _sync_to_inner(self):

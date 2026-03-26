@@ -1,9 +1,11 @@
 import json
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QTabWidget, QFormLayout, QGroupBox,
-    QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox
+    QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox,
+    QColorDialog, QFontComboBox
 )
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QColor, QFont
 import logging
 import os
 
@@ -369,6 +371,36 @@ class ControlPanel(QMainWindow):
         power_layout.addRow(power_size_label, self.power_size_spinbox)
         power_group.setLayout(power_layout)
         layout.addWidget(power_group)
+
+        game_time_group = QGroupBox("Game Time Widget Settings")
+        game_time_layout = QFormLayout()
+        self.game_time_checkbox = QCheckBox("Show Game Time")
+        self.game_time_checkbox.setChecked(self.state.hud_positions.get('show_game_time', True))
+        self.game_time_checkbox.stateChanged.connect(self.toggle_game_time)
+        game_time_layout.addRow(self.game_time_checkbox)
+
+        game_time_size_label = QLabel("Game Time Widget Size:")
+        game_time_size = self.state.hud_positions.get('game_time_widget_size', 50)
+        self.game_time_size_spinbox = QSpinBox()
+        self.game_time_size_spinbox.setRange(5, 500)
+        self.game_time_size_spinbox.setValue(game_time_size)
+        self.game_time_size_spinbox.valueChanged.connect(self.update_game_time_widget_size)
+        game_time_layout.addRow(game_time_size_label, self.game_time_size_spinbox)
+
+        game_time_font_label = QLabel("Game Time Font:")
+        self.game_time_font_combo = QFontComboBox()
+        saved_game_time_font = self.state.hud_positions.get('game_time_font_family', 'Arial')
+        self.game_time_font_combo.setCurrentFont(QFont(saved_game_time_font))
+        self.game_time_font_combo.currentFontChanged.connect(self.update_game_time_font)
+        game_time_layout.addRow(game_time_font_label, self.game_time_font_combo)
+
+        self.game_time_color_button = QPushButton()
+        self.game_time_color_button.clicked.connect(self.choose_game_time_color)
+        self._set_game_time_color_button(self.state.hud_positions.get('game_time_color', '#FFFFFF'))
+        game_time_layout.addRow("Game Time Color:", self.game_time_color_button)
+
+        game_time_group.setLayout(game_time_layout)
+        layout.addWidget(game_time_group)
 
         tab.setLayout(layout)
         self.tabs.addTab(tab, "Name/Flag/Money")
@@ -809,6 +841,27 @@ class ControlPanel(QMainWindow):
     def toggle_power(self, state_val):
         self.toggle_hud_element('show_power', 'power_widget', state_val)
 
+    def toggle_game_time(self, state_val):
+        visible = (state_val == 2)
+        self.state.hud_positions['show_game_time'] = visible
+        logging.info(f"Toggled show_game_time to: {visible}")
+        if self.state.hud_positions.get('combined_hud', False):
+            item = getattr(self.state, 'game_time_workspace_item', None)
+            if item is not None:
+                if visible:
+                    item.show()
+                    if getattr(item, 'inner_widget', None) is not None:
+                        item.inner_widget.show()
+                else:
+                    item.hide()
+        else:
+            window = getattr(self.state, 'game_time_window', None)
+            if window is not None:
+                if visible:
+                    window.show()
+                else:
+                    window.hide()
+
     def toggle_superweapons(self, state_val):
         enabled = (state_val == 2)
         if hasattr(self, 'show_superweapons_checkbox'):
@@ -851,6 +904,75 @@ class ControlPanel(QMainWindow):
 
     def toggle_flag(self, state_val):
         self.toggle_hud_element('show_flag', 'flag_widget', state_val)
+
+    def update_game_time_widget_size(self):
+        new_size = self.game_time_size_spinbox.value()
+        self.state.hud_positions['game_time_widget_size'] = new_size
+        logging.info(f"Updated game time widget size: {new_size}")
+        if self.state.hud_positions.get('combined_hud', False):
+            widget = getattr(self.state, 'game_time_widget', None)
+            if widget is not None:
+                widget.update_data_size(new_size)
+            item = getattr(self.state, 'game_time_workspace_item', None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
+        else:
+            window = getattr(self.state, 'game_time_window', None)
+            if window is not None:
+                window.update_widget_size(new_size)
+
+    def update_game_time_font(self, font):
+        family = font.family()
+        self.state.hud_positions['game_time_font_family'] = family
+        logging.info(f"Updated game time font family: {family}")
+        if self.state.hud_positions.get('combined_hud', False):
+            widget = getattr(self.state, 'game_time_widget', None)
+            if widget is not None:
+                widget.update_font_family(family)
+            item = getattr(self.state, 'game_time_workspace_item', None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
+        else:
+            window = getattr(self.state, 'game_time_window', None)
+            if window is not None:
+                window.update_font_family(family)
+
+    def _set_game_time_color_button(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            color = QColor('#FFFFFF')
+        self.game_time_color_button.setProperty('selected_color', color.name())
+        self.game_time_color_button.setText(color.name())
+        self.game_time_color_button.setStyleSheet(
+            f"background-color: {color.name()}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
+        )
+
+    def choose_game_time_color(self):
+        initial = QColor(self.state.hud_positions.get('game_time_color', '#FFFFFF'))
+        color = QColorDialog.getColor(initial, self, "Select Game Time Color")
+        if not color.isValid():
+            return
+        self.update_game_time_color(color.name())
+
+    def update_game_time_color(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        color_name = color.name()
+        self.state.hud_positions['game_time_color'] = color_name
+        self._set_game_time_color_button(color_name)
+        logging.info(f"Updated game time color: {color_name}")
+        if self.state.hud_positions.get('combined_hud', False):
+            widget = getattr(self.state, 'game_time_widget', None)
+            if widget is not None:
+                widget.update_color(new_text_color=color)
+            item = getattr(self.state, 'game_time_workspace_item', None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
+        else:
+            window = getattr(self.state, 'game_time_window', None)
+            if window is not None:
+                window.update_text_color(color_name)
 
     def toggle_save_flags_as_images(self, state_val):
         enabled = (state_val == 2)
@@ -1025,6 +1147,15 @@ class ControlPanel(QMainWindow):
         if hasattr(self.state, 'single_window_workspace') and self.state.single_window_workspace:
             self.state.single_window_workspace.close()
             self.state.single_window_workspace = None
+
+        if getattr(self.state, 'game_time_window', None) is not None:
+            self.state.game_time_window.close()
+            self.state.game_time_window = None
+
+        if getattr(self.state, 'game_time_workspace_item', None) is not None:
+            self.state.game_time_workspace_item.close()
+            self.state.game_time_workspace_item = None
+            self.state.game_time_widget = None
         
         # Clear the hud_windows list
         self.state.hud_windows.clear()

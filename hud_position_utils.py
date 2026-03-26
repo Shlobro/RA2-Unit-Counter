@@ -1,4 +1,5 @@
 DEFAULT_HUD_POSITION = {"x": 100, "y": 100}
+GLOBAL_WIDGETS_KEY = "global_widgets"
 HUD_POSITION_COMPAT_KEYS = {
     "combined": ["unit_counter_combined"],
     "factory": ["factories"],
@@ -38,6 +39,14 @@ def ensure_player_bucket(hud_positions, player_key):
     return bucket
 
 
+def ensure_global_widgets_bucket(hud_positions):
+    bucket = hud_positions.get(GLOBAL_WIDGETS_KEY)
+    if not isinstance(bucket, dict):
+        bucket = {}
+        hud_positions[GLOBAL_WIDGETS_KEY] = bucket
+    return bucket
+
+
 def get_position_compat_keys(hud_type):
     return list(HUD_POSITION_COMPAT_KEYS.get(hud_type, ()))
 
@@ -46,6 +55,12 @@ def set_player_position(hud_positions, player_key, hud_type, x, y):
     bucket = ensure_player_bucket(hud_positions, player_key)
     bucket[hud_type] = normalize_position({"x": x, "y": y})
     return bucket[hud_type]
+
+
+def set_global_widget_position(hud_positions, widget_key, x, y):
+    bucket = ensure_global_widgets_bucket(hud_positions)
+    bucket[widget_key] = normalize_position({"x": x, "y": y})
+    return bucket[widget_key]
 
 
 def get_player_setting(hud_positions, player_key, setting_key, default=None, legacy_bucket_keys=None):
@@ -103,6 +118,16 @@ def get_player_position(hud_positions, player_key, hud_type, legacy_root_keys=No
     return bucket[hud_type]
 
 
+def get_global_widget_position(hud_positions, widget_key, default=None):
+    bucket = ensure_global_widgets_bucket(hud_positions)
+    fallback = dict(default or DEFAULT_HUD_POSITION)
+    if widget_key in bucket:
+        bucket[widget_key] = normalize_position(bucket[widget_key], fallback)
+        return bucket[widget_key]
+    bucket[widget_key] = fallback
+    return bucket[widget_key]
+
+
 def normalize_hud_positions(hud_positions):
     if not isinstance(hud_positions, dict):
         return {}
@@ -132,5 +157,11 @@ def normalize_hud_positions(hud_positions):
         ):
             if key in value:
                 value[key] = normalize_position(value[key])
+
+    global_widgets = hud_positions.get(GLOBAL_WIDGETS_KEY)
+    if isinstance(global_widgets, dict):
+        for key in ("game_time",):
+            if key in global_widgets:
+                global_widgets[key] = normalize_position(global_widgets[key])
 
     return hud_positions

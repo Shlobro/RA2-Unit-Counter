@@ -4,6 +4,8 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap, QColor, QPainter, QFont, QFontMetrics
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
+from match_timeline import get_match_elapsed_ms
+
 class BaseDataWidget(QWidget):
     def __init__(self, data=None, text_color=Qt.black, size=16, font=None, use_fixed_width=False, max_digits=10, parent=None):
         """
@@ -399,4 +401,67 @@ class MoneySpentWidget(BaseDataWidget):
             self.setFixedSize(total_width, total_height)
         except Exception as e:
             logging.exception("Error adjusting size in MoneySpentWidget: %s", e)
+
+
+class GameTimeWidget(BaseDataWidget):
+    def __init__(self, state, hud_positions, text_color=Qt.white, size=16, font=None, parent=None):
+        super().__init__(
+            data=0,
+            text_color=text_color,
+            size=size,
+            font=font,
+            use_fixed_width=False,
+            parent=parent,
+        )
+        self.state = state
+        self.hud_positions = hud_positions
+        self._timer = QTimer(self)
+        self._timer.setInterval(250)
+        self._timer.timeout.connect(self.refresh_time)
+        self.data_label.setAlignment(Qt.AlignCenter)
+        self.refresh_time()
+        self._timer.start()
+
+    @staticmethod
+    def format_elapsed(elapsed_ms):
+        total_seconds = max(0, int(elapsed_ms // 1000))
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+    def refresh_time(self):
+        self.update_data(get_match_elapsed_ms(self.state))
+
+    def on_value_changed(self, value):
+        try:
+            self.value = max(0, int(value))
+            self.data_label.setText(self.format_elapsed(self.value))
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in GameTimeWidget.on_value_changed: %s", e)
+
+    def update_font_family(self, family):
+        try:
+            if family:
+                self.custom_font.setFamily(family)
+            self.update_font_size()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error updating game time font family: %s", e)
+
+    def update_data_size(self, new_size):
+        super().update_data_size(new_size)
+        self.refresh_time()
+
+    def adjust_size(self):
+        try:
+            fm = QFontMetrics(self.data_label.font())
+            text_width = fm.horizontalAdvance("88:88:88")
+            total_width = max(text_width, self.data_label.width()) + 4
+            total_height = self.data_label.height()
+            self.setFixedSize(total_width, total_height)
+        except Exception as e:
+            logging.exception("Error adjusting size in GameTimeWidget: %s", e)
 
