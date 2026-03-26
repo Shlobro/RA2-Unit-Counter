@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (
 )
 
 from constants import _existing_asset_paths, resolve_factory_image_path
-from player_identity import get_player_flag_export_stem
+from player_identity import get_player_flag_export_stem, get_player_flag_legacy_stems
 
 
 COUNTRY_TO_FLAG = {
@@ -179,9 +179,25 @@ def _player_flag_path(player_snapshot):
     if direct_flag_path and os.path.exists(direct_flag_path):
         return direct_flag_path
 
-    flag_asset_name = (player_snapshot.get("flag_asset_name") or "").strip()
-    if flag_asset_name:
-        for candidate in _existing_asset_paths("Flags", "PNG", flag_asset_name):
+    flag_stems = []
+
+    flag_file_stem = (player_snapshot.get("flag_file_stem") or "").strip()
+    if flag_file_stem:
+        flag_stems.append(flag_file_stem)
+
+    for legacy_stem in player_snapshot.get("flag_legacy_stems") or []:
+        normalized_legacy_stem = (legacy_stem or "").strip()
+        if normalized_legacy_stem and normalized_legacy_stem not in flag_stems:
+            flag_stems.append(normalized_legacy_stem)
+
+    color_name = (player_snapshot.get("color_name") or "").strip()
+    if color_name:
+        normalized_color_name = color_name.lower()
+        if normalized_color_name not in flag_stems:
+            flag_stems.append(normalized_color_name)
+
+    for stem in flag_stems:
+        for candidate in _existing_asset_paths("player flags", f"{stem}_flag.png"):
             return candidate
 
     country_flag = _country_flag_path(player_snapshot.get("country"))
@@ -192,15 +208,9 @@ def _player_flag_path(player_snapshot):
     if faction_flag:
         return faction_flag
 
-    flag_file_stem = (player_snapshot.get("flag_file_stem") or "").strip()
-    if flag_file_stem:
-        filename = f"{flag_file_stem}_flag.png"
-        for candidate in _existing_asset_paths("player flags", filename):
-            return candidate
-
-    color_name = (player_snapshot.get("color_name") or "").strip().lower()
-    if color_name:
-        for candidate in _existing_asset_paths("player flags", f"{color_name}_flag.png"):
+    flag_asset_name = (player_snapshot.get("flag_asset_name") or "").strip()
+    if flag_asset_name:
+        for candidate in _existing_asset_paths("Flags", "PNG", flag_asset_name):
             return candidate
 
     for candidate in _existing_asset_paths("Flags", "PNG", "RA2_Yuricountry.png"):
@@ -293,6 +303,7 @@ def build_post_game_snapshot(players, hud_positions=None):
             "country": country_name,
             "color_name": player.color_name if isinstance(player.color_name, str) else player.color_name.name(),
             "flag_file_stem": getattr(player, "post_game_flag_file_stem", "") or get_player_flag_export_stem(player, hud_positions),
+            "flag_legacy_stems": get_player_flag_legacy_stems(player, hud_positions),
             "flag_asset_name": flag_asset_name,
             "flag_asset_path": flag_asset_path,
             "accent_color": _color_to_hex(player.color),
