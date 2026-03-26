@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 
 from constants import _existing_asset_paths
+from scoreboard_window import build_post_game_snapshot
 
 
 CORE_METRIC_ORDER = [
@@ -310,7 +311,7 @@ def _build_completed_payload(state):
         players.append(player_meta)
 
     winner_names = [player["username"] for player in players if player["is_winner"]]
-    return {
+    timeline_payload = {
         "schema_version": timeline["schema_version"],
         "match_id": timeline["match_id"],
         "started_at": timeline["started_at"],
@@ -320,6 +321,31 @@ def _build_completed_payload(state):
         "winner_names": winner_names,
         "players": players,
     }
+    return {
+        **timeline_payload,
+        "summary": build_post_game_snapshot(state.players, state.hud_positions),
+        "timeline": timeline_payload,
+    }
+
+
+def _prune_saved_scoreboards(history_dir, limit):
+    if limit is None or int(limit) < 0:
+        return set()
+
+    json_paths = [
+        os.path.join(history_dir, entry)
+        for entry in os.listdir(history_dir)
+        if entry.lower().endswith(".json")
+    ]
+    json_paths.sort(key=os.path.getmtime, reverse=True)
+    removed_paths = set()
+    for stale_path in json_paths[int(limit):]:
+        try:
+            os.remove(stale_path)
+            removed_paths.add(stale_path)
+        except OSError:
+            logging.exception("Failed to remove old scoreboard %s", stale_path)
+    return removed_paths
 
 
 def _save_payload(payload, history_dir):
@@ -366,6 +392,12 @@ def finalize_match_timeline(state):
         }
     payload = _build_completed_payload(state)
     saved_path = _save_payload(payload, state.MATCH_HISTORY_DIR)
+    removed_paths = _prune_saved_scoreboards(
+        state.MATCH_HISTORY_DIR,
+        state.hud_positions.get("saved_scoreboard_limit", -1),
+    )
+    if saved_path in removed_paths:
+        saved_path = None
     timeline["_finalized"] = True
     timeline["_saved_path"] = saved_path
     state.completed_match_path = saved_path

@@ -1,4 +1,5 @@
 import bisect
+import json
 import os
 
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRectF, QSize, Qt, QTimer, Signal
@@ -233,6 +234,72 @@ def _result_rank(result):
     if result == "DEFEATED":
         return 1
     return 2
+
+
+def _last_series_value(series_map, metric_id, default=0):
+    points = (series_map or {}).get(metric_id) or []
+    if not points:
+        return default
+    return int(points[-1].get("value", default))
+
+
+def normalize_scoreboard_payload(payload, match_path=None):
+    if "summary" in payload:
+        summary = payload.get("summary") or {"players": []}
+        timeline = payload.get("timeline") or {"players": [], "duration_ms": 0}
+        return {
+            "summary": summary,
+            "timeline": timeline,
+            "match_path": match_path or payload.get("match_path"),
+        }
+
+    timeline = payload or {"players": [], "duration_ms": 0}
+    summary_players = []
+    for player_data in timeline.get("players", []):
+        series_map = player_data.get("series") or {}
+        result = player_data.get("result") or ("WINNER" if player_data.get("is_winner") else "DEFEATED" if player_data.get("is_loser") else "ACTIVE")
+        summary_players.append(
+            {
+                "player_id": str(player_data.get("player_id", "")),
+                "username": player_data.get("username") or f"Player {player_data.get('index', '?')}",
+                "faction": player_data.get("faction", ""),
+                "country": player_data.get("country", ""),
+                "color_name": player_data.get("color_name", ""),
+                "flag_file_stem": player_data.get("flag_file_stem", ""),
+                "flag_legacy_stems": player_data.get("flag_legacy_stems", []),
+                "flag_asset_name": player_data.get("flag_asset_name", ""),
+                "flag_asset_path": player_data.get("flag_asset_path"),
+                "accent_color": player_data.get("accent_color", "#d99a4e"),
+                "result": result,
+                "result_label": RESULT_LABELS.get(result, result.title()),
+                "money_spent": _last_series_value(series_map, "money_spent_total"),
+                "current_balance": _last_series_value(series_map, "cash"),
+                "income_total": _last_series_value(series_map, "income_total"),
+                "infantry_built": 0,
+                "vehicles_built": 0,
+                "buildings_built": 0,
+                "aircraft_built": 0,
+                "infantry_lost": _last_series_value(series_map, "infantry_lost"),
+                "vehicles_lost": _last_series_value(series_map, "vehicles_lost"),
+                "buildings_lost": _last_series_value(series_map, "buildings_lost"),
+                "aircraft_lost": _last_series_value(series_map, "aircraft_lost"),
+                "units_made": [],
+                "units_killed": [],
+                "units_remaining": [],
+            }
+        )
+    summary_players.sort(key=lambda player_data: (_result_rank(player_data["result"]), player_data["username"].lower()))
+    return {
+        "summary": {"players": summary_players},
+        "timeline": timeline,
+        "match_path": match_path,
+    }
+
+
+def load_scoreboard_payload_from_file(scoreboard_path):
+    with open(scoreboard_path, "r", encoding="utf-8") as scoreboard_file:
+        payload = json.load(scoreboard_file)
+    return normalize_scoreboard_payload(payload, scoreboard_path)
 
 
 def _derive_snapshot_losses(players):
@@ -868,14 +935,10 @@ class TimelineChartWidget(QWidget):
 class PostGameScoreboardWindow(QMainWindow):
     def __init__(self, payload):
         super().__init__()
-        if "summary" in payload:
-            self.summary = payload.get("summary") or {"players": []}
-            self.timeline = payload.get("timeline") or {"players": [], "duration_ms": 0}
-            self.match_path = payload.get("match_path")
-        else:
-            self.summary = payload
-            self.timeline = {"players": [], "duration_ms": 0}
-            self.match_path = None
+        normalized_payload = normalize_scoreboard_payload(payload)
+        self.summary = normalized_payload.get("summary") or {"players": []}
+        self.timeline = normalized_payload.get("timeline") or {"players": [], "duration_ms": 0}
+        self.match_path = normalized_payload.get("match_path")
         self.metric_buttons = {}
         self.legend_buttons = {}
         self.setWindowTitle("Post-Game Scoreboard")

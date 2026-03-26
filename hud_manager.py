@@ -100,6 +100,7 @@ def load_hud_positions(state):
         'factory_layout': 'Horizontal',  # Could be Vertical as well.
         'show_factory_frames': True,
         'show_post_game_scoreboard': True,
+        'saved_scoreboard_limit': -1,
         'use_player_numbers': False,
         # Toggle to show/hide the entire factory window
         'show_factory_window': True
@@ -261,6 +262,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.post_game_scoreboard_checkbox, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))
                 if value is not None:
                     state.hud_positions['show_post_game_scoreboard'] = value
+
+            if hasattr(cp, 'saved_scoreboard_limit_spinbox'):
+                value = safe_widget_value(cp.saved_scoreboard_limit_spinbox, 'value', state.hud_positions.get('saved_scoreboard_limit', -1))
+                if value is not None:
+                    state.hud_positions['saved_scoreboard_limit'] = value
 
             if hasattr(cp, 'use_player_numbers_checkbox'):
                 value = safe_widget_value(cp.use_player_numbers_checkbox, 'isChecked', state.hud_positions.get('use_player_numbers', False))

@@ -1,6 +1,7 @@
+import json
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QTabWidget, QFormLayout, QGroupBox,
-    QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog
+    QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox
 )
 from PySide6.QtCore import Qt
 import logging
@@ -8,6 +9,7 @@ import os
 
 from UnitWindow import CombinedHudWindow
 from hud_position_utils import normalize_position
+from scoreboard_window import PostGameScoreboardWindow, load_scoreboard_payload_from_file
 from selected_units_utils import load_selected_units_file, save_selected_units_file
 
 
@@ -31,6 +33,7 @@ class ControlPanel(QMainWindow):
         self.create_name_flag_money_tab()
         self.create_factory_settings_tab()
         self.create_superweapon_settings_tab()
+        self.create_scoreboard_settings_tab()
         self.create_general_settings_tab()
 
         self.unit_selection_window = None
@@ -612,16 +615,6 @@ class ControlPanel(QMainWindow):
         hud_mode_group.setLayout(hud_mode_layout)
         layout.addWidget(hud_mode_group)
 
-        # Post-game scoreboard visibility
-        scoreboard_group = QGroupBox("Scoreboard Settings")
-        scoreboard_layout = QFormLayout()
-        self.post_game_scoreboard_checkbox = QCheckBox("Show Post-Game Scoreboard")
-        self.post_game_scoreboard_checkbox.setChecked(self.state.hud_positions.get('show_post_game_scoreboard', True))
-        self.post_game_scoreboard_checkbox.stateChanged.connect(self.toggle_post_game_scoreboard)
-        scoreboard_layout.addRow(self.post_game_scoreboard_checkbox)
-        scoreboard_group.setLayout(scoreboard_layout)
-        layout.addWidget(scoreboard_group)
-
         # Data Update Settings
         data_update_group = QGroupBox("Data Update Settings")
         data_update_layout = QFormLayout()
@@ -637,6 +630,47 @@ class ControlPanel(QMainWindow):
 
         tab.setLayout(layout)
         self.tabs.addTab(tab, "General Settings")
+
+    def create_scoreboard_settings_tab(self):
+        tab = QWidget()
+        layout = QVBoxLayout()
+
+        settings_group = QGroupBox("Post-Game Scoreboard")
+        settings_layout = QFormLayout()
+
+        self.post_game_scoreboard_checkbox = QCheckBox("Show Post-Game Scoreboard")
+        self.post_game_scoreboard_checkbox.setChecked(self.state.hud_positions.get('show_post_game_scoreboard', True))
+        self.post_game_scoreboard_checkbox.stateChanged.connect(self.toggle_post_game_scoreboard)
+        settings_layout.addRow(self.post_game_scoreboard_checkbox)
+
+        saved_limit = self.state.hud_positions.get('saved_scoreboard_limit', -1)
+        self.saved_scoreboard_limit_spinbox = QSpinBox()
+        self.saved_scoreboard_limit_spinbox.setRange(-1, 9999)
+        self.saved_scoreboard_limit_spinbox.setSpecialValueText("Unlimited")
+        self.saved_scoreboard_limit_spinbox.setValue(saved_limit)
+        self.saved_scoreboard_limit_spinbox.valueChanged.connect(self.update_saved_scoreboard_limit)
+        settings_layout.addRow("Saved Scoreboards:", self.saved_scoreboard_limit_spinbox)
+
+        settings_group.setLayout(settings_layout)
+        layout.addWidget(settings_group)
+
+        actions_group = QGroupBox("Saved Scoreboards")
+        actions_layout = QVBoxLayout()
+
+        open_saved_button = QPushButton("Open Saved Scoreboard")
+        open_saved_button.clicked.connect(self.open_saved_scoreboard)
+        actions_layout.addWidget(open_saved_button)
+
+        open_recent_button = QPushButton("Open Most Recent Scoreboard")
+        open_recent_button.clicked.connect(self.open_most_recent_scoreboard)
+        actions_layout.addWidget(open_recent_button)
+
+        actions_group.setLayout(actions_layout)
+        layout.addWidget(actions_group)
+        layout.addStretch()
+
+        tab.setLayout(layout)
+        self.tabs.addTab(tab, "Scoreboard")
 
     def select_game_path(self):
         from PySide6.QtWidgets import QFileDialog, QMessageBox
@@ -829,6 +863,65 @@ class ControlPanel(QMainWindow):
     def toggle_post_game_scoreboard(self, state_val):
         enabled = (state_val == 2)
         self.set_post_game_scoreboard_enabled(enabled)
+
+    def update_saved_scoreboard_limit(self):
+        value = self.saved_scoreboard_limit_spinbox.value()
+        self.state.hud_positions['saved_scoreboard_limit'] = value
+        logging.info(f"Updated saved_scoreboard_limit to: {value}")
+
+    def open_saved_scoreboard(self):
+        history_dir = getattr(self.state, 'MATCH_HISTORY_DIR', 'match_history')
+        os.makedirs(history_dir, exist_ok=True)
+        selected_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Open Saved Scoreboard",
+            history_dir,
+            "Scoreboard Files (*.json);;All Files (*)"
+        )
+        if selected_path:
+            self.open_scoreboard_from_path(selected_path)
+
+    def open_most_recent_scoreboard(self):
+        history_dir = getattr(self.state, 'MATCH_HISTORY_DIR', 'match_history')
+        if not os.path.isdir(history_dir):
+            self.show_scoreboard_error("No saved scoreboards were found.")
+            return
+
+        json_paths = [
+            os.path.join(history_dir, entry)
+            for entry in os.listdir(history_dir)
+            if entry.lower().endswith('.json')
+        ]
+        if not json_paths:
+            self.show_scoreboard_error("No saved scoreboards were found.")
+            return
+
+        most_recent_path = max(json_paths, key=os.path.getmtime)
+        self.open_scoreboard_from_path(most_recent_path)
+
+    def open_scoreboard_from_path(self, scoreboard_path):
+        try:
+            payload = load_scoreboard_payload_from_file(scoreboard_path)
+        except (OSError, ValueError, json.JSONDecodeError) as error:
+            logging.exception("Failed to load scoreboard from %s", scoreboard_path)
+            self.show_scoreboard_error(f"Could not load scoreboard:\n{error}")
+            return
+
+        if getattr(self.state, 'scoreboard_window', None) is not None:
+            self.state.scoreboard_window.close()
+
+        self.state.scoreboard_window = PostGameScoreboardWindow(payload)
+        self.state.scoreboard_window.show()
+        self.state.scoreboard_window.raise_()
+        self.state.scoreboard_window.activateWindow()
+
+    def show_scoreboard_error(self, message):
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Scoreboard")
+        msg_box.setText(message)
+        msg_box.setIcon(QMessageBox.Icon.Warning)
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msg_box.exec()
 
     def set_post_game_scoreboard_enabled(self, enabled):
         self.state.hud_positions['show_post_game_scoreboard'] = enabled
