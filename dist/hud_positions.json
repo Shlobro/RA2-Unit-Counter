@@ -22,7 +22,7 @@
     "show_superweapon_frames": true,
     "superweapon_layout": "Horizontal",
     "money_spent_widget_size": 50,
-    "combined_hud": false,
+    "combined_hud": true,
     "show_factory_window": true,
     "show_factory_queue": true,
     "factory_size": 100,
@@ -236,24 +236,24 @@
             "y": 100
         },
         "money": {
-            "x": 100,
-            "y": 100
+            "x": 251,
+            "y": 227
         },
         "power": {
             "x": 100,
             "y": 100
         },
         "money_spent": {
-            "x": 100,
-            "y": 100
+            "x": 168,
+            "y": 161
         },
         "superweapons": {
             "x": 62,
             "y": 238
         },
         "factory": {
-            "x": 708,
-            "y": 79
+            "x": 781,
+            "y": 130
         },
         "unit_counter_combined": {
             "x": 100,
@@ -378,5 +378,17 @@
             "x": 100,
             "y": 100
         }
-    }
+    },
+    "single_window_geometry": {
+        "x": 0,
+        "y": 0,
+        "width": 2560,
+        "height": 1440,
+        "maximized": false
+    },
+    "control_panel_position": {
+        "x": -1947,
+        "y": 107
+    },
+    "single_window_show_window_bar": true
 }

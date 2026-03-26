@@ -18,7 +18,9 @@
   <a target="code" href="///D:/PycharmProjects/unitcounter/RA2-Unit-Counter/Main.py" type="text/plain"><tt>Main.py</tt></a>
 <span class="moduletype">Script</span>  <div class="import">
 imports:
-    <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
+    <a href="#PySide6.QtCore">PySide6.QtCore</a>
+ &#8226;   <a href="#PySide6.QtGui">PySide6.QtGui</a>
+ &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
  &#8226;   <a href="#_collections_abc">_collections_abc</a>
  &#8226;   <a href="#_weakrefset">_weakrefset</a>
  &#8226;   <a href="#abc">abc</a>
@@ -264,7 +266,10 @@ imports:
   <div class="import">
 imported by:
     <a href="#UnitWindow">UnitWindow</a>
+ &#8226;   <a href="#factory_queue_item_widget">factory_queue_item_widget</a>
  &#8226;   <a href="#factory_widget">factory_widget</a>
+ &#8226;   <a href="#factory_window">factory_window</a>
+ &#8226;   <a href="#superweapon_panel">superweapon_panel</a>
  &#8226;   <a href="#superweapon_widget">superweapon_widget</a>
 
   </div>
@@ -391,6 +396,7 @@ imported by:
     <a href="#CounterWidget">CounterWidget</a>
  &#8226;   <a href="#DataTracker">DataTracker</a>
  &#8226;   <a href="#DataWidget">DataWidget</a>
+ &#8226;   <a href="#Main.py">Main.py</a>
  &#8226;   <a href="#PySide6.QtCore">PySide6.QtCore</a>
  &#8226;   <a href="#PySide6.QtGui">PySide6.QtGui</a>
  &#8226;   <a href="#PySide6.QtNetwork">PySide6.QtNetwork</a>
@@ -435,6 +441,7 @@ imported by:
     <a href="#CounterWidget">CounterWidget</a>
  &#8226;   <a href="#DataTracker">DataTracker</a>
  &#8226;   <a href="#DataWidget">DataWidget</a>
+ &#8226;   <a href="#Main.py">Main.py</a>
  &#8226;   <a href="#Player">Player</a>
  &#8226;   <a href="#PySide6.QtGui">PySide6.QtGui</a>
  &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
@@ -580,9 +587,11 @@ imports:
  &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
  &#8226;   <a href="#constants">constants</a>
  &#8226;   <a href="#factory_panel">factory_panel</a>
+ &#8226;   <a href="#factory_window">factory_window</a>
  &#8226;   <a href="#hud_position_utils">hud_position_utils</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#player_identity">player_identity</a>
+ &#8226;   <a href="#shiboken6">shiboken6</a>
 
   </div>
   <div class="import">
@@ -2119,6 +2128,7 @@ imports:
  &#8226;   <a href="#UnitSelectionWindow">UnitSelectionWindow</a>
  &#8226;   <a href="#UnitWindow">UnitWindow</a>
  &#8226;   <a href="#hud_manager">hud_manager</a>
+ &#8226;   <a href="#hud_position_utils">hud_position_utils</a>
  &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#os">os</a>
  &#8226;   <a href="#selected_units_utils">selected_units_utils</a>
@@ -5473,7 +5483,8 @@ imported by:
   <a target="code" href="///D:/PycharmProjects/unitcounter/RA2-Unit-Counter/factory_queue_item_widget.py" type="text/plain"><tt>factory_queue_item_widget</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#PySide6.QtCore">PySide6.QtCore</a>
+    <a href="#CounterWidget">CounterWidget</a>
+ &#8226;   <a href="#PySide6.QtCore">PySide6.QtCore</a>
  &#8226;   <a href="#PySide6.QtGui">PySide6.QtGui</a>
  &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
  &#8226;   <a href="#constants">constants</a>
@@ -5515,7 +5526,8 @@ imported by:
   <a target="code" href="///D:/PycharmProjects/unitcounter/RA2-Unit-Counter/factory_window.py" type="text/plain"><tt>factory_window</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#PySide6.QtCore">PySide6.QtCore</a>
+    <a href="#CounterWidget">CounterWidget</a>
+ &#8226;   <a href="#PySide6.QtCore">PySide6.QtCore</a>
  &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
  &#8226;   <a href="#collections">collections</a>
  &#8226;   <a href="#factory_queue_item_widget">factory_queue_item_widget</a>
@@ -5527,7 +5539,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#hud_manager">hud_manager</a>
+    <a href="#UnitWindow">UnitWindow</a>
+ &#8226;   <a href="#hud_manager">hud_manager</a>
 
   </div>
 
@@ -5931,6 +5944,7 @@ imported by:
 imported by:
     <a href="#DataTracker">DataTracker</a>
  &#8226;   <a href="#UnitWindow">UnitWindow</a>
+ &#8226;   <a href="#control_panel">control_panel</a>
  &#8226;   <a href="#factory_panel">factory_panel</a>
  &#8226;   <a href="#factory_window">factory_window</a>
  &#8226;   <a href="#hud_manager">hud_manager</a>
@@ -7919,6 +7933,7 @@ imported by:
  &#8226;   <a href="#PySide6.QtGui">PySide6.QtGui</a>
  &#8226;   <a href="#PySide6.QtNetwork">PySide6.QtNetwork</a>
  &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
+ &#8226;   <a href="#UnitWindow">UnitWindow</a>
  &#8226;   <a href="#shiboken6.Shiboken">shiboken6.Shiboken</a>
 
   </div>
@@ -8299,7 +8314,8 @@ imported by:
   <a target="code" href="///D:/PycharmProjects/unitcounter/RA2-Unit-Counter/superweapon_panel.py" type="text/plain"><tt>superweapon_panel</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
-    <a href="#PySide6.QtCore">PySide6.QtCore</a>
+    <a href="#CounterWidget">CounterWidget</a>
+ &#8226;   <a href="#PySide6.QtCore">PySide6.QtCore</a>
  &#8226;   <a href="#PySide6.QtWidgets">PySide6.QtWidgets</a>
  &#8226;   <a href="#hud_position_utils">hud_position_utils</a>
  &#8226;   <a href="#player_identity">player_identity</a>

@@ -1,6 +1,7 @@
 import logging
 from PySide6.QtCore import Qt, QEvent, QTimer
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu, QLabel
+from shiboken6 import isValid
 
 from CounterWidget import (
     CounterWidgetImagesAndNumber,
@@ -889,7 +890,9 @@ class SingleWindowWorkspace(QMainWindow):
             )
             self.canvas.setStyleSheet("background-color: rgba(24, 24, 24, 180);")
         else:
-            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+            # Keep this as a real top-level window so OBS can still enumerate it
+            # for window capture while the title bar is hidden.
+            self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
             self.setAttribute(Qt.WA_TranslucentBackground, True)
             self.setAttribute(Qt.WA_NoSystemBackground, False)
             self.canvas.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -941,16 +944,28 @@ class WorkspaceWidgetContainer(QWidget):
         self.player_bucket_key = get_player_bucket_key(self.player, self.hud_pos)
         self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
         self._drag_offset = None
+        self._sync_pending = False
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         layout.addWidget(self.inner_widget)
 
+        self.inner_widget.destroyed.connect(self._on_inner_destroyed)
+
         self._install_drag_filters(self)
         self._install_drag_filters(self.inner_widget)
         self._refresh_geometry_from_saved_position()
         self._sync_to_inner()
+
+    def _has_live_inner_widget(self):
+        return self.inner_widget is not None and isValid(self.inner_widget)
+
+    def _on_inner_destroyed(self, *_args):
+        self.inner_widget = None
+        self._sync_pending = False
+        if isValid(self):
+            self.hide()
 
     def _install_drag_filters(self, widget):
         widget.installEventFilter(self)
@@ -966,6 +981,8 @@ class WorkspaceWidgetContainer(QWidget):
         return None
 
     def _inner_widget_has_custom_context_menu(self):
+        if not self._has_live_inner_widget():
+            return False
         for cls in type(self.inner_widget).mro():
             if 'contextMenuEvent' in cls.__dict__:
                 return cls not in (QWidget, QMainWindow)
@@ -992,7 +1009,7 @@ class WorkspaceWidgetContainer(QWidget):
         return max(0, min(x, max_x)), max(0, min(y, max_y))
 
     def _get_saved_anchor_position(self):
-        if hasattr(self.inner_widget, 'get_saved_anchor_position'):
+        if self._has_live_inner_widget() and hasattr(self.inner_widget, 'get_saved_anchor_position'):
             return self.inner_widget.get_saved_anchor_position()
         return get_player_position(
             self.hud_pos,
@@ -1003,14 +1020,14 @@ class WorkspaceWidgetContainer(QWidget):
         )
 
     def _save_position(self, x, y):
-        if hasattr(self.inner_widget, 'top_left_to_anchor') and hasattr(self.inner_widget, 'save_anchor_position'):
+        if self._has_live_inner_widget() and hasattr(self.inner_widget, 'top_left_to_anchor') and hasattr(self.inner_widget, 'save_anchor_position'):
             self.inner_widget.save_anchor_position(self.inner_widget.top_left_to_anchor(x, y, self.size()))
         else:
             set_player_position(self.hud_pos, self.player_bucket_key, self.hud_type, x, y)
 
     def _refresh_geometry_from_saved_position(self):
         anchor = self._get_saved_anchor_position()
-        if hasattr(self.inner_widget, 'anchor_to_top_left'):
+        if self._has_live_inner_widget() and hasattr(self.inner_widget, 'anchor_to_top_left'):
             pos = self.inner_widget.anchor_to_top_left(anchor, self.size())
             x = pos['x']
             y = pos['y']
@@ -1021,6 +1038,12 @@ class WorkspaceWidgetContainer(QWidget):
         self.move(x, y)
 
     def _sync_to_inner(self):
+        self._sync_pending = False
+        if not isValid(self):
+            return
+        if not self._has_live_inner_widget():
+            self.hide()
+            return
         if self.inner_widget.isHidden():
             self.hide()
             return
@@ -1029,6 +1052,12 @@ class WorkspaceWidgetContainer(QWidget):
             self.setFixedSize(hint)
         self.show()
         self._refresh_geometry_from_saved_position()
+
+    def _queue_sync_to_inner(self):
+        if self._sync_pending or not self._has_live_inner_widget():
+            return
+        self._sync_pending = True
+        QTimer.singleShot(0, self._sync_to_inner)
 
     def eventFilter(self, watched, event):
         event_type = event.type()
@@ -1057,7 +1086,7 @@ class WorkspaceWidgetContainer(QWidget):
             self._save_position(self.x(), self.y())
             return False
         if watched is self.inner_widget and event_type in (QEvent.Resize, QEvent.Show, QEvent.Hide, QEvent.LayoutRequest):
-            QTimer.singleShot(0, self._sync_to_inner)
+            self._queue_sync_to_inner()
         return super().eventFilter(watched, event)
 
 

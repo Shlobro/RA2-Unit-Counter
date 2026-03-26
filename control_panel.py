@@ -928,6 +928,10 @@ class ControlPanel(QMainWindow):
             for factory_win in self.state.factory_windows:
                 factory_win.close()
             self.state.factory_windows.clear()
+
+        if hasattr(self.state, 'single_window_workspace') and self.state.single_window_workspace:
+            self.state.single_window_workspace.close()
+            self.state.single_window_workspace = None
         
         # Clear the hud_windows list
         self.state.hud_windows.clear()
