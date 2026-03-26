@@ -1,8 +1,13 @@
 import logging
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu
+from PySide6.QtCore import Qt, QEvent, QTimer
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu, QLabel
 
-from CounterWidget import (CounterWidgetImagesAndNumber, CounterWidgetNumberOnly, CounterWidgetImageOnly)
+from CounterWidget import (
+    CounterWidgetImagesAndNumber,
+    CounterWidgetNumberOnly,
+    CounterWidgetImageOnly,
+    apply_context_menu_style,
+)
 from constants import (
     name_to_path,
     country_name_to_faction,
@@ -14,6 +19,7 @@ from DataTracker import ResourceWindow
 from factory_panel import FactoryPanel
 from hud_position_utils import get_player_position, set_player_position, get_player_setting, set_player_setting
 from player_identity import (
+    build_player_hud_tooltip,
     get_combined_hud_title,
     get_player_bucket_key,
     get_player_display_label,
@@ -27,10 +33,11 @@ from player_identity import (
 class UnitWindowBase(QMainWindow):
     EXPANSION_SETTING_KEY = 'unit_expansion_direction'
 
-    def __init__(self, player, hud_pos, selected_units_dict, spacing=0):
-        super().__init__()
+    def __init__(self, player, hud_pos, selected_units_dict, spacing=0, embedded_mode=False, parent=None):
+        super().__init__(parent)
         self.player = player
         self.hud_pos = hud_pos
+        self.embedded_mode = embedded_mode
         self.selected_units = selected_units_dict['selected_units']
         self.unit_info_by_name = {}
         self.unit_order_index = {}
@@ -54,21 +61,30 @@ class UnitWindowBase(QMainWindow):
         self.spacing = spacing
         self.player_bucket_key = get_player_bucket_key(self.player, self.hud_pos)
         self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
+        self.tooltip_text = build_player_hud_tooltip(self.player, self.hud_pos, "unit counter")
 
         # Set geometry and flags.
         self.setGeometry(0, 0, 120, 120)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        if self.embedded_mode:
+            self.setWindowFlags(Qt.Widget)
+            self.setAttribute(Qt.WA_TranslucentBackground, True)
+            self.setAttribute(Qt.WA_NoSystemBackground, True)
+        else:
+            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
+            self.setAttribute(Qt.WA_TranslucentBackground)
         self.make_hud_movable()
 
         # Create container for counters.
         self.unit_frame = QWidget(self)
+        self.setToolTip(self.tooltip_text)
+        self.unit_frame.setToolTip(self.tooltip_text)
         self.set_layout(self.layout_type, self.spacing)
         self.setCentralWidget(self.unit_frame)
         self.load_selected_units_and_create_counters()
         self.adjustSize()
         self._move_to_saved_anchor()
-        self.show()
+        if not self.embedded_mode:
+            self.show()
 
     def get_default_size(self):
         raise NotImplementedError("Subclasses must implement get_default_size().")
@@ -109,6 +125,7 @@ class UnitWindowBase(QMainWindow):
             unit_info = self.unit_info_by_name.get(unit_name, {})
             unit_type = unit_info.get('unit_type')
             counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
+            counter_widget.setToolTip(self.tooltip_text)
             counter_widget.hide()
             self.layout.addWidget(counter_widget)
             self.counters[unit_name] = (counter_widget, unit_type)
@@ -197,15 +214,34 @@ class UnitWindowBase(QMainWindow):
         self.offset = None
         def mouse_press_event(event):
             if event.button() == Qt.LeftButton:
+                self.raise_()
                 self.offset = event.pos()
         def mouse_move_event(event):
             if self.offset is not None:
-                x = event.globalX() - self.offset.x()
-                y = event.globalY() - self.offset.y()
+                if self.parentWidget() is not None and not self.isWindow():
+                    x = self.x() + event.pos().x() - self.offset.x()
+                    y = self.y() + event.pos().y() - self.offset.y()
+                    x, y = self._clamp_to_parent(x, y)
+                else:
+                    x = event.globalX() - self.offset.x()
+                    y = event.globalY() - self.offset.y()
                 self.move(x, y)
                 self.update_hud_position(x, y)
+        def mouse_release_event(event):
+            if event.button() == Qt.LeftButton:
+                self.offset = None
+                self.update_hud_position(self.x(), self.y())
         self.mousePressEvent = mouse_press_event
         self.mouseMoveEvent = mouse_move_event
+        self.mouseReleaseEvent = mouse_release_event
+
+    def _clamp_to_parent(self, x, y):
+        parent = self.parentWidget()
+        if parent is None:
+            return x, y
+        max_x = max(0, parent.width() - self.width())
+        max_y = max(0, parent.height() - self.height())
+        return max(0, min(x, max_x)), max(0, min(y, max_y))
 
     def _is_reverse_expansion(self):
         return get_player_setting(
@@ -243,8 +279,8 @@ class UnitWindowBase(QMainWindow):
         if self.isWindow():
             self._move_to_saved_anchor()
 
-    def contextMenuEvent(self, event):
-        menu = QMenu(self)
+    def show_context_menu(self, global_pos):
+        menu = apply_context_menu_style(QMenu(self))
         if self.layout_type == 'Horizontal':
             expand_forward = menu.addAction("Expand Right")
             expand_reverse = menu.addAction("Expand Left")
@@ -258,15 +294,32 @@ class UnitWindowBase(QMainWindow):
         else:
             expand_forward.setChecked(True)
 
-        selected_action = menu.exec(event.globalPos())
+        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        if workspace is not None:
+            menu.addSeparator()
+            toggle_window_bar = workspace.add_window_bar_toggle_action(menu)
+        else:
+            toggle_window_bar = None
+
+        selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
+        elif toggle_window_bar is not None and selected_action == toggle_window_bar:
+            return
+
+    def contextMenuEvent(self, event):
+        self.show_context_menu(event.globalPos())
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
         if not self.isWindow():
+            if self._is_reverse_expansion():
+                self._move_to_saved_anchor()
+            x, y = self._clamp_to_parent(self.x(), self.y())
+            if x != self.x() or y != self.y():
+                self.move(x, y)
             return
         self._move_to_saved_anchor()
 
@@ -316,6 +369,8 @@ class UnitWindowBase(QMainWindow):
 
     def _move_to_saved_anchor(self):
         pos = self.get_default_position()
+        if self.parentWidget() is not None and not self.isWindow():
+            pos['x'], pos['y'] = self._clamp_to_parent(pos['x'], pos['y'])
         if pos['x'] != self.x() or pos['y'] != self.y():
             self.move(pos['x'], pos['y'])
 
@@ -333,6 +388,7 @@ class UnitWindowBase(QMainWindow):
             if unit_name not in self.counters:
                 unit_info = self.unit_info_by_name.get(unit_name, {})
                 counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
+                counter_widget.setToolTip(self.tooltip_text)
                 counter_widget.hide()  # Will be shown when unit_count > 0
                 self.counters[unit_name] = (counter_widget, unit_type)
                 self.layout.addWidget(counter_widget)
@@ -363,9 +419,16 @@ class UnitWindowBase(QMainWindow):
 # UnitWindowWithImages: Combined unit window (image and number together).
 # =============================================================================
 class UnitWindowWithImages(UnitWindowBase):
-    def __init__(self, player, hud_pos, selected_units_dict):
+    def __init__(self, player, hud_pos, selected_units_dict, embedded_mode=False, parent=None):
         self.distance_between_images = hud_pos.get('distance_between_images', 0)
-        super().__init__(player, hud_pos, selected_units_dict, spacing=self.distance_between_images)
+        super().__init__(
+            player,
+            hud_pos,
+            selected_units_dict,
+            spacing=self.distance_between_images,
+            embedded_mode=embedded_mode,
+            parent=parent,
+        )
     def get_default_size(self):
         return self.hud_pos.get('unit_counter_size', 100)
     def get_hud_type(self):
@@ -387,9 +450,16 @@ class UnitWindowWithImages(UnitWindowBase):
 # UnitWindowImagesOnly: Displays only unit images.
 # =============================================================================
 class UnitWindowImagesOnly(UnitWindowBase):
-    def __init__(self, player, hud_pos, selected_units_dict):
+    def __init__(self, player, hud_pos, selected_units_dict, embedded_mode=False, parent=None):
         self.distance_between_images = hud_pos.get('distance_between_images', 0)
-        super().__init__(player, hud_pos, selected_units_dict, spacing=self.distance_between_images)
+        super().__init__(
+            player,
+            hud_pos,
+            selected_units_dict,
+            spacing=self.distance_between_images,
+            embedded_mode=embedded_mode,
+            parent=parent,
+        )
     def get_default_size(self):
         return self.hud_pos.get('image_size', 75)
     def get_hud_type(self):
@@ -410,9 +480,16 @@ class UnitWindowImagesOnly(UnitWindowBase):
 # UnitWindowNumbersOnly: Displays only unit numbers.
 # =============================================================================
 class UnitWindowNumbersOnly(UnitWindowBase):
-    def __init__(self, player, hud_pos, selected_units_dict):
+    def __init__(self, player, hud_pos, selected_units_dict, embedded_mode=False, parent=None):
         self.distance_between_numbers = hud_pos.get('distance_between_numbers', 0)
-        super().__init__(player, hud_pos, selected_units_dict, spacing=self.distance_between_numbers)
+        super().__init__(
+            player,
+            hud_pos,
+            selected_units_dict,
+            spacing=self.distance_between_numbers,
+            embedded_mode=embedded_mode,
+            parent=parent,
+        )
     def get_default_size(self):
         return self.hud_pos.get('number_size', 75)
     def get_hud_type(self):
@@ -435,22 +512,27 @@ class UnitWindowNumbersOnly(UnitWindowBase):
 # plus the FactoryPanel if "show_factory_window" is True.
 # =============================================================================
 class CombinedHudWindow(QWidget):
-    def __init__(self, player, hud_pos, selected_units_dict):
+    def __init__(self, player, hud_pos, selected_units_dict, embedded_mode=False, parent=None):
         """
         Create a combined HUD container for a single player.
         The top section displays resource info.
         The middle section displays unit counters (images/numbers).
         The bottom section displays the factory panel (if show_factory_window is True).
         """
-        super().__init__()
+        super().__init__(parent)
         self.player = player
         self.hud_pos = hud_pos
         self.selected_units_dict = selected_units_dict
+        self.embedded_mode = embedded_mode
+        self.offset = None
 
         self.setWindowTitle(get_combined_hud_title(player, hud_pos))
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
-        self.make_hud_movable()
+        if self.embedded_mode:
+            self.setAttribute(Qt.WA_StyledBackground, True)
+        else:
+            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
+            self.setAttribute(Qt.WA_TranslucentBackground)
+            self.make_hud_movable()
 
         self._init_ui()
 
@@ -463,10 +545,30 @@ class CombinedHudWindow(QWidget):
             legacy_bucket_keys=get_player_legacy_bucket_keys(player, self.hud_pos),
         )
         self.move(pos['x'], pos['y'])
+        self.adjustSize()
 
     def _init_ui(self):
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        if self.embedded_mode:
+            self.drag_handle = QLabel(get_player_display_label(self.player, self.hud_pos), self)
+            self.drag_handle.setFixedHeight(22)
+            self.drag_handle.setAlignment(Qt.AlignCenter)
+            self.drag_handle.setCursor(Qt.SizeAllCursor)
+            self.drag_handle.setStyleSheet(
+                "background-color: rgba(0, 0, 0, 120);"
+                "color: white;"
+                "font-weight: bold;"
+                "padding: 2px 8px;"
+                "border-top-left-radius: 6px;"
+                "border-top-right-radius: 6px;"
+            )
+            main_layout.addWidget(self.drag_handle)
+            self.make_embedded_movable()
+        else:
+            self.drag_handle = None
 
         # First define self.factory_panel = None so it exists for the while-loop check.
         self.factory_panel = None
@@ -503,9 +605,10 @@ class CombinedHudWindow(QWidget):
                          False for a single combined widget.
         """
         layout = self.layout()
-        # We want to remove any existing unit widgets but keep the resource_widget
-        # (index 0) and the factory_panel if it exists (usually at the bottom).
-        while layout.count() > (2 if self.factory_panel else 1):
+        # We want to remove any existing unit widgets but keep the drag handle
+        # (embedded mode), the resource_widget, and the factory_panel if present.
+        fixed_items = 1 + (1 if self.drag_handle is not None else 0) + (1 if self.factory_panel else 0)
+        while layout.count() > fixed_items:
             # The item at the bottom might be the old unit container or the factory panel.
             item = layout.itemAt(layout.count() - 1)
             w = item.widget()
@@ -567,6 +670,7 @@ class CombinedHudWindow(QWidget):
         # Also update factory panel
         if self.factory_panel:
             self.factory_panel.update_labels()
+        self.adjustSize()
 
     def make_hud_movable(self):
         self.offset = None
@@ -584,6 +688,28 @@ class CombinedHudWindow(QWidget):
 
         self.mousePressEvent = mouse_press_event
         self.mouseMoveEvent = mouse_move_event
+
+    def make_embedded_movable(self):
+        def mouse_press_event(event):
+            if event.button() == Qt.LeftButton:
+                self.raise_()
+                self.offset = event.pos()
+
+        def mouse_move_event(event):
+            if self.offset is not None and self.parentWidget() is not None:
+                new_x = self.x() + event.pos().x() - self.offset.x()
+                new_y = self.y() + event.pos().y() - self.offset.y()
+                self.move(new_x, new_y)
+                self.update_hud_position(new_x, new_y)
+
+        def mouse_release_event(event):
+            if event.button() == Qt.LeftButton:
+                self.offset = None
+                self.update_hud_position(self.x(), self.y())
+
+        self.drag_handle.mousePressEvent = mouse_press_event
+        self.drag_handle.mouseMoveEvent = mouse_move_event
+        self.drag_handle.mouseReleaseEvent = mouse_release_event
 
     def update_hud_position(self, x, y):
         set_player_position(
@@ -686,6 +812,469 @@ class CombinedHudWindow(QWidget):
             if hasattr(self, 'unit_widget'):
                 self.unit_widget.update_locked_widgets(faction, unit_type, unit_name, new_state)
 
+
+class SingleWindowWorkspace(QMainWindow):
+    GEOMETRY_KEY = 'single_window_geometry'
+    WINDOW_BAR_KEY = 'single_window_show_window_bar'
+
+    def __init__(self, hud_pos):
+        super().__init__()
+        self.hud_pos = hud_pos
+        self.canvas = QWidget(self)
+        self.canvas.setObjectName("singleWindowCanvas")
+        self.setAttribute(Qt.WA_OpaquePaintEvent, False)
+        self.setAutoFillBackground(False)
+        self.canvas.setAttribute(Qt.WA_OpaquePaintEvent, False)
+        self.canvas.setAutoFillBackground(False)
+        self.setCentralWidget(self.canvas)
+        self.setWindowTitle("Single Window HUD")
+        self.setMinimumSize(900, 600)
+        self._apply_window_chrome(self.is_window_bar_visible(), keep_geometry=False)
+        self._apply_saved_geometry()
+
+    def _get_saved_geometry(self):
+        geometry = self.hud_pos.get(self.GEOMETRY_KEY, {})
+        if not isinstance(geometry, dict):
+            geometry = {}
+        return geometry
+
+    def _apply_saved_geometry(self):
+        geometry = self._get_saved_geometry()
+        width = int(geometry.get('width', 1600))
+        height = int(geometry.get('height', 900))
+        x = int(geometry.get('x', 50))
+        y = int(geometry.get('y', 50))
+        maximized = bool(geometry.get('maximized', True))
+
+        self.setGeometry(x, y, width, height)
+        if maximized:
+            self.showMaximized()
+
+    def save_geometry_to_state(self):
+        normal_geometry = self.normalGeometry() if self.isMaximized() else self.geometry()
+        self.hud_pos[self.GEOMETRY_KEY] = {
+            'x': normal_geometry.x(),
+            'y': normal_geometry.y(),
+            'width': normal_geometry.width(),
+            'height': normal_geometry.height(),
+            'maximized': self.isMaximized(),
+        }
+
+    def closeEvent(self, event):
+        self.save_geometry_to_state()
+        super().closeEvent(event)
+
+    def is_window_bar_visible(self):
+        return bool(self.hud_pos.get(self.WINDOW_BAR_KEY, False))
+
+    def _apply_window_chrome(self, show_window_bar, keep_geometry=True):
+        normal_geometry = self.normalGeometry() if keep_geometry and self.isMaximized() else self.geometry()
+        maximized = self.isMaximized() if keep_geometry else False
+        was_visible = self.isVisible()
+
+        if was_visible:
+            self.hide()
+
+        if show_window_bar:
+            self.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
+            self.setAttribute(Qt.WA_TranslucentBackground, False)
+            self.setAttribute(Qt.WA_NoSystemBackground, False)
+            self.canvas.setAttribute(Qt.WA_TranslucentBackground, False)
+            self.canvas.setAttribute(Qt.WA_NoSystemBackground, False)
+            self.canvas.setAutoFillBackground(True)
+            self.setAutoFillBackground(True)
+            self.setStyleSheet(
+                "QMainWindow { background-color: rgba(24, 24, 24, 180); }"
+                "QWidget#singleWindowCanvas { background-color: rgba(24, 24, 24, 180); }"
+            )
+            self.canvas.setStyleSheet("background-color: rgba(24, 24, 24, 180);")
+        else:
+            self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
+            self.setAttribute(Qt.WA_TranslucentBackground, True)
+            self.setAttribute(Qt.WA_NoSystemBackground, False)
+            self.canvas.setAttribute(Qt.WA_TranslucentBackground, True)
+            self.canvas.setAttribute(Qt.WA_NoSystemBackground, False)
+            self.canvas.setAutoFillBackground(False)
+            self.setAutoFillBackground(False)
+            self.setStyleSheet(
+                "QMainWindow { background: transparent; border: none; }"
+                "QWidget#singleWindowCanvas { background: transparent; border: none; }"
+            )
+            self.canvas.setStyleSheet("background-color: transparent;")
+
+        if keep_geometry and normal_geometry.isValid():
+            self.setGeometry(normal_geometry)
+        if was_visible or not keep_geometry:
+            self.show()
+        if keep_geometry and normal_geometry.isValid():
+            self.updateGeometry()
+        if maximized:
+            self.showMaximized()
+        self.canvas.update()
+        self.update()
+
+    def set_window_bar_visible(self, visible):
+        visible = bool(visible)
+        if self.hud_pos.get(self.WINDOW_BAR_KEY, False) == visible:
+            return
+        self.hud_pos[self.WINDOW_BAR_KEY] = visible
+        self._apply_window_chrome(visible)
+
+    def toggle_window_bar_visible(self):
+        self.set_window_bar_visible(not self.is_window_bar_visible())
+
+    def add_window_bar_toggle_action(self, menu):
+        action_text = "Hide Window Bar" if self.is_window_bar_visible() else "Show Window Bar"
+        action = menu.addAction(action_text)
+        action.triggered.connect(self.toggle_window_bar_visible)
+        return action
+
+
+class WorkspaceWidgetContainer(QWidget):
+    def __init__(self, inner_widget, player, hud_pos, hud_type, parent, legacy_root_keys=None):
+        super().__init__(parent)
+        self.inner_widget = inner_widget
+        self.player = player
+        self.hud_pos = hud_pos
+        self.hud_type = hud_type
+        self.legacy_root_keys = legacy_root_keys or []
+        self.player_bucket_key = get_player_bucket_key(self.player, self.hud_pos)
+        self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
+        self._drag_offset = None
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        layout.addWidget(self.inner_widget)
+
+        self._install_drag_filters(self)
+        self._install_drag_filters(self.inner_widget)
+        self._refresh_geometry_from_saved_position()
+        self._sync_to_inner()
+
+    def _install_drag_filters(self, widget):
+        widget.installEventFilter(self)
+        for child in widget.findChildren(QWidget):
+            child.installEventFilter(self)
+
+    def _find_workspace(self):
+        current = self.parentWidget()
+        while current is not None:
+            if hasattr(current, 'add_window_bar_toggle_action'):
+                return current
+            current = current.parentWidget()
+        return None
+
+    def _inner_widget_has_custom_context_menu(self):
+        for cls in type(self.inner_widget).mro():
+            if 'contextMenuEvent' in cls.__dict__:
+                return cls not in (QWidget, QMainWindow)
+        return False
+
+    def _event_global_point(self, event):
+        if hasattr(event, 'globalPos'):
+            return event.globalPos()
+        if hasattr(event, 'globalPosition'):
+            return event.globalPosition().toPoint()
+        return self.mapToGlobal(self.rect().center())
+
+    def _mouse_global_point(self, event):
+        if hasattr(event, 'globalPosition'):
+            return event.globalPosition().toPoint()
+        return event.globalPos()
+
+    def _clamp_to_parent(self, x, y):
+        parent = self.parentWidget()
+        if parent is None:
+            return x, y
+        max_x = max(0, parent.width() - self.width())
+        max_y = max(0, parent.height() - self.height())
+        return max(0, min(x, max_x)), max(0, min(y, max_y))
+
+    def _get_saved_anchor_position(self):
+        if hasattr(self.inner_widget, 'get_saved_anchor_position'):
+            return self.inner_widget.get_saved_anchor_position()
+        return get_player_position(
+            self.hud_pos,
+            self.player_bucket_key,
+            self.hud_type,
+            legacy_root_keys=self.legacy_root_keys,
+            legacy_bucket_keys=self.legacy_player_bucket_keys,
+        )
+
+    def _save_position(self, x, y):
+        if hasattr(self.inner_widget, 'top_left_to_anchor') and hasattr(self.inner_widget, 'save_anchor_position'):
+            self.inner_widget.save_anchor_position(self.inner_widget.top_left_to_anchor(x, y, self.size()))
+        else:
+            set_player_position(self.hud_pos, self.player_bucket_key, self.hud_type, x, y)
+
+    def _refresh_geometry_from_saved_position(self):
+        anchor = self._get_saved_anchor_position()
+        if hasattr(self.inner_widget, 'anchor_to_top_left'):
+            pos = self.inner_widget.anchor_to_top_left(anchor, self.size())
+            x = pos['x']
+            y = pos['y']
+        else:
+            x = anchor['x']
+            y = anchor['y']
+        x, y = self._clamp_to_parent(x, y)
+        self.move(x, y)
+
+    def _sync_to_inner(self):
+        if self.inner_widget.isHidden():
+            self.hide()
+            return
+        hint = self.layout().sizeHint()
+        if hint.width() > 0 and hint.height() > 0:
+            self.setFixedSize(hint)
+        self.show()
+        self._refresh_geometry_from_saved_position()
+
+    def eventFilter(self, watched, event):
+        event_type = event.type()
+        if event_type == QEvent.ContextMenu and not self._inner_widget_has_custom_context_menu():
+            workspace = self._find_workspace()
+            if workspace is not None:
+                menu = apply_context_menu_style(QMenu(self))
+                workspace.add_window_bar_toggle_action(menu)
+                menu.exec(self._event_global_point(event))
+                return True
+        if event_type == QEvent.MouseButtonPress and event.button() == Qt.LeftButton:
+            self.raise_()
+            global_pos = self._mouse_global_point(event)
+            self._drag_offset = global_pos - self.mapToGlobal(self.rect().topLeft())
+            return False
+        if event_type == QEvent.MouseMove and self._drag_offset is not None:
+            global_pos = self._mouse_global_point(event)
+            new_global_pos = global_pos - self._drag_offset
+            parent_pos = self.parentWidget().mapFromGlobal(new_global_pos)
+            x, y = self._clamp_to_parent(parent_pos.x(), parent_pos.y())
+            self.move(x, y)
+            self._save_position(x, y)
+            return False
+        if event_type == QEvent.MouseButtonRelease and getattr(event, 'button', lambda: None)() == Qt.LeftButton:
+            self._drag_offset = None
+            self._save_position(self.x(), self.y())
+            return False
+        if watched is self.inner_widget and event_type in (QEvent.Resize, QEvent.Show, QEvent.Hide, QEvent.LayoutRequest):
+            QTimer.singleShot(0, self._sync_to_inner)
+        return super().eventFilter(watched, event)
+
+
+class SingleWindowPlayerHud:
+    def __init__(self, player, hud_pos, selected_units_dict, workspace):
+        self.player = player
+        self.hud_pos = hud_pos
+        self.selected_units_dict = selected_units_dict
+        self.workspace = workspace
+        self.resource_widget = ResourceWindow(
+            self.player,
+            0,
+            self.hud_pos,
+            self.player.color_name,
+            combined_mode=True,
+        )
+        self.resource_widget.hide()
+        self.factory_panel = None
+        self.unit_widget = None
+        self.unit_widget_images = None
+        self.unit_widget_numbers = None
+        self.items = {}
+        self.unit_items = {}
+
+        self._create_resource_items()
+        self._create_unit_items()
+        self._create_factory_item()
+        self._apply_visibility_settings()
+
+    def _register_item(self, key, item):
+        self.items[key] = item
+        item.show()
+
+    def _set_workspace_item_visibility(self, item, visible):
+        if item is None:
+            return
+        if visible:
+            item.inner_widget.show()
+            item._sync_to_inner()
+        else:
+            item.hide()
+
+    def _create_resource_items(self):
+        self._register_item(
+            'name_widget',
+            WorkspaceWidgetContainer(self.resource_widget.name_widget, self.player, self.hud_pos, 'name', self.workspace.canvas),
+        )
+        self._register_item(
+            'flag_widget',
+            WorkspaceWidgetContainer(self.resource_widget.flag_widget, self.player, self.hud_pos, 'flag', self.workspace.canvas),
+        )
+        self._register_item(
+            'money_widget',
+            WorkspaceWidgetContainer(self.resource_widget.money_widget, self.player, self.hud_pos, 'money', self.workspace.canvas),
+        )
+        self._register_item(
+            'money_widget_spent',
+            WorkspaceWidgetContainer(self.resource_widget.money_spent_widget, self.player, self.hud_pos, 'money_spent', self.workspace.canvas),
+        )
+        self._register_item(
+            'power_widget',
+            WorkspaceWidgetContainer(self.resource_widget.power_widget, self.player, self.hud_pos, 'power', self.workspace.canvas),
+        )
+        self._register_item(
+            'superweapon_widget',
+            WorkspaceWidgetContainer(
+                self.resource_widget.superweapon_widget,
+                self.player,
+                self.hud_pos,
+                'superweapons',
+                self.workspace.canvas,
+                legacy_root_keys=['superweapon'],
+            ),
+        )
+
+    def _create_unit_items(self):
+        if self.hud_pos.get('separate_unit_counters', False):
+            self.unit_widget_images = UnitWindowImagesOnly(
+                self.player,
+                self.hud_pos,
+                self.selected_units_dict,
+                embedded_mode=True,
+            )
+            self.unit_widget_numbers = UnitWindowNumbersOnly(
+                self.player,
+                self.hud_pos,
+                self.selected_units_dict,
+                embedded_mode=True,
+            )
+            self.unit_items['unit_widget_images'] = WorkspaceWidgetContainer(
+                self.unit_widget_images,
+                self.player,
+                self.hud_pos,
+                'unit_counter_images',
+                self.workspace.canvas,
+            )
+            self.unit_items['unit_widget_numbers'] = WorkspaceWidgetContainer(
+                self.unit_widget_numbers,
+                self.player,
+                self.hud_pos,
+                'unit_counter_numbers',
+                self.workspace.canvas,
+            )
+        else:
+            self.unit_widget = UnitWindowWithImages(
+                self.player,
+                self.hud_pos,
+                self.selected_units_dict,
+                embedded_mode=True,
+            )
+            self.unit_items['unit_widget'] = WorkspaceWidgetContainer(
+                self.unit_widget,
+                self.player,
+                self.hud_pos,
+                'unit_counter_combined',
+                self.workspace.canvas,
+                legacy_root_keys=['combined'],
+            )
+
+    def _create_factory_item(self):
+        if not self.hud_pos.get('show_factory_window', True):
+            return
+        from factory_window import FactoryWindow
+        self.factory_panel = FactoryWindow(
+            self.player,
+            self.hud_pos,
+            embedded_mode=True,
+            parent=self.workspace.canvas,
+        )
+        self.factory_panel.show()
+
+    def _apply_visibility_settings(self):
+        self.set_element_visibility('name_widget', self.hud_pos.get('show_name', True))
+        self.set_element_visibility('flag_widget', self.hud_pos.get('show_flag', True) and not self.hud_pos.get('save_flags_as_images', False))
+        self.set_element_visibility('money_widget', self.hud_pos.get('show_money', True))
+        self.set_element_visibility('money_widget_spent', self.hud_pos.get('show_money_spent', False))
+        self.set_element_visibility('power_widget', self.hud_pos.get('show_power', True))
+        self.set_element_visibility('superweapon_widget', self.hud_pos.get('show_superweapons', True))
+
+    def set_element_visibility(self, widget_name, visible):
+        if widget_name == 'unit_widget':
+            for item in self.unit_items.values():
+                self._set_workspace_item_visibility(item, visible)
+            return
+        item = self.items.get(widget_name)
+        self._set_workspace_item_visibility(item, visible)
+
+    def update_labels(self):
+        self.resource_widget.update_labels()
+        if self.unit_widget is not None:
+            self.unit_widget.update_labels()
+        if self.unit_widget_images is not None:
+            self.unit_widget_images.update_labels()
+        if self.unit_widget_numbers is not None:
+            self.unit_widget_numbers.update_labels()
+        if self.factory_panel is not None:
+            self.factory_panel.update_labels()
+
+    def update_unit_counters_size(self, new_size, section=None):
+        if self.hud_pos.get('separate_unit_counters', False):
+            if section in (None, 'images') and self.unit_widget_images is not None:
+                self.unit_widget_images.update_all_counters_size(new_size)
+            if section in (None, 'numbers') and self.unit_widget_numbers is not None:
+                self.unit_widget_numbers.update_all_counters_size(new_size)
+        elif self.unit_widget is not None:
+            self.unit_widget.update_all_counters_size(new_size)
+
+    def update_show_unit_frames(self, show):
+        if self.unit_widget is not None:
+            self.unit_widget.update_show_unit_frames(show)
+        if self.unit_widget_images is not None:
+            self.unit_widget_images.update_show_unit_frames(show)
+        if self.unit_widget_numbers is not None:
+            self.unit_widget_numbers.update_show_unit_frames(show)
+
+    def update_unit_layout(self, layout_type):
+        if self.unit_widget is not None:
+            self.unit_widget.update_layout(layout_type)
+        if self.unit_widget_images is not None:
+            self.unit_widget_images.update_layout(layout_type)
+        if self.unit_widget_numbers is not None:
+            self.unit_widget_numbers.update_layout(layout_type)
+
+    def update_selected_widgets(self, faction, unit_type, unit_name, new_state):
+        for widget in (self.unit_widget, self.unit_widget_images, self.unit_widget_numbers):
+            if widget is not None:
+                widget.update_selected_widgets(faction, unit_type, unit_name, new_state)
+
+    def update_position_widgets(self, faction, unit_type, unit_name):
+        for widget in (self.unit_widget, self.unit_widget_images, self.unit_widget_numbers):
+            if widget is not None:
+                widget.update_position_widgets(faction, unit_type, unit_name)
+
+    def update_locked_widgets(self, faction, unit_type, unit_name, new_state):
+        for widget in (self.unit_widget, self.unit_widget_images, self.unit_widget_numbers):
+            if widget is not None:
+                widget.update_locked_widgets(faction, unit_type, unit_name, new_state)
+
+    def show(self):
+        self._apply_visibility_settings()
+        for item in self.unit_items.values():
+            self._set_workspace_item_visibility(item, True)
+        if self.factory_panel is not None:
+            if self.hud_pos.get('show_factory_window', True):
+                self.factory_panel.show()
+            else:
+                self.factory_panel.hide()
+
+    def close(self):
+        for item in self.items.values():
+            item.close()
+        for item in self.unit_items.values():
+            item.close()
+        for widget in (self.unit_widget, self.unit_widget_images, self.unit_widget_numbers, self.factory_panel):
+            if widget is not None:
+                widget.close()
+        self.resource_widget.close()
 
 
 # =============================================================================

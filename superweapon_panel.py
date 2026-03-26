@@ -2,8 +2,13 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QHBoxLayout, QLayout, QSizePolicy, QVBoxLayout, QWidget, QMenu
 
 from superweapon_widget import SuperweaponWidget
+from CounterWidget import apply_context_menu_style
 from hud_position_utils import get_player_setting, set_player_setting, get_player_position, set_player_position
-from player_identity import get_player_bucket_key, get_player_legacy_bucket_keys
+from player_identity import (
+    build_player_hud_tooltip,
+    get_player_bucket_key,
+    get_player_legacy_bucket_keys,
+)
 
 
 class SuperweaponTimerPanel(QWidget):
@@ -20,6 +25,7 @@ class SuperweaponTimerPanel(QWidget):
         self.layout_type = hud_positions.get('superweapon_layout', 'Horizontal')
         self.player_bucket_key = get_player_bucket_key(self.player, self.hud_positions)
         self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_positions)
+        self.tooltip_text = build_player_hud_tooltip(self.player, self.hud_positions, "superweapon counter")
 
         if self.layout_type == 'Vertical':
             self.main_layout = QVBoxLayout()
@@ -33,6 +39,7 @@ class SuperweaponTimerPanel(QWidget):
         self.main_layout.setSizeConstraint(QLayout.SetFixedSize)
         self._apply_layout_direction(self.main_layout)
         self.setLayout(self.main_layout)
+        self.setToolTip(self.tooltip_text)
         self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self._build_widgets()
 
@@ -157,8 +164,8 @@ class SuperweaponTimerPanel(QWidget):
             self.setUpdatesEnabled(True)
             self.update()
 
-    def contextMenuEvent(self, event):
-        menu = QMenu(self)
+    def show_context_menu(self, global_pos):
+        menu = apply_context_menu_style(QMenu(self))
         if self.layout_type == 'Horizontal':
             expand_forward = menu.addAction("Expand Right")
             expand_reverse = menu.addAction("Expand Left")
@@ -172,11 +179,23 @@ class SuperweaponTimerPanel(QWidget):
         else:
             expand_forward.setChecked(True)
 
-        selected_action = menu.exec(event.globalPos())
+        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        if workspace is not None:
+            menu.addSeparator()
+            toggle_window_bar = workspace.add_window_bar_toggle_action(menu)
+        else:
+            toggle_window_bar = None
+
+        selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
+        elif toggle_window_bar is not None and selected_action == toggle_window_bar:
+            return
+
+    def contextMenuEvent(self, event):
+        self.show_context_menu(event.globalPos())
 
     def _build_widgets(self):
         size = self.hud_positions.get('superweapon_widget_size', 100)
@@ -190,7 +209,7 @@ class SuperweaponTimerPanel(QWidget):
                 show_frame=show_frames,
                 parent=self,
             )
-            widget.setToolTip(name)
+            widget.setToolTip(f"{self.tooltip_text}\n{name}")
             self.main_layout.addWidget(widget)
             self.widgets[name] = widget
 

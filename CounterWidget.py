@@ -2,8 +2,43 @@
 import logging
 
 from PySide6.QtGui import QColor, QPixmap, QPainter, QPen, QFontDatabase, QFont, QFontMetrics
-from PySide6.QtWidgets import QLabel, QSizePolicy
+from PySide6.QtWidgets import QLabel, QSizePolicy, QMenu
 from PySide6.QtCore import Qt
+
+
+def apply_context_menu_style(menu):
+    menu.setStyleSheet(
+        "QMenu {"
+        " background-color: #202020;"
+        " color: #f2f2f2;"
+        " border: 1px solid #5a5a5a;"
+        " padding: 4px;"
+        "}"
+        "QMenu::item {"
+        " color: #f2f2f2;"
+        " background-color: transparent;"
+        " padding: 6px 24px 6px 12px;"
+        "}"
+        "QMenu::item:selected {"
+        " background-color: #3d6ea8;"
+        " color: #ffffff;"
+        "}"
+        "QMenu::separator {"
+        " height: 1px;"
+        " background: #5a5a5a;"
+        " margin: 4px 8px;"
+        "}"
+    )
+    return menu
+
+
+def find_context_menu_handler(widget):
+    current = widget.parentWidget()
+    while current is not None:
+        if hasattr(current, 'show_context_menu'):
+            return current
+        current = current.parentWidget()
+    return None
 
 class CounterWidgetBase(QLabel):
     def __init__(self, color=Qt.red, size=100, parent=None):
@@ -40,6 +75,20 @@ class CounterWidgetBase(QLabel):
     def update_show_frame(self, show_frame):
         self.show_frame = show_frame
         self.repaint()
+
+    def contextMenuEvent(self, event):
+        handler = find_context_menu_handler(self)
+        if handler is not None:
+            handler.show_context_menu(event.globalPos())
+            return
+
+        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        if workspace is None:
+            super().contextMenuEvent(event)
+            return
+        menu = apply_context_menu_style(QMenu(self))
+        workspace.add_window_bar_toggle_action(menu)
+        menu.exec(event.globalPos())
 
 class CounterWidgetImageOnly(CounterWidgetBase):
     def __init__(self, image_path, color=Qt.red, size=100, show_frame=True, parent=None):

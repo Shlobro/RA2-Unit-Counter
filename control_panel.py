@@ -582,7 +582,7 @@ class ControlPanel(QMainWindow):
         # HUD Mode Settings
         hud_mode_group = QGroupBox("HUD Mode Settings")
         hud_mode_layout = QFormLayout()
-        self.combined_hud_checkbox = QCheckBox("Use Combined HUD Mode")
+        self.combined_hud_checkbox = QCheckBox("Use Single Window HUD Mode")
         self.combined_hud_checkbox.setChecked(self.state.hud_positions.get('combined_hud', False))
         self.combined_hud_checkbox.stateChanged.connect(self.toggle_combined_hud)
         hud_mode_layout.addRow(self.combined_hud_checkbox)
@@ -850,26 +850,8 @@ class ControlPanel(QMainWindow):
             return
         if self.state.hud_positions.get('combined_hud', False):
             for combined_window, _ in self.state.hud_windows:
-                if widget_name == 'unit_widget':
-                    parent = combined_window  # CombinedHudWindow's layout.
-                    target_widget = combined_window.unit_widget
-                else:
-                    parent = combined_window.resource_widget.centralWidget()
-                    if widget_name == 'name_widget':
-                        target_widget = combined_window.resource_widget.name_widget
-                    elif widget_name == 'flag_widget':
-                        target_widget = combined_window.resource_widget.flag_widget
-                    elif widget_name == 'money_widget':
-                        target_widget = combined_window.resource_widget.money_widget
-                    elif widget_name == 'money_widget_spent':
-                        target_widget = combined_window.resource_widget.money_spent_widget
-                    elif widget_name == 'power_widget':
-                        target_widget = combined_window.resource_widget.power_widget
-                    elif widget_name == 'superweapon_widget':
-                        target_widget = combined_window.resource_widget.superweapon_widget
-                    else:
-                        continue
-                self.update_combined_widget(parent, target_widget, fixed_index, state_val == 2)
+                if hasattr(combined_window, 'set_element_visibility'):
+                    combined_window.set_element_visibility(widget_name, state_val == 2)
         else:
             index_mapping = {
                 'name_widget': 0,

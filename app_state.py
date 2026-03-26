@@ -35,6 +35,7 @@ class AppState:
         self.game_path = ''         # Game path (empty string by default)
         self.admin = True
         self.scoreboard_window = None
+        self.single_window_workspace = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
         self.current_match_timeline = None

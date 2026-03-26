@@ -49,6 +49,16 @@ def get_player_display_label(player, hud_positions):
     return f"Player {get_player_color_name(player)}"
 
 
+def get_player_tooltip_prefix(player, hud_positions):
+    if use_player_number_mode(hud_positions):
+        return f"Player {get_player_number(player)}"
+    return f"{get_player_color_name(player).title()} player"
+
+
+def build_player_hud_tooltip(player, hud_positions, element_name):
+    return f"{get_player_tooltip_prefix(player, hud_positions)} {element_name}"
+
+
 def get_combined_hud_title(player, hud_positions):
     if use_player_number_mode(hud_positions):
         return f"Player {get_player_number(player)} Combined HUD"

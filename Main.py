@@ -2,7 +2,9 @@
 import sys
 import logging
 import argparse
-from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QEvent, QObject, QPoint, Qt
+from PySide6.QtGui import QColor, QPalette
+from PySide6.QtWidgets import QApplication, QLabel
 
 from logging_config import setup_logging
 from hud_manager import (
@@ -18,9 +20,64 @@ from data_update_thread import DataUpdateThread
 from app_state import AppState
 
 
+class TooltipOverrideFilter(QObject):
+    def __init__(self, app):
+        super().__init__(app)
+        self.app = app
+        self.tooltip_label = QLabel()
+        self.tooltip_label.setWindowFlags(Qt.ToolTip | Qt.FramelessWindowHint)
+        self.tooltip_label.setAttribute(Qt.WA_ShowWithoutActivating, True)
+        self.tooltip_label.setAttribute(Qt.WA_TransparentForMouseEvents, True)
+        self.tooltip_label.setStyleSheet(
+            "QLabel {"
+            " color: #000000;"
+            " background-color: #ffffff;"
+            " border: 1px solid #000000;"
+            " padding: 4px 6px;"
+            "}"
+        )
+        self.tooltip_label.hide()
+
+    def eventFilter(self, watched, event):
+        event_type = event.type()
+
+        if event_type == QEvent.ToolTip:
+            tooltip_text = watched.toolTip() if hasattr(watched, "toolTip") else ""
+            if tooltip_text:
+                self.tooltip_label.setText(tooltip_text)
+                self.tooltip_label.adjustSize()
+                global_pos = event.globalPos() if hasattr(event, "globalPos") else self.app.primaryScreen().availableGeometry().topLeft()
+                self.tooltip_label.move(global_pos + QPoint(16, 24))
+                self.tooltip_label.show()
+                return True
+            self.tooltip_label.hide()
+            return False
+
+        if event_type in (QEvent.Leave, QEvent.Hide, QEvent.WindowDeactivate, QEvent.FocusOut):
+            self.tooltip_label.hide()
+
+        return super().eventFilter(watched, event)
+
+
 def main():
     logging.info("Starting Resource HUD Application")
     app = QApplication(sys.argv)
+    tooltip_palette = QPalette(app.palette())
+    tooltip_palette.setColor(QPalette.ToolTipBase, QColor("#ffffff"))
+    tooltip_palette.setColor(QPalette.ToolTipText, QColor("#000000"))
+    tooltip_palette.setColor(QPalette.Base, QColor("#ffffff"))
+    tooltip_palette.setColor(QPalette.Text, QColor("#000000"))
+    app.setPalette(tooltip_palette)
+    app.setStyleSheet(
+        "QToolTip {"
+        " color: #000000;"
+        " background-color: #ffffff;"
+        " border: 1px solid #000000;"
+        " padding: 4px 6px;"
+        "}"
+    )
+    app.tooltip_override_filter = TooltipOverrideFilter(app)
+    app.installEventFilter(app.tooltip_override_filter)
     state = AppState()
 
     data_thread = None  # Initialize data_thread here

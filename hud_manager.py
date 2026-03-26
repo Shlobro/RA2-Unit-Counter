@@ -20,7 +20,9 @@ from UnitWindow import (
     UnitWindowNumbersOnly,
     UnitWindowImagesOnly,
     CombinedHudWindow,  # Combined HUD window: one window per player.
-    CombinedUnitWindow  # Used in separate mode if separate unit counters are enabled.
+    CombinedUnitWindow,  # Used in separate mode if separate unit counters are enabled.
+    SingleWindowWorkspace,
+    SingleWindowPlayerHud,
 )
 from factory_window import FactoryWindow  # New import for the factory window
 from player_identity import (
@@ -84,6 +86,13 @@ def load_hud_positions(state):
         'superweapon_layout': 'Horizontal',
         'money_spent_widget_size': 50,
         'combined_hud': False,    # False: separate HUD; True: combined HUD.
+        'single_window_geometry': {
+            'x': 50,
+            'y': 50,
+            'width': 1600,
+            'height': 900,
+            'maximized': True,
+        },
         # --- New defaults for factory windows ---
         'show_factory_window': True,
         'show_factory_queue': True,
@@ -268,6 +277,9 @@ def save_hud_positions(state):
         def player_key(player):
             return get_player_bucket_key(player, state.hud_positions)
 
+        if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
+            state.single_window_workspace.save_geometry_to_state()
+
         def get_saved_window_position(window, embedded_widget=None):
             if window is None or not hasattr(window, 'pos'):
                 return None
@@ -430,6 +442,9 @@ def create_hud_windows(state):
                 else:
                     resource_window.close()
         state.hud_windows = []
+        if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
+            state.single_window_workspace.close()
+        state.single_window_workspace = None
 
         # Also close any existing factory windows.
         if hasattr(state, 'factory_windows'):
@@ -450,14 +465,19 @@ def create_hud_windows(state):
         # COMBINED HUD MODE
         # ----------------------------------------
         if state.hud_positions.get('combined_hud', False):
-            # One combined window per player – includes resources, units, and factory panel.
+            state.single_window_workspace = SingleWindowWorkspace(state.hud_positions)
+            # One workspace manager per player; each HUD element remains independently movable.
             for player in state.players:
                 logging.info(f"Creating combined HUD for {player.username.value} with color {player.color_name}")
-                combined = CombinedHudWindow(player, state.hud_positions, state.selected_units_dict)
-                combined.setWindowTitle(get_combined_hud_title(player, state.hud_positions))
-                combined.show()
+                combined = SingleWindowPlayerHud(
+                    player,
+                    state.hud_positions,
+                    state.selected_units_dict,
+                    state.single_window_workspace,
+                )
                 # We store (combined, None) because there's no separate resource window in combined mode
                 state.hud_windows.append((combined, None))
+            state.single_window_workspace.show()
 
             # IMPORTANT: We do NOT create separate top-level FactoryWindows here,
             # because the CombinedHudWindow already embeds a factory panel internally.
@@ -637,6 +657,9 @@ def game_stopped_handler(state):
     if hasattr(state, 'data_update_thread') and state.data_update_thread:
         state.data_update_thread.stop_event.set()
     save_hud_positions(state)
+    if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
+        state.single_window_workspace.close()
+        state.single_window_workspace = None
     for unit_window, resource_window in state.hud_windows:
         if unit_window:
             if isinstance(unit_window, tuple):

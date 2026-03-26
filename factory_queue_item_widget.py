@@ -1,8 +1,9 @@
 # factory_queue_item_widget.py
 import logging
 from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont
-from PySide6.QtWidgets import QLabel
+from PySide6.QtWidgets import QLabel, QMenu
 from PySide6.QtCore import Qt
+from CounterWidget import apply_context_menu_style, find_context_menu_handler
 from constants import resolve_factory_image_path
 
 class FactoryQueueItemWidget(QLabel):
@@ -73,3 +74,18 @@ class FactoryQueueItemWidget(QLabel):
 
             painter.setPen(Qt.white)
             painter.drawText(x, y, text)
+
+    def contextMenuEvent(self, event):
+        handler = find_context_menu_handler(self)
+        if handler is not None:
+            handler.show_context_menu(event.globalPos())
+            return
+
+        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        if workspace is None:
+            super().contextMenuEvent(event)
+            return
+
+        menu = apply_context_menu_style(QMenu(self))
+        workspace.add_window_bar_toggle_action(menu)
+        menu.exec(event.globalPos())

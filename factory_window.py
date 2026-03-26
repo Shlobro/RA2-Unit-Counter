@@ -9,23 +9,30 @@ from PySide6.QtWidgets import (
 
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
+from CounterWidget import apply_context_menu_style
 from hud_position_utils import get_player_position, set_player_position, get_player_setting, set_player_setting
-from player_identity import get_player_bucket_key, get_player_display_label, get_player_legacy_bucket_keys
+from player_identity import (
+    build_player_hud_tooltip,
+    get_player_bucket_key,
+    get_player_display_label,
+    get_player_legacy_bucket_keys,
+)
 
 class FactoryWindow(QMainWindow):
     EXPANSION_SETTING_KEY = 'factory_expansion_direction'
 
-    def __init__(self, player, hud_pos, spacing=0):
+    def __init__(self, player, hud_pos, spacing=0, embedded_mode=False, parent=None):
         """
         Displays a window for all the player's factory production.
         Each "factory" (Infantry, Vehicles, etc.) gets its own
         container widget, which includes the "currently building" unit
         plus any queued units side-by-side or stacked, depending on the main layout.
         """
-        super().__init__()
+        super().__init__(parent)
         self.player = player
         self.hud_pos = hud_pos
         self.spacing = spacing
+        self.embedded_mode = embedded_mode
         self._dragging = False
         self._applying_geometry = False
         self._anchor_refresh_pending = False
@@ -47,17 +54,25 @@ class FactoryWindow(QMainWindow):
         self.show_factory_queue = hud_pos.get('show_factory_queue', False)
         self.player_bucket_key = get_player_bucket_key(self.player, self.hud_pos)
         self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
+        self.tooltip_text = build_player_hud_tooltip(self.player, self.hud_pos, "factory counter")
         self.setWindowTitle(f"{get_player_display_label(self.player, self.hud_pos)} Factory Window")
 
         # Set up the window
-        self.setWindowFlags(Qt.FramelessWindowHint
-                            | Qt.WindowStaysOnTopHint
-                            | Qt.X11BypassWindowManagerHint)
-        self.setAttribute(Qt.WA_TranslucentBackground)
+        if self.embedded_mode:
+            self.setWindowFlags(Qt.Widget)
+            self.setAttribute(Qt.WA_TranslucentBackground, True)
+            self.setAttribute(Qt.WA_NoSystemBackground, True)
+        else:
+            self.setWindowFlags(Qt.FramelessWindowHint
+                                | Qt.WindowStaysOnTopHint
+                                | Qt.X11BypassWindowManagerHint)
+            self.setAttribute(Qt.WA_TranslucentBackground)
         self.make_hud_movable()
 
         # The main container for the entire window
         self.factory_frame = QWidget(self)
+        self.setToolTip(self.tooltip_text)
+        self.factory_frame.setToolTip(self.tooltip_text)
 
         # Create the main layout (vertical or horizontal).
         if self.layout_type == 'Vertical':
@@ -83,7 +98,8 @@ class FactoryWindow(QMainWindow):
         self.setGeometry(0, 0, default_size, default_size)
         self.update_labels()
         self._apply_layout_and_anchor()
-        self.show()
+        if not self.embedded_mode:
+            self.show()
         self._schedule_anchor_refresh()
 
     # --------------------------------------------------------------------
@@ -120,6 +136,8 @@ class FactoryWindow(QMainWindow):
                 show_frame=show_frames,
                 parent=container
             )
+            container.setToolTip(self.tooltip_text)
+            current_widget.setToolTip(self.tooltip_text)
             sub_layout.addWidget(current_widget)
 
             queue_widgets = []
@@ -194,13 +212,19 @@ class FactoryWindow(QMainWindow):
 
         def mouse_press_event(event):
             if event.button() == Qt.LeftButton:
+                self.raise_()
                 self._dragging = True
                 self.offset = event.pos()
 
         def mouse_move_event(event):
             if self.offset is not None:
-                new_x = event.globalX() - self.offset.x()
-                new_y = event.globalY() - self.offset.y()
+                if self.parentWidget() is not None and not self.isWindow():
+                    new_x = self.x() + event.pos().x() - self.offset.x()
+                    new_y = self.y() + event.pos().y() - self.offset.y()
+                    new_x, new_y = self._clamp_to_parent(new_x, new_y)
+                else:
+                    new_x = event.globalX() - self.offset.x()
+                    new_y = event.globalY() - self.offset.y()
                 self.move(new_x, new_y)
                 self.update_hud_position(new_x, new_y)
 
@@ -218,8 +242,16 @@ class FactoryWindow(QMainWindow):
         anchor = self._get_anchor_position(origin_x=x, origin_y=y)
         set_player_position(self.hud_pos, self.player_bucket_key, 'factory', anchor['x'], anchor['y'])
 
-    def contextMenuEvent(self, event):
-        menu = QMenu(self)
+    def _clamp_to_parent(self, x, y):
+        parent = self.parentWidget()
+        if parent is None:
+            return x, y
+        max_x = max(0, parent.width() - self.width())
+        max_y = max(0, parent.height() - self.height())
+        return max(0, min(x, max_x)), max(0, min(y, max_y))
+
+    def show_context_menu(self, global_pos):
+        menu = apply_context_menu_style(QMenu(self))
         if self.layout_type == 'Horizontal':
             expand_forward = menu.addAction("Expand Right")
             expand_reverse = menu.addAction("Expand Left")
@@ -233,15 +265,36 @@ class FactoryWindow(QMainWindow):
         else:
             expand_forward.setChecked(True)
 
-        selected_action = menu.exec(event.globalPos())
+        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        if workspace is not None:
+            menu.addSeparator()
+            toggle_window_bar = workspace.add_window_bar_toggle_action(menu)
+        else:
+            toggle_window_bar = None
+
+        selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
+        elif toggle_window_bar is not None and selected_action == toggle_window_bar:
+            return
+
+    def contextMenuEvent(self, event):
+        self.show_context_menu(event.globalPos())
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        if self._applying_geometry or self._dragging or not self._is_reverse_expansion():
+        if self._applying_geometry or self._dragging:
+            return
+        if not self.isWindow():
+            if self._is_reverse_expansion():
+                self._move_to_saved_anchor()
+            x, y = self._clamp_to_parent(self.x(), self.y())
+            if x != self.x() or y != self.y():
+                self.move(x, y)
+            return
+        if not self._is_reverse_expansion():
             return
         self._move_to_saved_anchor()
 
@@ -283,6 +336,8 @@ class FactoryWindow(QMainWindow):
         if self._dragging:
             return
         pos = self.get_default_position()
+        if self.parentWidget() is not None and not self.isWindow():
+            pos['x'], pos['y'] = self._clamp_to_parent(pos['x'], pos['y'])
         if pos['x'] != self.x() or pos['y'] != self.y():
             self.move(pos['x'], pos['y'])
 
@@ -396,6 +451,7 @@ class FactoryWindow(QMainWindow):
                     prefer_vet=prefer_vet,
                     parent=self
                 )
+                item_widget.setToolTip(self.tooltip_text)
                 queue_widgets.append(item_widget)
                 sub_layout.addWidget(item_widget)
 

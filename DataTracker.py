@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 from DataWidget import MoneyWidget, PowerWidget, NameWidget, FlagWidget, MoneySpentWidget
 from hud_position_utils import get_player_position, set_player_position
 from player_identity import (
+    build_player_hud_tooltip,
     get_combined_hud_title,
     get_player_bucket_key,
     get_player_display_label,
@@ -108,6 +109,7 @@ class ResourceWindow(QMainWindow):
             hud_positions=self.hud_positions
         )
         self.superweapon_widget.update_size(superweapon_widget_size)
+        self._apply_widget_tooltips()
 
         if self.combined_mode:
             # Combined mode: Create one composite widget for all resource widgets.
@@ -193,10 +195,25 @@ class ResourceWindow(QMainWindow):
                 self.superweapon_window,
             ]
 
+    def _apply_widget_tooltips(self):
+        self._set_tooltip_recursive(self.name_widget, build_player_hud_tooltip(self.player, self.hud_positions, "name"))
+        self._set_tooltip_recursive(self.flag_widget, build_player_hud_tooltip(self.player, self.hud_positions, "flag"))
+        self._set_tooltip_recursive(self.money_widget, build_player_hud_tooltip(self.player, self.hud_positions, "money"))
+        self._set_tooltip_recursive(self.money_spent_widget, build_player_hud_tooltip(self.player, self.hud_positions, "money spent"))
+        self._set_tooltip_recursive(self.power_widget, build_player_hud_tooltip(self.player, self.hud_positions, "power"))
+        self._set_tooltip_recursive(self.superweapon_widget, build_player_hud_tooltip(self.player, self.hud_positions, "superweapon counter"))
+
+    def _set_tooltip_recursive(self, widget, tooltip_text):
+        widget.setToolTip(tooltip_text)
+        for child in widget.findChildren(QWidget):
+            child.setToolTip(tooltip_text)
+
     def create_window_with_widget(self, title, widget, player_count, hud_type):
         """Create a new window for a given widget with a specified title."""
         window = QWidget()
         window.setWindowTitle(title)
+        if widget.toolTip():
+            window.setToolTip(widget.toolTip())
         window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
         window.setAttribute(Qt.WA_TranslucentBackground)
 

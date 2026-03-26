@@ -22,7 +22,7 @@ class BaseDataWidget(QWidget):
         if self.use_fixed_width:
             self.data_label.setAlignment(Qt.AlignCenter)
         try:
-            self.data_label.setStyleSheet(f"color: {QColor(self.text_color).name()}; margin-top: -2px;")
+            self._apply_label_style()
         except Exception as e:
             logging.exception("Error setting stylesheet in BaseDataWidget: %s", e)
 
@@ -51,6 +51,10 @@ class BaseDataWidget(QWidget):
         except Exception as e:
             logging.exception("Error computing fixed width: %s", e)
             self.fixed_width = 50
+
+    def _apply_label_style(self):
+        text_color = QColor(self.text_color).name()
+        self.data_label.setStyleSheet(f"color: {text_color}; margin-top: -2px;")
 
     def update_font_size(self):
         """
@@ -102,7 +106,7 @@ class BaseDataWidget(QWidget):
             if new_text_color is not None:
                 self.text_color = QColor(new_text_color)
                 logging.debug(f"update_color: new_text_color: {self.text_color.name()}")
-                self.data_label.setStyleSheet(f"color: {self.text_color.name()}; margin-top: -2px;")
+                self._apply_label_style()
                 self.data_label.adjustSize()
                 self.adjust_size()
         except Exception as e:
