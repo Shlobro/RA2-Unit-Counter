@@ -267,6 +267,16 @@ def save_hud_positions(state):
                 if value is not None:
                     state.hud_positions['use_player_numbers'] = value
 
+            if hasattr(cp, 'pos'):
+                try:
+                    cp_pos = cp.pos()
+                    state.hud_positions['control_panel_position'] = {
+                        'x': cp_pos.x(),
+                        'y': cp_pos.y(),
+                    }
+                except RuntimeError:
+                    pass
+
         if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'path_edit'):
             try:
                 state.hud_positions['game_path'] = state.control_panel.path_edit.text()

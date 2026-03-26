@@ -7,6 +7,7 @@ import logging
 import os
 
 from UnitWindow import CombinedHudWindow
+from hud_position_utils import normalize_position
 from selected_units_utils import load_selected_units_file, save_selected_units_file
 
 
@@ -19,6 +20,7 @@ class ControlPanel(QMainWindow):
 
         self.setWindowTitle("HUD Control Panel")
         self.setGeometry(100, 100, 600, 600)  # Wider to accommodate tabs
+        self.restore_saved_position()
 
         # Create a tab widget
         self.tabs = QTabWidget()
@@ -35,6 +37,14 @@ class ControlPanel(QMainWindow):
 
         # Store reference in state so other modules can access control panel settings.
         self.state.control_panel = self
+
+    def restore_saved_position(self):
+        saved_position = self.state.hud_positions.get('control_panel_position')
+        if not saved_position:
+            return
+
+        normalized_position = normalize_position(saved_position)
+        self.move(normalized_position['x'], normalized_position['y'])
 
     def create_unit_settings_tab(self):
         tab = QWidget()
