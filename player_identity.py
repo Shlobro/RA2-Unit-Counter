@@ -31,6 +31,15 @@ def get_player_flag_export_stem(player, hud_positions):
     return get_player_color_name(player)
 
 
+def get_player_oil_file_stem(player, hud_positions):
+    if use_player_number_mode(hud_positions):
+        return f"Player {get_player_number(player)}"
+
+    if hasattr(player, "get_normalized_color_name_for_file"):
+        return player.get_normalized_color_name_for_file()
+    return get_player_color_name(player)
+
+
 def get_player_flag_legacy_stems(player, hud_positions):
     current_stem = get_player_flag_export_stem(player, hud_positions)
     candidate_stems = [f"Player {get_player_number(player)}"]

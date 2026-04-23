@@ -542,8 +542,11 @@ class Player:
         try:
             folder_name = "oil counts"
             os.makedirs(folder_name, exist_ok=True)
-            normalized_color_name = self.get_normalized_color_name_for_file()
-            filename = os.path.join(folder_name, f"{normalized_color_name}_oil_count.txt")
+            from player_identity import get_player_oil_file_stem
+
+            hud_positions = getattr(self, "hud_positions_override", {}) or {}
+            oil_file_stem = get_player_oil_file_stem(self, hud_positions)
+            filename = os.path.join(folder_name, f"{oil_file_stem}_oil_count.txt")
             with open(filename, 'w') as file:
                 file.write(str(oil_count))
             logging.debug(f"Wrote oil count {oil_count} to file {filename}")
