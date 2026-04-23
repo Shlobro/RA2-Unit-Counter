@@ -263,6 +263,7 @@ def _normalize_player_events(player_data):
     superweapon_events = []
     radar_tech_events = []
     battle_lab_events = []
+    special_unit_events = []
     for event in events.get("superweapons") or []:
         if not isinstance(event, dict):
             continue
@@ -302,10 +303,25 @@ def _normalize_player_events(player_data):
                 "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
             }
         )
+    for event in events.get("special_units") or []:
+        if not isinstance(event, dict):
+            continue
+        unit_name = (event.get("unit_name") or "").strip()
+        if not unit_name:
+            continue
+        special_unit_events.append(
+            {
+                "type": event.get("type") or "special_unit_built",
+                "unit_name": unit_name,
+                "count": max(1, int(event.get("count", 1) or 1)),
+                "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
+            }
+        )
     return {
         "superweapons": sorted(superweapon_events, key=lambda item: (item["t_ms"], item["superweapon_name"])),
         "radar_tech": sorted(radar_tech_events, key=lambda item: (item["t_ms"], item["building_name"])),
         "battle_lab": sorted(battle_lab_events, key=lambda item: (item["t_ms"], item["building_name"])),
+        "special_units": sorted(special_unit_events, key=lambda item: (item["t_ms"], item["unit_name"])),
     }
 
 
@@ -1073,6 +1089,7 @@ class MatchEventTimelineWidget(QWidget):
         self.show_superweapons = True
         self.show_radar_tech = True
         self.show_battle_lab = True
+        self.show_special_units = True
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
 
     def set_show_superweapons(self, show):
@@ -1087,6 +1104,11 @@ class MatchEventTimelineWidget(QWidget):
 
     def set_show_battle_lab(self, show):
         self.show_battle_lab = bool(show)
+        self.updateGeometry()
+        self.update()
+
+    def set_show_special_units(self, show):
+        self.show_special_units = bool(show)
         self.updateGeometry()
         self.update()
 
@@ -1142,6 +1164,21 @@ class MatchEventTimelineWidget(QWidget):
                             "icon_path": resolve_factory_image_path(building_name),
                         }
                     )
+            if self.show_special_units:
+                for event in ((player.get("events") or {}).get("special_units") or []):
+                    unit_name = event.get("unit_name") or ""
+                    count = max(1, int(event.get("count", 1) or 1))
+                    detail_text = unit_name if count == 1 else f"{unit_name} x{count}"
+                    events.append(
+                        {
+                            "t_ms": int(event.get("t_ms", 0) or 0),
+                            "player_name": player.get("username") or f"Player {player.get('index', '?')}",
+                            "accent_color": player.get("accent_color", "#d99a4e"),
+                            "title": f"{player.get('username') or f'Player {player.get('index', '?')}'} made a special unit",
+                            "detail": detail_text,
+                            "icon_path": resolve_factory_image_path(unit_name),
+                        }
+                    )
         events.sort(key=lambda item: (item["t_ms"], item["player_name"].lower(), item.get("title", ""), item.get("detail", "")))
         return events
 
@@ -1165,7 +1202,7 @@ class MatchEventTimelineWidget(QWidget):
         if not visible_events:
             painter.setPen(QColor("#f7d29d"))
             painter.setFont(_load_ra_font(14))
-            message = "No timeline events recorded yet." if (self.show_superweapons or self.show_radar_tech or self.show_battle_lab) else "Enable a timeline filter to view events."
+            message = "No timeline events recorded yet." if (self.show_superweapons or self.show_radar_tech or self.show_battle_lab or self.show_special_units) else "Enable a timeline filter to view events."
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, message)
             return
 
@@ -1341,8 +1378,9 @@ class UnitFilterChip(QPushButton):
 
 
 class PostGameScoreboardWindow(QMainWindow):
-    def __init__(self, payload):
+    def __init__(self, payload, app_state=None):
         super().__init__()
+        self.app_state = app_state
         normalized_payload = normalize_scoreboard_payload(payload)
         self.summary = normalized_payload.get("summary") or {"players": []}
         self.timeline = normalized_payload.get("timeline") or {"players": [], "duration_ms": 0}
@@ -1361,11 +1399,39 @@ class PostGameScoreboardWindow(QMainWindow):
         self.superweapon_timeline_checkbox = None
         self.radar_tech_timeline_checkbox = None
         self.battle_lab_timeline_checkbox = None
+        self.special_units_timeline_checkbox = None
         self.event_timeline_widget = None
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1680, 980)
         self._build_ui()
         self.showMaximized()
+
+    def _timeline_pref(self, key, default=True):
+        if self.app_state is None:
+            return default
+        return bool(self.app_state.hud_positions.get(key, default))
+
+    def _save_timeline_preferences(self):
+        if self.app_state is None:
+            return
+        self.app_state.hud_positions['scoreboard_timeline_show_superweapons'] = bool(
+            self.superweapon_timeline_checkbox.isChecked()
+        ) if self.superweapon_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_superweapons', True)
+        self.app_state.hud_positions['scoreboard_timeline_show_radar_tech'] = bool(
+            self.radar_tech_timeline_checkbox.isChecked()
+        ) if self.radar_tech_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_radar_tech', True)
+        self.app_state.hud_positions['scoreboard_timeline_show_battle_lab'] = bool(
+            self.battle_lab_timeline_checkbox.isChecked()
+        ) if self.battle_lab_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_battle_lab', True)
+        self.app_state.hud_positions['scoreboard_timeline_show_special_units'] = bool(
+            self.special_units_timeline_checkbox.isChecked()
+        ) if self.special_units_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_special_units', True)
+
+        try:
+            with open(self.app_state.HUD_POSITION_FILE, 'w') as file:
+                json.dump(self.app_state.hud_positions, file, indent=4)
+        except OSError:
+            pass
 
     def _build_ui(self):
         title_font = _load_ra_font(34)
@@ -1843,17 +1909,21 @@ class PostGameScoreboardWindow(QMainWindow):
 
         filter_row = QHBoxLayout()
         self.superweapon_timeline_checkbox = QCheckBox("Superweapons")
-        self.superweapon_timeline_checkbox.setChecked(True)
+        self.superweapon_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_superweapons', True))
         self.superweapon_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
         filter_row.addWidget(self.superweapon_timeline_checkbox)
         self.radar_tech_timeline_checkbox = QCheckBox("Radar Tech")
-        self.radar_tech_timeline_checkbox.setChecked(True)
+        self.radar_tech_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_radar_tech', True))
         self.radar_tech_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
         filter_row.addWidget(self.radar_tech_timeline_checkbox)
         self.battle_lab_timeline_checkbox = QCheckBox("Battle Lab")
-        self.battle_lab_timeline_checkbox.setChecked(True)
+        self.battle_lab_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_battle_lab', True))
         self.battle_lab_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
         filter_row.addWidget(self.battle_lab_timeline_checkbox)
+        self.special_units_timeline_checkbox = QCheckBox("Special Units")
+        self.special_units_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_special_units', True))
+        self.special_units_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
+        filter_row.addWidget(self.special_units_timeline_checkbox)
         filter_row.addStretch()
         layout.addLayout(filter_row)
 
@@ -1957,10 +2027,13 @@ class PostGameScoreboardWindow(QMainWindow):
             or self.superweapon_timeline_checkbox is None
             or self.radar_tech_timeline_checkbox is None
             or self.battle_lab_timeline_checkbox is None
+            or self.special_units_timeline_checkbox is None
         ):
             return
         self.event_timeline_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
         self.event_timeline_widget.set_show_radar_tech(self.radar_tech_timeline_checkbox.isChecked())
         self.event_timeline_widget.set_show_battle_lab(self.battle_lab_timeline_checkbox.isChecked())
+        self.event_timeline_widget.set_show_special_units(self.special_units_timeline_checkbox.isChecked())
+        self._save_timeline_preferences()
 
 

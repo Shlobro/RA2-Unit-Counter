@@ -115,6 +115,10 @@ def load_hud_positions(state):
         'show_factory_frames': True,
         'show_post_game_scoreboard': True,
         'saved_scoreboard_limit': -1,
+        'scoreboard_timeline_show_superweapons': True,
+        'scoreboard_timeline_show_radar_tech': True,
+        'scoreboard_timeline_show_battle_lab': True,
+        'scoreboard_timeline_show_special_units': True,
         'use_player_numbers': False,
         # Toggle to show/hide the entire factory window
         'show_factory_window': True
@@ -721,7 +725,7 @@ def show_pending_post_game_scoreboard(state):
     if state.scoreboard_window is not None:
         state.scoreboard_window.close()
 
-    state.scoreboard_window = PostGameScoreboardWindow(payload)
+    state.scoreboard_window = PostGameScoreboardWindow(payload, state)
     state.scoreboard_window.show()
     state.scoreboard_window.raise_()
     state.scoreboard_window.activateWindow()

@@ -86,6 +86,14 @@ BATTLE_LAB_BUILDINGS = {
     "Soviet": ("Soviet Battle Lab",),
     "Allied": ("Allied Battle Lab",),
 }
+SPECIAL_UNIT_NAMES = (
+    "Tanya",
+    "Boris",
+    "Yuri Prime",
+    "Chrono Commando",
+    "Chrono Ivan",
+    "Psi-Corp Trooper",
+)
 
 
 def _now_iso():
@@ -396,15 +404,37 @@ def _record_battle_lab_events(player_meta, elapsed_ms, player):
     event_state["building_name"] = owned_building_name or ""
 
 
+def _record_special_unit_events(player_meta, elapsed_ms, player):
+    special_unit_events = player_meta.setdefault("events", {}).setdefault("special_units", [])
+    event_state = player_meta.setdefault("_special_unit_event_state", {})
+    built_infantry_counts = player.built_infantry_counts or {}
+
+    for unit_name in SPECIAL_UNIT_NAMES:
+        current_count = int(built_infantry_counts.get(unit_name, 0) or 0)
+        previous_count = int(event_state.get(unit_name, 0) or 0)
+        if current_count > previous_count:
+            special_unit_events.append(
+                {
+                    "type": "special_unit_built",
+                    "unit_name": unit_name,
+                    "count": current_count - previous_count,
+                    "t_ms": int(elapsed_ms),
+                }
+            )
+        event_state[unit_name] = current_count
+
+
 def _export_player_timeline_meta(player_meta):
     exported_meta = dict(player_meta)
     exported_meta.pop("_superweapon_event_state", None)
     exported_meta.pop("_radar_tech_event_state", None)
     exported_meta.pop("_battle_lab_event_state", None)
+    exported_meta.pop("_special_unit_event_state", None)
     exported_meta["events"] = {
         "superweapons": list(((player_meta.get("events") or {}).get("superweapons") or [])),
         "radar_tech": list(((player_meta.get("events") or {}).get("radar_tech") or [])),
         "battle_lab": list(((player_meta.get("events") or {}).get("battle_lab") or [])),
+        "special_units": list(((player_meta.get("events") or {}).get("special_units") or [])),
     }
     return exported_meta
 
@@ -434,10 +464,11 @@ def start_match_timeline(state):
         timeline["players"][player_id] = _build_player_metadata(player)
         timeline["series"][player_id] = {metric_id: [] for metric_id in CORE_METRIC_ORDER}
         timeline["players"][player_id]["unit_series"] = {}
-        timeline["players"][player_id]["events"] = {"superweapons": [], "radar_tech": [], "battle_lab": []}
+        timeline["players"][player_id]["events"] = {"superweapons": [], "radar_tech": [], "battle_lab": [], "special_units": []}
         timeline["players"][player_id]["_superweapon_event_state"] = {}
         timeline["players"][player_id]["_radar_tech_event_state"] = {"owned": False}
         timeline["players"][player_id]["_battle_lab_event_state"] = {"owned": False}
+        timeline["players"][player_id]["_special_unit_event_state"] = {}
 
     state.current_match_timeline = timeline
     state.completed_match_path = None
@@ -490,6 +521,7 @@ def record_match_timeline_sample(state):
         _record_superweapon_events(timeline["players"][player_id], elapsed_ms, player)
         _record_radar_tech_events(timeline["players"][player_id], elapsed_ms, player)
         _record_battle_lab_events(timeline["players"][player_id], elapsed_ms, player)
+        _record_special_unit_events(timeline["players"][player_id], elapsed_ms, player)
 
     timeline["_last_sample_ms"] = elapsed_ms
 

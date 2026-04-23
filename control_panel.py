@@ -1787,7 +1787,7 @@ class ControlPanel(QMainWindow):
         if getattr(self.state, 'scoreboard_window', None) is not None:
             self.state.scoreboard_window.close()
 
-        self.state.scoreboard_window = PostGameScoreboardWindow(payload)
+        self.state.scoreboard_window = PostGameScoreboardWindow(payload, self.state)
         self.state.scoreboard_window.show()
         self.state.scoreboard_window.raise_()
         self.state.scoreboard_window.activateWindow()
