@@ -1251,6 +1251,25 @@ class UnitFilterDialog(QDialog):
         return set(self.selected_names)
 
 
+class UnitFilterChip(QPushButton):
+    def __init__(self, unit_name, selected=True, parent=None):
+        super().__init__(_display_name(unit_name), parent)
+        self.unit_name = unit_name
+        self.setObjectName("unitFilterChip")
+        self.setCheckable(True)
+        self.setChecked(selected)
+        self.setMinimumSize(118, 104)
+        self.setMaximumWidth(140)
+        self.setIconSize(QSize(56, 44))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setAutoDefault(False)
+        self.setDefault(False)
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 56, 44)
+        if pixmap is not None:
+            self.setIcon(QIcon(pixmap))
+
+
 class PostGameScoreboardWindow(QMainWindow):
     def __init__(self, payload):
         super().__init__()
@@ -1261,8 +1280,14 @@ class PostGameScoreboardWindow(QMainWindow):
         self.tabs = None
         self.metric_buttons = {}
         self.legend_buttons = {}
-        self.filter_button = None
         self.filter_status_label = None
+        self.unit_filter_panel = None
+        self.unit_filter_title_label = None
+        self.unit_filter_scroll = None
+        self.unit_filter_grid = None
+        self.unit_filter_empty_label = None
+        self.select_all_units_button = None
+        self.unit_filter_buttons = {}
         self.superweapon_timeline_checkbox = None
         self.event_timeline_widget = None
         self.setWindowTitle("Post-Game Scoreboard")
@@ -1413,6 +1438,11 @@ class PostGameScoreboardWindow(QMainWindow):
                 color: rgba(230, 203, 177, 0.82);
                 font-size: 14px;
             }}
+            QLabel#unitFilterTitle {{
+                color: rgba(255, 214, 150, 0.95);
+                font-size: 15px;
+                font-weight: 700;
+            }}
             QPushButton#metricButton {{
                 background-color: rgba(24, 14, 11, 0.92);
                 border: 1px solid rgba(201, 112, 50, 0.6);
@@ -1451,6 +1481,33 @@ class PostGameScoreboardWindow(QMainWindow):
                 background: rgba(36, 20, 15, 0.95);
                 border: 1px solid rgba(255, 214, 150, 0.95);
                 color: #fff4d3;
+            }}
+            QFrame#unitFilterPanel {{
+                background-color: rgba(7, 5, 5, 0.5);
+                border: 1px solid rgba(201, 112, 50, 0.38);
+                border-radius: 14px;
+            }}
+            QPushButton#unitFilterChip {{
+                background-color: rgba(18, 12, 10, 0.9);
+                border: 1px solid rgba(201, 112, 50, 0.45);
+                border-radius: 12px;
+                padding: 10px 8px;
+                color: #f1dbbe;
+                font-size: 13px;
+                font-weight: 700;
+                text-align: center;
+            }}
+            QPushButton#unitFilterChip:hover {{
+                background-color: rgba(30, 18, 14, 0.94);
+                border-color: rgba(228, 145, 76, 0.7);
+            }}
+            QPushButton#unitFilterChip:checked {{
+                background-color: rgba(114, 55, 24, 0.96);
+                border: 1px solid rgba(255, 214, 150, 0.95);
+                color: #fff4d3;
+            }}
+            QPushButton#unitFilterChip:pressed {{
+                background-color: rgba(141, 68, 29, 0.98);
             }}
             QLabel#hoverReadout {{
                 color: #fff1cf;
@@ -1634,18 +1691,49 @@ class PostGameScoreboardWindow(QMainWindow):
         layout.addLayout(metric_grid)
 
         filter_row = QHBoxLayout()
-        self.filter_button = QPushButton("Select Units")
-        self.filter_button.setObjectName("metricButton")
-        self.filter_button.setAutoDefault(False)
-        self.filter_button.setDefault(False)
-        self.filter_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.filter_button.clicked.connect(self._open_unit_filter_dialog)
-        filter_row.addWidget(self.filter_button)
+        self.unit_filter_title_label = QLabel("FILTERED UNITS")
+        self.unit_filter_title_label.setObjectName("unitFilterTitle")
+        filter_row.addWidget(self.unit_filter_title_label)
+
+        self.select_all_units_button = QPushButton("Select All")
+        self.select_all_units_button.setObjectName("metricButton")
+        self.select_all_units_button.setAutoDefault(False)
+        self.select_all_units_button.setDefault(False)
+        self.select_all_units_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.select_all_units_button.clicked.connect(self._select_all_graph_units)
+        filter_row.addWidget(self.select_all_units_button)
 
         self.filter_status_label = QLabel("")
         self.filter_status_label.setObjectName("graphSubText")
         filter_row.addWidget(self.filter_status_label, 1)
         layout.addLayout(filter_row)
+
+        self.unit_filter_panel = QFrame()
+        self.unit_filter_panel.setObjectName("unitFilterPanel")
+        unit_filter_layout = QVBoxLayout(self.unit_filter_panel)
+        unit_filter_layout.setContentsMargins(12, 12, 12, 12)
+        unit_filter_layout.setSpacing(10)
+
+        self.unit_filter_scroll = QScrollArea()
+        self.unit_filter_scroll.setWidgetResizable(True)
+        self.unit_filter_scroll.setFrameShape(QFrame.Shape.NoFrame)
+        self.unit_filter_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.unit_filter_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+        filter_content = QWidget()
+        self.unit_filter_grid = QGridLayout(filter_content)
+        self.unit_filter_grid.setContentsMargins(0, 0, 0, 0)
+        self.unit_filter_grid.setHorizontalSpacing(10)
+        self.unit_filter_grid.setVerticalSpacing(10)
+        self.unit_filter_scroll.setWidget(filter_content)
+        unit_filter_layout.addWidget(self.unit_filter_scroll)
+
+        self.unit_filter_empty_label = QLabel("No per-unit timeline data available for this graph.")
+        self.unit_filter_empty_label.setObjectName("graphSubText")
+        self.unit_filter_empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        unit_filter_layout.addWidget(self.unit_filter_empty_label)
+
+        layout.addWidget(self.unit_filter_panel)
 
         self.chart_widget = TimelineChartWidget(self.timeline, self.summary["players"])
         layout.addWidget(self.chart_widget, 1)
@@ -1713,29 +1801,75 @@ class PostGameScoreboardWindow(QMainWindow):
         self.legend_buttons[player_id].setChecked(player_id in self.chart_widget.visible_player_ids)
 
     def _refresh_filter_controls(self):
-        if self.filter_button is None or self.filter_status_label is None:
+        if self.filter_status_label is None or self.unit_filter_panel is None:
             return
 
         supports_filter = self.chart_widget.metric_supports_unit_filter()
         has_data = self.chart_widget.has_unit_series_data()
-        self.filter_button.setVisible(supports_filter)
+        self.unit_filter_panel.setVisible(supports_filter)
+        if self.unit_filter_title_label is not None:
+            self.unit_filter_title_label.setVisible(supports_filter)
         self.filter_status_label.setVisible(supports_filter)
-        self.filter_button.setEnabled(has_data)
+        if self.select_all_units_button is not None:
+            self.select_all_units_button.setVisible(supports_filter)
+            self.select_all_units_button.setEnabled(has_data)
         self.filter_status_label.setText(self.chart_widget.selected_unit_summary_text() if supports_filter else "")
+        self._rebuild_unit_filter_widgets(supports_filter, has_data)
 
-    def _open_unit_filter_dialog(self):
-        if not self.chart_widget.metric_supports_unit_filter():
+    def _clear_unit_filter_grid(self):
+        if self.unit_filter_grid is None:
+            return
+        while self.unit_filter_grid.count():
+            item = self.unit_filter_grid.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+        self.unit_filter_buttons = {}
+
+    def _rebuild_unit_filter_widgets(self, supports_filter, has_data):
+        self._clear_unit_filter_grid()
+        if self.unit_filter_empty_label is not None:
+            self.unit_filter_empty_label.setVisible(supports_filter and not has_data)
+        if not supports_filter or not has_data or self.unit_filter_grid is None:
             return
 
-        dialog = UnitFilterDialog(
-            self.chart_widget.metric_id,
-            self.chart_widget.available_unit_names(),
-            self.chart_widget.current_unit_selection(),
-            self,
-        )
-        if dialog.exec():
-            self.chart_widget.set_current_unit_selection(dialog.selected_unit_names())
-            self._refresh_filter_controls()
+        unit_names = self.chart_widget.available_unit_names()
+        selected_names = self.chart_widget.current_unit_selection()
+        if not selected_names:
+            selected_names = set(unit_names)
+
+        for index, unit_name in enumerate(unit_names):
+            button = UnitFilterChip(unit_name, selected=unit_name in selected_names, parent=self.unit_filter_panel)
+            button.clicked.connect(lambda checked, target_name=unit_name: self._toggle_graph_unit_filter(target_name, checked))
+            self.unit_filter_buttons[unit_name] = button
+            self.unit_filter_grid.addWidget(button, index // 8, index % 8)
+
+    def _toggle_graph_unit_filter(self, unit_name, checked):
+        selected_names = self.chart_widget.current_unit_selection()
+        available_names = self.chart_widget.available_unit_names()
+        if not selected_names:
+            selected_names = set(available_names)
+
+        if checked:
+            selected_names.add(unit_name)
+        else:
+            if len(selected_names) <= 1 and unit_name in selected_names:
+                button = self.unit_filter_buttons.get(unit_name)
+                if button is not None:
+                    button.blockSignals(True)
+                    button.setChecked(True)
+                    button.blockSignals(False)
+                return
+            selected_names.discard(unit_name)
+
+        self.chart_widget.set_current_unit_selection(selected_names)
+        self._refresh_filter_controls()
+
+    def _select_all_graph_units(self):
+        if not self.chart_widget.metric_supports_unit_filter():
+            return
+        self.chart_widget.set_current_unit_selection(self.chart_widget.available_unit_names())
+        self._refresh_filter_controls()
 
     def _refresh_timeline_filters(self):
         if self.event_timeline_widget is None or self.superweapon_timeline_checkbox is None:
