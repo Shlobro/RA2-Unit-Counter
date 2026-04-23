@@ -5,6 +5,7 @@ import os
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRectF, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QFont, QFontDatabase, QIcon, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import (
+    QCheckBox,
     QDialog,
     QFrame,
     QGraphicsDropShadowEffect,
@@ -25,7 +26,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from constants import _existing_asset_paths, resolve_factory_image_path
+from constants import _existing_asset_paths, name_to_path, resolve_factory_image_path
 from player_identity import get_player_flag_export_stem, get_player_flag_legacy_stems
 
 
@@ -257,10 +258,33 @@ def _last_series_value(series_map, metric_id, default=0):
     return int(points[-1].get("value", default))
 
 
+def _normalize_player_events(player_data):
+    events = player_data.get("events") or {}
+    superweapon_events = []
+    for event in events.get("superweapons") or []:
+        if not isinstance(event, dict):
+            continue
+        superweapon_name = (event.get("superweapon_name") or "").strip()
+        if not superweapon_name:
+            continue
+        superweapon_events.append(
+            {
+                "type": event.get("type") or "superweapon_used",
+                "superweapon_name": superweapon_name,
+                "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
+            }
+        )
+    return {
+        "superweapons": sorted(superweapon_events, key=lambda item: (item["t_ms"], item["superweapon_name"])),
+    }
+
+
 def normalize_scoreboard_payload(payload, match_path=None):
     if "summary" in payload:
         summary = payload.get("summary") or {"players": []}
         timeline = payload.get("timeline") or {"players": [], "duration_ms": 0}
+        for player_data in timeline.get("players", []):
+            player_data["events"] = _normalize_player_events(player_data)
         return {
             "summary": summary,
             "timeline": timeline,
@@ -270,6 +294,7 @@ def normalize_scoreboard_payload(payload, match_path=None):
     timeline = payload or {"players": [], "duration_ms": 0}
     summary_players = []
     for player_data in timeline.get("players", []):
+        player_data["events"] = _normalize_player_events(player_data)
         series_map = player_data.get("series") or {}
         result = player_data.get("result") or ("WINNER" if player_data.get("is_winner") else "DEFEATED" if player_data.get("is_loser") else "ACTIVE")
         summary_players.append(
@@ -1010,6 +1035,128 @@ class TimelineChartWidget(QWidget):
         super().leaveEvent(event)
 
 
+class MatchEventTimelineWidget(QWidget):
+    def __init__(self, timeline, summary_players):
+        super().__init__()
+        self.timeline = timeline or {"players": [], "duration_ms": 0}
+        self.summary_players = summary_players or []
+        self.show_superweapons = True
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
+
+    def set_show_superweapons(self, show):
+        self.show_superweapons = bool(show)
+        self.updateGeometry()
+        self.update()
+
+    def _ordered_players(self):
+        ordered_players = []
+        players_by_id = {str(player.get("player_id", "")): player for player in self.timeline.get("players", [])}
+        for summary_player in self.summary_players:
+            player_id = str(summary_player.get("player_id", ""))
+            if player_id in players_by_id:
+                ordered_players.append(players_by_id.pop(player_id))
+        ordered_players.extend(players_by_id.values())
+        return ordered_players
+
+    def _visible_events(self):
+        events = []
+        for player in self._ordered_players():
+            if self.show_superweapons:
+                for event in ((player.get("events") or {}).get("superweapons") or []):
+                    events.append(
+                        {
+                            "t_ms": int(event.get("t_ms", 0) or 0),
+                            "player_name": player.get("username") or f"Player {player.get('index', '?')}",
+                            "accent_color": player.get("accent_color", "#d99a4e"),
+                            "superweapon_name": event.get("superweapon_name") or "",
+                            "icon_path": name_to_path(event.get("superweapon_name") or ""),
+                        }
+                    )
+        events.sort(key=lambda item: (item["t_ms"], item["player_name"].lower(), item["superweapon_name"]))
+        return events
+
+    def sizeHint(self):
+        event_count = max(1, len(self._visible_events()))
+        return QSize(960, max(220, 88 + event_count * 92))
+
+    def minimumSizeHint(self):
+        return QSize(640, 220)
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        panel_rect = self.rect().adjusted(0, 0, -1, -1)
+        painter.setPen(QPen(QColor(196, 109, 50, 160), 1))
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawRoundedRect(panel_rect, 16, 16)
+
+        visible_events = self._visible_events()
+        if not visible_events:
+            painter.setPen(QColor("#f7d29d"))
+            painter.setFont(_load_ra_font(14))
+            message = "No timeline events recorded yet." if self.show_superweapons else "Enable a timeline filter to view events."
+            painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, message)
+            return
+
+        left_x = 84
+        line_x = 204
+        top_y = 52
+        row_height = 92
+        icon_size = 56
+
+        painter.setPen(QPen(QColor(196, 109, 50, 120), 3))
+        painter.drawLine(line_x, top_y - 12, line_x, top_y + row_height * max(0, len(visible_events) - 1) + 24)
+
+        time_font = _load_ra_font(12)
+        title_font = _load_ra_font(15)
+        meta_font = _load_ra_font(11, QFont.Normal)
+
+        for index, item in enumerate(visible_events):
+            row_y = top_y + index * row_height
+            marker_center_y = row_y + 26
+            accent_color = _as_color(item.get("accent_color"))
+
+            painter.setPen(QColor("#f7d29d"))
+            painter.setFont(time_font)
+            painter.drawText(QRectF(left_x, row_y - 4, 96, 28), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter, _format_duration(item["t_ms"]))
+
+            painter.setBrush(accent_color)
+            painter.setPen(QPen(QColor("#0b0908"), 2))
+            painter.drawEllipse(QRectF(line_x - 10, marker_center_y - 10, 20, 20))
+
+            icon_rect = QRectF(line_x + 28, row_y - 2, icon_size, icon_size)
+            pixmap = _load_pixmap(item.get("icon_path"), icon_size, icon_size)
+            if pixmap is not None:
+                icon_x = icon_rect.left() + (icon_rect.width() - pixmap.width()) / 2
+                icon_y = icon_rect.top() + (icon_rect.height() - pixmap.height()) / 2
+                painter.drawPixmap(int(icon_x), int(icon_y), pixmap)
+            else:
+                painter.setPen(QPen(accent_color, 2))
+                painter.setBrush(QColor(12, 9, 8, 220))
+                painter.drawRoundedRect(icon_rect, 10, 10)
+                painter.setPen(QColor("#f7d29d"))
+                painter.setFont(_load_ra_font(10))
+                painter.drawText(icon_rect, Qt.AlignmentFlag.AlignCenter, "?")
+
+            text_x = line_x + 106
+            painter.setPen(QColor("#fff1cf"))
+            painter.setFont(title_font)
+            painter.drawText(
+                QRectF(text_x, row_y - 2, self.width() - text_x - 30, 28),
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                f"{item['player_name']} used {item['superweapon_name']}",
+            )
+
+            painter.setPen(QColor(222, 195, 167, 210))
+            painter.setFont(meta_font)
+            painter.drawText(
+                QRectF(text_x, row_y + 28, self.width() - text_x - 30, 24),
+                Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
+                "Detected when the superweapon timer reset and then resumed charging.",
+            )
+
+
 class UnitFilterDialog(QDialog):
     def __init__(self, metric_id, unit_names, selected_unit_names, parent=None):
         super().__init__(parent)
@@ -1111,10 +1258,13 @@ class PostGameScoreboardWindow(QMainWindow):
         self.summary = normalized_payload.get("summary") or {"players": []}
         self.timeline = normalized_payload.get("timeline") or {"players": [], "duration_ms": 0}
         self.match_path = normalized_payload.get("match_path")
+        self.tabs = None
         self.metric_buttons = {}
         self.legend_buttons = {}
         self.filter_button = None
         self.filter_status_label = None
+        self.superweapon_timeline_checkbox = None
+        self.event_timeline_widget = None
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1680, 980)
         self._build_ui()
@@ -1159,6 +1309,12 @@ class PostGameScoreboardWindow(QMainWindow):
 
         tabs = QTabWidget()
         tabs.setObjectName("scoreboardTabs")
+        self.tabs = tabs
+
+        timeline_tab = QWidget()
+        timeline_layout = QVBoxLayout(timeline_tab)
+        timeline_layout.setContentsMargins(18, 18, 18, 24)
+        timeline_layout.addWidget(self._build_timeline_panel(), 1)
 
         graphs_tab = QWidget()
         graphs_layout = QVBoxLayout(graphs_tab)
@@ -1184,9 +1340,10 @@ class PostGameScoreboardWindow(QMainWindow):
         for col in range(cols):
             grid.setColumnStretch(col, 1)
         breakdown_layout.addWidget(cards_container)
+        tabs.addTab(timeline_tab, "Timeline")
         tabs.addTab(breakdown_tab, "Player Breakdown")
-
         tabs.addTab(graphs_tab, "Graphs")
+        tabs.setCurrentIndex(0)
 
         root.addWidget(tabs)
 
@@ -1509,6 +1666,42 @@ class PostGameScoreboardWindow(QMainWindow):
         self._set_metric("income_total")
         return panel
 
+    def _build_timeline_panel(self):
+        panel = QFrame()
+        panel.setObjectName("graphPanel")
+        panel.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(18, 14, 18, 18)
+        layout.setSpacing(12)
+
+        header_row = QHBoxLayout()
+        title = QLabel("MATCH EVENTS")
+        title.setObjectName("graphHeading")
+        header_row.addWidget(title)
+        header_row.addStretch()
+        layout.addLayout(header_row)
+
+        filter_row = QHBoxLayout()
+        self.superweapon_timeline_checkbox = QCheckBox("Superweapons")
+        self.superweapon_timeline_checkbox.setChecked(True)
+        self.superweapon_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
+        filter_row.addWidget(self.superweapon_timeline_checkbox)
+        filter_row.addStretch()
+        layout.addLayout(filter_row)
+
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+        self.event_timeline_widget = MatchEventTimelineWidget(self.timeline, self.summary["players"])
+        scroll_area.setWidget(self.event_timeline_widget)
+        layout.addWidget(scroll_area, 1)
+
+        self._refresh_timeline_filters()
+        return panel
+
     def _set_metric(self, metric_id):
         for button_metric_id, button in self.metric_buttons.items():
             button.setChecked(button_metric_id == metric_id)
@@ -1543,5 +1736,10 @@ class PostGameScoreboardWindow(QMainWindow):
         if dialog.exec():
             self.chart_widget.set_current_unit_selection(dialog.selected_unit_names())
             self._refresh_filter_controls()
+
+    def _refresh_timeline_filters(self):
+        if self.event_timeline_widget is None or self.superweapon_timeline_checkbox is None:
+            return
+        self.event_timeline_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
 
 

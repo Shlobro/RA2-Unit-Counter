@@ -5,7 +5,7 @@ import tempfile
 import time
 from datetime import datetime
 
-from constants import _existing_asset_paths
+from constants import _existing_asset_paths, SUPERCLASS_READY_VALUE
 from scoreboard_window import build_post_game_snapshot
 
 
@@ -273,6 +273,65 @@ def _record_unit_series_sample(unit_series, elapsed_ms, player):
         _record_named_count_series(target_bucket, elapsed_ms, counts)
 
 
+def _record_superweapon_events(player_meta, elapsed_ms, player):
+    event_state = player_meta.setdefault("_superweapon_event_state", {})
+    superweapon_events = player_meta.setdefault("events", {}).setdefault("superweapons", [])
+
+    for name in player.superweapon_order:
+        timer_info = player.superweapon_timers.get(name) or {}
+        owned = bool(timer_info.get("owned"))
+        raw_value = int(timer_info.get("raw_value", 0) or 0)
+        raw_value = max(0, min(raw_value, SUPERCLASS_READY_VALUE))
+
+        state = event_state.setdefault(
+            name,
+            {
+                "prev_owned": False,
+                "prev_raw_value": 0,
+                "pending_reset": None,
+            },
+        )
+
+        pending_reset = state.get("pending_reset")
+        if pending_reset is not None:
+            pending_raw_value = int(pending_reset.get("raw_value", 0))
+            if owned and raw_value > pending_raw_value and raw_value < SUPERCLASS_READY_VALUE:
+                superweapon_events.append(
+                    {
+                        "type": "superweapon_used",
+                        "superweapon_name": name,
+                        "t_ms": int(pending_reset.get("t_ms", elapsed_ms)),
+                    }
+                )
+                pending_reset = None
+            elif not owned or raw_value >= SUPERCLASS_READY_VALUE:
+                pending_reset = None
+
+        prev_owned = bool(state.get("prev_owned"))
+        prev_raw_value = int(state.get("prev_raw_value", 0))
+        if (
+            prev_owned
+            and owned
+            and prev_raw_value >= SUPERCLASS_READY_VALUE - 1
+            and raw_value <= max(10, SUPERCLASS_READY_VALUE // 3)
+            and raw_value < prev_raw_value
+        ):
+            pending_reset = {"t_ms": elapsed_ms, "raw_value": raw_value}
+
+        state["prev_owned"] = owned
+        state["prev_raw_value"] = raw_value
+        state["pending_reset"] = pending_reset
+
+
+def _export_player_timeline_meta(player_meta):
+    exported_meta = dict(player_meta)
+    exported_meta.pop("_superweapon_event_state", None)
+    exported_meta["events"] = {
+        "superweapons": list(((player_meta.get("events") or {}).get("superweapons") or [])),
+    }
+    return exported_meta
+
+
 def start_match_timeline(state):
     if not state.players:
         return None
@@ -298,6 +357,8 @@ def start_match_timeline(state):
         timeline["players"][player_id] = _build_player_metadata(player)
         timeline["series"][player_id] = {metric_id: [] for metric_id in CORE_METRIC_ORDER}
         timeline["players"][player_id]["unit_series"] = {}
+        timeline["players"][player_id]["events"] = {"superweapons": []}
+        timeline["players"][player_id]["_superweapon_event_state"] = {}
 
     state.current_match_timeline = timeline
     state.completed_match_path = None
@@ -347,6 +408,7 @@ def record_match_timeline_sample(state):
         for metric_id, value in metrics.items():
             series.setdefault(metric_id, []).append({"t_ms": elapsed_ms, "value": int(value)})
         _record_unit_series_sample(unit_series, elapsed_ms, player)
+        _record_superweapon_events(timeline["players"][player_id], elapsed_ms, player)
 
     timeline["_last_sample_ms"] = elapsed_ms
 
@@ -357,7 +419,7 @@ def _build_completed_payload(state):
     players = []
     for player in state.players:
         player_id = _player_id(player)
-        player_meta = dict(timeline["players"].get(player_id, _build_player_metadata(player)))
+        player_meta = _export_player_timeline_meta(timeline["players"].get(player_id, _build_player_metadata(player)))
         player_meta.update(
             {
                 "result": "DEFEATED" if player_id in losing_player_ids else "WINNER" if losing_player_ids else "WINNER" if player.is_winner else "DEFEATED" if player.is_loser else "ACTIVE",
@@ -474,7 +536,7 @@ def build_scoreboard_timeline(state):
         for player_id, meta in timeline["players"].items():
             players.append(
                 {
-                    **meta,
+                    **_export_player_timeline_meta(meta),
                     "series": timeline["series"].get(player_id, {}),
                 }
             )
@@ -495,7 +557,7 @@ def build_scoreboard_timeline(state):
     players = []
     for player in state.players:
         player_id = _player_id(player)
-        meta = dict(timeline["players"].get(player_id, _build_player_metadata(player)))
+        meta = _export_player_timeline_meta(timeline["players"].get(player_id, _build_player_metadata(player)))
         meta.update(
             {
                 "result": "DEFEATED" if player_id in losing_player_ids else "WINNER" if losing_player_ids else "WINNER" if player.is_winner else "DEFEATED" if player.is_loser else "ACTIVE",
