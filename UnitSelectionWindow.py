@@ -1,6 +1,6 @@
 import logging
 
-from PySide6.QtGui import QPixmap, QImage, QAction, QPainter, QFont
+from PySide6.QtGui import QPixmap, QImage, QAction, QPainter, QFont, QColor, QPainterPath
 from PySide6.QtWidgets import QMainWindow, QWidget, QTabWidget, QVBoxLayout, QGridLayout, QLabel, QMenu, QInputDialog
 from PySide6.QtCore import Qt
 
@@ -36,7 +36,8 @@ class UnitSelectionWindow(QMainWindow):
         self.validate_position_data()
 
         self.setWindowTitle("Unit Selection")
-        self.setGeometry(200, 200, 400, 300)
+        self.setGeometry(200, 200, 480, 400)
+        self._apply_dark_theme()
 
         main_widget = QWidget(self)
         self.setCentralWidget(main_widget)
@@ -48,6 +49,88 @@ class UnitSelectionWindow(QMainWindow):
         # Layout setup
         layout = QVBoxLayout(main_widget)
         layout.addWidget(self.tab_widget)
+
+    def _apply_dark_theme(self):
+        self.setStyleSheet("""
+            QMainWindow, QWidget {
+                background-color: #1a1a2e;
+                color: #e0e0e0;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 13px;
+            }
+            QTabWidget::pane {
+                border: 1px solid #2d2d4e;
+                background-color: #16213e;
+                border-radius: 4px;
+            }
+            QTabBar::tab {
+                background-color: #0f3460;
+                color: #a0a0c0;
+                padding: 7px 14px;
+                margin-right: 2px;
+                border-top-left-radius: 6px;
+                border-top-right-radius: 6px;
+                font-weight: 500;
+            }
+            QTabBar::tab:selected {
+                background-color: #e94560;
+                color: #ffffff;
+                font-weight: 700;
+            }
+            QTabBar::tab:hover:!selected {
+                background-color: #1a4a8a;
+                color: #e0e0e0;
+            }
+            QLabel {
+                color: #c0c0e0;
+            }
+            QMenu {
+                background-color: #0f3460;
+                color: #e0e0e0;
+                border: 1px solid #2d2d4e;
+                border-radius: 6px;
+                padding: 4px;
+            }
+            QMenu::item {
+                padding: 6px 20px;
+                border-radius: 4px;
+            }
+            QMenu::item:selected {
+                background-color: #e94560;
+            }
+            QScrollBar:vertical {
+                background-color: #1a1a2e;
+                width: 10px;
+                border-radius: 5px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #0f3460;
+                border-radius: 5px;
+                min-height: 20px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #e94560;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+            QScrollBar:horizontal {
+                background-color: #1a1a2e;
+                height: 10px;
+                border-radius: 5px;
+            }
+            QScrollBar::handle:horizontal {
+                background-color: #0f3460;
+                border-radius: 5px;
+                min-width: 20px;
+            }
+            QScrollBar::handle:horizontal:hover {
+                background-color: #e94560;
+            }
+            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+                width: 0px;
+            }
+        """)
 
     def create_faction_tabs(self):
         for faction in factions:
@@ -325,34 +408,28 @@ class UnitSelectionWindow(QMainWindow):
             lock_icon = lock_icon.scaled(20, 20, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             painter.drawPixmap(0, 0, lock_icon)
             painter.end()
-        # Overlay the position text if set
         if position > -1:
             painter = QPainter(image)
-            # Use larger, bold font for better visibility
-            font = QFont('Arial', 16, QFont.Bold)
+            painter.setRenderHint(QPainter.Antialiasing)
+            font = QFont('Segoe UI', 9, QFont.Bold)
             painter.setFont(font)
-            
-            # Create background circle for position number
             fm = painter.fontMetrics()
             text = str(position)
-            text_width = fm.horizontalAdvance(text)
-            text_height = fm.height()
-            
-            # Position circle in top-right corner
-            circle_size = max(text_width + 8, text_height + 4)
-            circle_x = image.width() - circle_size - 2
-            circle_y = 2
-            
-            # Draw background circle
-            painter.setPen(Qt.black)
-            painter.setBrush(Qt.yellow if is_selected else Qt.lightGray)
-            painter.drawEllipse(circle_x, circle_y, circle_size, circle_size)
-            
-            # Draw position number
-            painter.setPen(Qt.black)
-            text_x = circle_x + (circle_size - text_width) // 2
-            text_y = circle_y + (circle_size + text_height) // 2 - fm.descent()
-            painter.drawText(text_x, text_y, text)
+            text_w = fm.horizontalAdvance(text)
+            text_h = fm.ascent()
+            pad_x, pad_y = 5, 3
+            badge_w = text_w + pad_x * 2
+            badge_h = text_h + pad_y * 2
+            badge_x = image.width() - badge_w - 2
+            badge_y = 2
+            radius = badge_h / 2
+            path = QPainterPath()
+            path.addRoundedRect(badge_x, badge_y, badge_w, badge_h, radius, radius)
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(QColor(30, 30, 60, 210))
+            painter.drawPath(path)
+            painter.setPen(QColor('#e94560'))
+            painter.drawText(badge_x + pad_x, badge_y + pad_y + text_h - 1, text)
             painter.end()
         label.setPixmap(QPixmap.fromImage(image))
 

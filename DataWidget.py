@@ -70,6 +70,12 @@ class BaseDataWidget(QWidget):
         except Exception as e:
             logging.exception("Error updating font size: %s", e)
 
+    def update_font_family(self, family):
+        if family:
+            self.custom_font.setFamily(family)
+        self.update_font_size()
+        self.adjust_size()
+
     def update_data_size(self, new_size):
         """
         Adjust the widget's size (and font) dynamically.

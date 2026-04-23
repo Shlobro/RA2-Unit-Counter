@@ -419,13 +419,16 @@ class ResourceWindow(QMainWindow):
         )
 
     def get_power_widget_colors(self):
-        custom_color = self._get_custom_color('power_custom_color')
-        mode = str(self.hud_positions.get('power_color_mode', '')).strip().lower()
-        if mode == 'custom' and custom_color is not None:
-            return custom_color, custom_color
-
-        default_color = QColor(Qt.red) if self.player.power < 0 else QColor(Qt.green)
-        return default_color, default_color
+        is_low = self.player.power < 0
+        if is_low:
+            mode = str(self.hud_positions.get('power_low_color_mode', '')).strip().lower()
+            custom = self._get_custom_color('power_low_color') if mode == 'custom' else None
+            color = custom if custom is not None else QColor(Qt.red)
+        else:
+            mode = str(self.hud_positions.get('power_good_color_mode', '')).strip().lower()
+            custom = self._get_custom_color('power_good_color') if mode == 'custom' else None
+            color = custom if custom is not None else QColor(Qt.green)
+        return color, color
 
     def _get_custom_color(self, key):
         color_value = self.hud_positions.get(key)
