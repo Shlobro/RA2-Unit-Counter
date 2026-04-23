@@ -703,17 +703,22 @@ def maybe_show_post_game_scoreboard(state):
 
     finalize_match_timeline(state)
     timeline = build_scoreboard_timeline(state)
+    state.pending_post_game_scoreboard_payload = {
+        "summary": snapshot,
+        "timeline": timeline,
+        "match_path": state.completed_match_path,
+    }
+
+
+def show_pending_post_game_scoreboard(state):
+    payload = getattr(state, 'pending_post_game_scoreboard_payload', None)
+    if state.post_game_scoreboard_shown or not payload:
+        return
 
     if state.scoreboard_window is not None:
         state.scoreboard_window.close()
 
-    state.scoreboard_window = PostGameScoreboardWindow(
-        {
-            "summary": snapshot,
-            "timeline": timeline,
-            "match_path": state.completed_match_path,
-        }
-    )
+    state.scoreboard_window = PostGameScoreboardWindow(payload)
     state.scoreboard_window.show()
     state.scoreboard_window.raise_()
     state.scoreboard_window.activateWindow()
@@ -729,6 +734,7 @@ def game_started_handler(state):
     with state.data_lock:
         state.post_game_scoreboard_shown = False
         state.last_live_scoreboard_snapshot = None
+        state.pending_post_game_scoreboard_payload = None
         state.current_match_timeline = None
         state.completed_match_path = None
         if state.scoreboard_window is not None:
@@ -824,4 +830,5 @@ def game_stopped_handler(state):
     state.hud_windows.clear()
     if hasattr(state, 'factory_windows'):
         state.factory_windows.clear()
+    show_pending_post_game_scoreboard(state)
     state.players.clear()

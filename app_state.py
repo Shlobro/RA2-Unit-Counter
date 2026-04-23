@@ -68,6 +68,7 @@ class AppState:
         self.map_name_widget = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
+        self.pending_post_game_scoreboard_payload = None
         self.current_match_timeline = None
         self.completed_match_path = None
         self.player_color_export_cache = {}
