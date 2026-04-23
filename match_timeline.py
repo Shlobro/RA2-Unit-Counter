@@ -10,6 +10,7 @@ from scoreboard_window import build_post_game_snapshot
 
 
 CORE_METRIC_ORDER = [
+    "estimated_score",
     "income_total",
     "cash",
     "money_spent_total",
@@ -94,6 +95,40 @@ SPECIAL_UNIT_NAMES = (
     "Chrono Ivan",
     "Psi-Corp Trooper",
 )
+MCV_SUPPORT_BY_FACTION = {
+    "Allied": {
+        "unit_name": "Allied Construction Vehicle",
+        "building_names": ("Allied Construction Yard",),
+    },
+    "Soviet": {
+        "unit_name": "Soviet Construction Vehicle",
+        "building_names": ("Soviet Construction Yard",),
+    },
+    "Yuri": {
+        "unit_name": "Yuri Construction Vehicle",
+        "building_names": ("Yuri Construction Yard",),
+    },
+}
+SCORE_WEIGHTS = {
+    "infantry_current": 12,
+    "miners_current": 55,
+    "vehicles_current": 42,
+    "navy_current": 48,
+    "buildings_current": 85,
+    "aircraft_current": 38,
+    "infantry_lost": 4,
+    "vehicles_lost": 13,
+    "navy_lost": 15,
+    "buildings_lost": 28,
+    "aircraft_lost": 12,
+    "income_divisor": 120,
+    "cash_divisor": 180,
+    "spent_divisor": 150,
+    "captured_divisor": 80,
+    "infiltration_bonus": 180,
+    "mcv_support_bonus": 140,
+    "mcv_support_penalty": 260,
+}
 
 
 def _now_iso():
@@ -132,6 +167,73 @@ def _resolve_flag_asset(country_name, faction_name):
     for candidate in _existing_asset_paths("Flags", "PNG", flag_name):
         return flag_name, candidate
     return flag_name, None
+
+
+def _player_has_mcv_support(player):
+    faction_name = (player.faction or "").strip()
+    support_config = MCV_SUPPORT_BY_FACTION.get(faction_name)
+    if not support_config:
+        return False
+
+    has_mobile_mcv = int((player.tank_counts or {}).get(support_config["unit_name"], 0) or 0) > 0
+    has_deployed_mcv = any(
+        int((player.building_counts or {}).get(building_name, 0) or 0) > 0
+        for building_name in support_config["building_names"]
+    )
+    return has_mobile_mcv or has_deployed_mcv
+
+
+def _estimate_player_score(
+    *,
+    infantry_current,
+    miners_current,
+    vehicles_current,
+    navy_current,
+    buildings_current,
+    aircraft_current,
+    infantry_lost,
+    vehicles_lost,
+    navy_lost,
+    buildings_lost,
+    aircraft_lost,
+    income_total,
+    cash,
+    money_spent_total,
+    captured_building_credits,
+    barracks_infiltrated,
+    war_factory_infiltrated,
+    has_mcv_support,
+):
+    score = 0
+    score += infantry_current * SCORE_WEIGHTS["infantry_current"]
+    score += miners_current * SCORE_WEIGHTS["miners_current"]
+    score += vehicles_current * SCORE_WEIGHTS["vehicles_current"]
+    score += navy_current * SCORE_WEIGHTS["navy_current"]
+    score += buildings_current * SCORE_WEIGHTS["buildings_current"]
+    score += aircraft_current * SCORE_WEIGHTS["aircraft_current"]
+
+    score += infantry_lost * SCORE_WEIGHTS["infantry_lost"]
+    score += vehicles_lost * SCORE_WEIGHTS["vehicles_lost"]
+    score += navy_lost * SCORE_WEIGHTS["navy_lost"]
+    score += buildings_lost * SCORE_WEIGHTS["buildings_lost"]
+    score += aircraft_lost * SCORE_WEIGHTS["aircraft_lost"]
+
+    score += int(income_total // SCORE_WEIGHTS["income_divisor"])
+    score += int(cash // SCORE_WEIGHTS["cash_divisor"])
+    score += int(money_spent_total // SCORE_WEIGHTS["spent_divisor"])
+    score += int(captured_building_credits // SCORE_WEIGHTS["captured_divisor"])
+
+    if barracks_infiltrated:
+        score += SCORE_WEIGHTS["infiltration_bonus"]
+    if war_factory_infiltrated:
+        score += SCORE_WEIGHTS["infiltration_bonus"]
+
+    if has_mcv_support:
+        score += SCORE_WEIGHTS["mcv_support_bonus"]
+    else:
+        score -= SCORE_WEIGHTS["mcv_support_penalty"]
+
+    return max(0, int(score))
 
 
 def _build_player_metadata(player):
@@ -229,8 +331,30 @@ def _compute_player_metrics(player, player_meta, derived_loss_metrics):
     starting_balance = int(player_meta.get("starting_balance", player.balance))
     starting_spent = int(player_meta.get("starting_spent", player.spent_credit))
     income_total = max(0, int(player.spent_credit - starting_spent + player.balance - starting_balance))
+    has_mcv_support = _player_has_mcv_support(player)
+    estimated_score = _estimate_player_score(
+        infantry_current=infantry_current,
+        miners_current=miners_current,
+        vehicles_current=vehicles_current,
+        navy_current=navy_current,
+        buildings_current=buildings_current,
+        aircraft_current=aircraft_current,
+        infantry_lost=infantry_lost,
+        vehicles_lost=vehicles_lost,
+        navy_lost=navy_lost,
+        buildings_lost=buildings_lost,
+        aircraft_lost=aircraft_lost,
+        income_total=income_total,
+        cash=player.balance,
+        money_spent_total=player.spent_credit,
+        captured_building_credits=getattr(player, "captured_building_credits", 0),
+        barracks_infiltrated=bool(getattr(player, "barracks_infiltrated", False)),
+        war_factory_infiltrated=bool(getattr(player, "war_factory_infiltrated", False)),
+        has_mcv_support=has_mcv_support,
+    )
 
     return {
+        "estimated_score": estimated_score,
         "income_total": income_total,
         "cash": int(player.balance),
         "money_spent_total": int(player.spent_credit),
@@ -424,17 +548,48 @@ def _record_special_unit_events(player_meta, elapsed_ms, player):
         event_state[unit_name] = current_count
 
 
+def _record_mcv_lost_events(player_meta, elapsed_ms, player):
+    faction_name = (player.faction or "").strip()
+    support_config = MCV_SUPPORT_BY_FACTION.get(faction_name)
+    if not support_config:
+        return
+
+    unit_name = support_config["unit_name"]
+    building_names = support_config["building_names"]
+    tank_counts = player.tank_counts or {}
+    building_counts = player.building_counts or {}
+
+    has_mobile_mcv = int(tank_counts.get(unit_name, 0) or 0) > 0
+    has_deployed_mcv = any(int(building_counts.get(building_name, 0) or 0) > 0 for building_name in building_names)
+    has_any_mcv_support = has_mobile_mcv or has_deployed_mcv
+
+    event_state = player_meta.setdefault("_mcv_lost_event_state", {})
+    previous_has_support = event_state.get("had_support")
+    if previous_has_support is True and not has_any_mcv_support:
+        player_meta.setdefault("events", {}).setdefault("mcv_lost", []).append(
+            {
+                "type": "mcv_lost",
+                "unit_name": unit_name,
+                "t_ms": int(elapsed_ms),
+            }
+        )
+
+    event_state["had_support"] = has_any_mcv_support
+
+
 def _export_player_timeline_meta(player_meta):
     exported_meta = dict(player_meta)
     exported_meta.pop("_superweapon_event_state", None)
     exported_meta.pop("_radar_tech_event_state", None)
     exported_meta.pop("_battle_lab_event_state", None)
     exported_meta.pop("_special_unit_event_state", None)
+    exported_meta.pop("_mcv_lost_event_state", None)
     exported_meta["events"] = {
         "superweapons": list(((player_meta.get("events") or {}).get("superweapons") or [])),
         "radar_tech": list(((player_meta.get("events") or {}).get("radar_tech") or [])),
         "battle_lab": list(((player_meta.get("events") or {}).get("battle_lab") or [])),
         "special_units": list(((player_meta.get("events") or {}).get("special_units") or [])),
+        "mcv_lost": list(((player_meta.get("events") or {}).get("mcv_lost") or [])),
     }
     return exported_meta
 
@@ -464,11 +619,12 @@ def start_match_timeline(state):
         timeline["players"][player_id] = _build_player_metadata(player)
         timeline["series"][player_id] = {metric_id: [] for metric_id in CORE_METRIC_ORDER}
         timeline["players"][player_id]["unit_series"] = {}
-        timeline["players"][player_id]["events"] = {"superweapons": [], "radar_tech": [], "battle_lab": [], "special_units": []}
+        timeline["players"][player_id]["events"] = {"superweapons": [], "radar_tech": [], "battle_lab": [], "special_units": [], "mcv_lost": []}
         timeline["players"][player_id]["_superweapon_event_state"] = {}
         timeline["players"][player_id]["_radar_tech_event_state"] = {"owned": False}
         timeline["players"][player_id]["_battle_lab_event_state"] = {"owned": False}
         timeline["players"][player_id]["_special_unit_event_state"] = {}
+        timeline["players"][player_id]["_mcv_lost_event_state"] = {}
 
     state.current_match_timeline = timeline
     state.completed_match_path = None
@@ -522,6 +678,7 @@ def record_match_timeline_sample(state):
         _record_radar_tech_events(timeline["players"][player_id], elapsed_ms, player)
         _record_battle_lab_events(timeline["players"][player_id], elapsed_ms, player)
         _record_special_unit_events(timeline["players"][player_id], elapsed_ms, player)
+        _record_mcv_lost_events(timeline["players"][player_id], elapsed_ms, player)
 
     timeline["_last_sample_ms"] = elapsed_ms
 

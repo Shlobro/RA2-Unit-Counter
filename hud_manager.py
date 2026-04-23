@@ -119,6 +119,7 @@ def load_hud_positions(state):
         'scoreboard_timeline_show_radar_tech': True,
         'scoreboard_timeline_show_battle_lab': True,
         'scoreboard_timeline_show_special_units': True,
+        'scoreboard_timeline_show_mcv_lost': True,
         'use_player_numbers': False,
         # Toggle to show/hide the entire factory window
         'show_factory_window': True

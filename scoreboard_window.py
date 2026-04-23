@@ -63,6 +63,7 @@ DISPLAY_NAME_ALIASES = {
 }
 
 METRIC_OPTIONS = [
+    {"id": "estimated_score", "label": "Score", "format": "count"},
     {"id": "income_total", "label": "Income", "format": "money"},
     {"id": "cash", "label": "Cash", "format": "money"},
     {"id": "money_spent_total", "label": "Money Spent", "format": "money"},
@@ -264,6 +265,7 @@ def _normalize_player_events(player_data):
     radar_tech_events = []
     battle_lab_events = []
     special_unit_events = []
+    mcv_lost_events = []
     for event in events.get("superweapons") or []:
         if not isinstance(event, dict):
             continue
@@ -317,11 +319,25 @@ def _normalize_player_events(player_data):
                 "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
             }
         )
+    for event in events.get("mcv_lost") or []:
+        if not isinstance(event, dict):
+            continue
+        unit_name = (event.get("unit_name") or "").strip()
+        if not unit_name:
+            continue
+        mcv_lost_events.append(
+            {
+                "type": event.get("type") or "mcv_lost",
+                "unit_name": unit_name,
+                "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
+            }
+        )
     return {
         "superweapons": sorted(superweapon_events, key=lambda item: (item["t_ms"], item["superweapon_name"])),
         "radar_tech": sorted(radar_tech_events, key=lambda item: (item["t_ms"], item["building_name"])),
         "battle_lab": sorted(battle_lab_events, key=lambda item: (item["t_ms"], item["building_name"])),
         "special_units": sorted(special_unit_events, key=lambda item: (item["t_ms"], item["unit_name"])),
+        "mcv_lost": sorted(mcv_lost_events, key=lambda item: (item["t_ms"], item["unit_name"])),
     }
 
 
@@ -781,7 +797,7 @@ class TimelineChartWidget(QWidget):
         super().__init__()
         self.timeline = timeline or {"players": []}
         self.summary_players = summary_players or []
-        self.metric_id = "income_total"
+        self.metric_id = "estimated_score"
         self.visible_player_ids = {player["player_id"] for player in self.timeline.get("players", [])}
         self.hover_t_ms = None
         self.unit_filters = {}
@@ -1090,6 +1106,7 @@ class MatchEventTimelineWidget(QWidget):
         self.show_radar_tech = True
         self.show_battle_lab = True
         self.show_special_units = True
+        self.show_mcv_lost = True
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
 
     def set_show_superweapons(self, show):
@@ -1109,6 +1126,11 @@ class MatchEventTimelineWidget(QWidget):
 
     def set_show_special_units(self, show):
         self.show_special_units = bool(show)
+        self.updateGeometry()
+        self.update()
+
+    def set_show_mcv_lost(self, show):
+        self.show_mcv_lost = bool(show)
         self.updateGeometry()
         self.update()
 
@@ -1179,6 +1201,20 @@ class MatchEventTimelineWidget(QWidget):
                             "icon_path": resolve_factory_image_path(unit_name),
                         }
                     )
+            if self.show_mcv_lost:
+                for event in ((player.get("events") or {}).get("mcv_lost") or []):
+                    unit_name = event.get("unit_name") or ""
+                    events.append(
+                        {
+                            "t_ms": int(event.get("t_ms", 0) or 0),
+                            "player_name": player.get("username") or f"Player {player.get('index', '?')}",
+                            "accent_color": player.get("accent_color", "#d99a4e"),
+                            "title": f"{player.get('username') or f'Player {player.get('index', '?')}'} lost MCV",
+                            "detail": unit_name,
+                            "icon_path": resolve_factory_image_path(unit_name),
+                            "cross_out_icon": True,
+                        }
+                    )
         events.sort(key=lambda item: (item["t_ms"], item["player_name"].lower(), item.get("title", ""), item.get("detail", "")))
         return events
 
@@ -1202,7 +1238,7 @@ class MatchEventTimelineWidget(QWidget):
         if not visible_events:
             painter.setPen(QColor("#f7d29d"))
             painter.setFont(_load_ra_font(14))
-            message = "No timeline events recorded yet." if (self.show_superweapons or self.show_radar_tech or self.show_battle_lab or self.show_special_units) else "Enable a timeline filter to view events."
+            message = "No timeline events recorded yet." if (self.show_superweapons or self.show_radar_tech or self.show_battle_lab or self.show_special_units or self.show_mcv_lost) else "Enable a timeline filter to view events."
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, message)
             return
 
@@ -1245,6 +1281,11 @@ class MatchEventTimelineWidget(QWidget):
                 painter.setPen(QColor("#f7d29d"))
                 painter.setFont(_load_ra_font(10))
                 painter.drawText(icon_rect, Qt.AlignmentFlag.AlignCenter, "?")
+
+            if item.get("cross_out_icon"):
+                painter.setPen(QPen(QColor(210, 52, 38, 235), 5, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
+                painter.drawLine(icon_rect.topLeft(), icon_rect.bottomRight())
+                painter.drawLine(icon_rect.topRight(), icon_rect.bottomLeft())
 
             text_x = line_x + 106
             painter.setPen(QColor("#fff1cf"))
@@ -1400,6 +1441,7 @@ class PostGameScoreboardWindow(QMainWindow):
         self.radar_tech_timeline_checkbox = None
         self.battle_lab_timeline_checkbox = None
         self.special_units_timeline_checkbox = None
+        self.mcv_lost_timeline_checkbox = None
         self.event_timeline_widget = None
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1680, 980)
@@ -1426,6 +1468,9 @@ class PostGameScoreboardWindow(QMainWindow):
         self.app_state.hud_positions['scoreboard_timeline_show_special_units'] = bool(
             self.special_units_timeline_checkbox.isChecked()
         ) if self.special_units_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_special_units', True)
+        self.app_state.hud_positions['scoreboard_timeline_show_mcv_lost'] = bool(
+            self.mcv_lost_timeline_checkbox.isChecked()
+        ) if self.mcv_lost_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_mcv_lost', True)
 
         try:
             with open(self.app_state.HUD_POSITION_FILE, 'w') as file:
@@ -1889,7 +1934,7 @@ class PostGameScoreboardWindow(QMainWindow):
         legend_layout.addStretch()
         layout.addLayout(legend_layout)
 
-        self._set_metric("income_total")
+        self._set_metric("estimated_score")
         return panel
 
     def _build_timeline_panel(self):
@@ -1924,6 +1969,10 @@ class PostGameScoreboardWindow(QMainWindow):
         self.special_units_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_special_units', True))
         self.special_units_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
         filter_row.addWidget(self.special_units_timeline_checkbox)
+        self.mcv_lost_timeline_checkbox = QCheckBox("MCV Lost")
+        self.mcv_lost_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_mcv_lost', True))
+        self.mcv_lost_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
+        filter_row.addWidget(self.mcv_lost_timeline_checkbox)
         filter_row.addStretch()
         layout.addLayout(filter_row)
 
@@ -2028,12 +2077,14 @@ class PostGameScoreboardWindow(QMainWindow):
             or self.radar_tech_timeline_checkbox is None
             or self.battle_lab_timeline_checkbox is None
             or self.special_units_timeline_checkbox is None
+            or self.mcv_lost_timeline_checkbox is None
         ):
             return
         self.event_timeline_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
         self.event_timeline_widget.set_show_radar_tech(self.radar_tech_timeline_checkbox.isChecked())
         self.event_timeline_widget.set_show_battle_lab(self.battle_lab_timeline_checkbox.isChecked())
         self.event_timeline_widget.set_show_special_units(self.special_units_timeline_checkbox.isChecked())
+        self.event_timeline_widget.set_show_mcv_lost(self.mcv_lost_timeline_checkbox.isChecked())
         self._save_timeline_preferences()
 
 
