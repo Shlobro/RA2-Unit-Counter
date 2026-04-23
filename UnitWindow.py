@@ -1390,7 +1390,7 @@ class SingleWindowPlayerHud:
 
     def _apply_visibility_settings(self):
         self.set_element_visibility('name_widget', self.hud_pos.get('show_name', True))
-        self.set_element_visibility('flag_widget', self.hud_pos.get('show_flag', True) and not self.hud_pos.get('save_flags_as_images', False))
+        self.set_element_visibility('flag_widget', self.hud_pos.get('show_flag', True))
         self.set_element_visibility('money_widget', self.hud_pos.get('show_money', True))
         self.set_element_visibility('money_widget_spent', self.hud_pos.get('show_money_spent', False))
         self.set_element_visibility('power_widget', self.hud_pos.get('show_power', True))

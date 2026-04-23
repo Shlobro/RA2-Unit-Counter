@@ -121,7 +121,7 @@ class ResourceWindow(QMainWindow):
 
             if self.hud_positions.get('show_name', True):
                 layout.addWidget(self.name_widget)
-            if self.hud_positions.get('show_flag', True) and not self.hud_positions.get('save_flags_as_images', False):
+            if self.hud_positions.get('show_flag', True):
                 layout.addWidget(self.flag_widget)
             if self.hud_positions.get('show_money', True):
                 layout.addWidget(self.money_widget)
@@ -146,7 +146,7 @@ class ResourceWindow(QMainWindow):
             self.flag_window = self.create_window_with_widget(
                 f"{self.player_display_label} Flag", self.flag_widget, player_count, 'flag'
             )
-            if self.hud_positions.get('show_flag', True) and not self.hud_positions.get('save_flags_as_images', False):
+            if self.hud_positions.get('show_flag', True):
                 self.flag_window.show()
             else:
                 self.flag_window.hide()
@@ -335,9 +335,6 @@ class ResourceWindow(QMainWindow):
         self.power_widget.update_data_size(new_size)
 
     def export_flag_image_if_needed(self):
-        if not self.hud_positions.get('save_flags_as_images', False):
-            return
-
         try:
             folder_name = "player flags"
             os.makedirs(folder_name, exist_ok=True)

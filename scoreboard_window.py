@@ -190,10 +190,6 @@ def _faction_flag_path(faction_name):
 
 
 def _player_flag_path(player_snapshot):
-    direct_flag_path = player_snapshot.get("flag_asset_path")
-    if direct_flag_path and os.path.exists(direct_flag_path):
-        return direct_flag_path
-
     flag_stems = []
 
     flag_file_stem = (player_snapshot.get("flag_file_stem") or "").strip()
@@ -214,6 +210,10 @@ def _player_flag_path(player_snapshot):
     for stem in flag_stems:
         for candidate in _existing_asset_paths("player flags", f"{stem}_flag.png"):
             return candidate
+
+    direct_flag_path = player_snapshot.get("flag_asset_path")
+    if direct_flag_path and os.path.exists(direct_flag_path):
+        return direct_flag_path
 
     country_flag = _country_flag_path(player_snapshot.get("country"))
     if country_flag:

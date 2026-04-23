@@ -307,10 +307,6 @@ class ControlPanel(QMainWindow):
         self.flag_checkbox.setChecked(self.state.hud_positions.get('show_flag', True))
         self.flag_checkbox.stateChanged.connect(self.toggle_flag)
         flag_layout.addRow(self.flag_checkbox)
-        self.save_flags_as_images_checkbox = QCheckBox("Save Flags As Images")
-        self.save_flags_as_images_checkbox.setChecked(self.state.hud_positions.get('save_flags_as_images', False))
-        self.save_flags_as_images_checkbox.stateChanged.connect(self.toggle_save_flags_as_images)
-        flag_layout.addRow(self.save_flags_as_images_checkbox)
         flag_size_label = QLabel("Flag Widget Size:")
         flag_size = self.state.hud_positions.get('flag_widget_size', 50)
         self.flag_size_spinbox = QSpinBox()
@@ -1070,14 +1066,6 @@ class ControlPanel(QMainWindow):
             window = getattr(self.state, 'map_name_window', None)
             if window is not None:
                 window.update_text_color(color_name)
-
-    def toggle_save_flags_as_images(self, state_val):
-        enabled = (state_val == 2)
-        self.state.hud_positions['save_flags_as_images'] = enabled
-        logging.info(f"Toggled save_flags_as_images to: {enabled}")
-
-        from hud_manager import create_hud_windows
-        create_hud_windows(self.state)
 
     def toggle_post_game_scoreboard(self, state_val):
         enabled = (state_val == 2)
