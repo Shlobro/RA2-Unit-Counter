@@ -109,6 +109,14 @@ MCV_SUPPORT_BY_FACTION = {
         "building_names": ("Yuri Construction Yard",),
     },
 }
+SUPERWEAPON_BUILDINGS = {
+    "NukeSpecial": "Soviet Nuclear Missile Silo",
+    "IronCurtainSpecial": "Soviet Iron Curtain Device",
+    "LightningStormSpecial": "Allied Weather Controller",
+    "ChronoSphereSpecial": "Allied Chrono Sphere",
+    "GeneticConverterSpecial": "Yuri Genetic Mutator Device",
+    "PsychicDominatorSpecial": "Yuri Puppet Master",
+}
 SCORE_WEIGHTS = {
     "infantry_current": 12,
     "miners_current": 55,
@@ -468,6 +476,27 @@ def _record_superweapon_events(player_meta, elapsed_ms, player):
         state["pending_reset"] = pending_reset
 
 
+def _record_superweapon_build_events(player_meta, elapsed_ms, player):
+    event_state = player_meta.setdefault("_superweapon_build_event_state", {})
+    built_building_counts = player.built_building_counts or {}
+    superweapon_events = player_meta.setdefault("events", {}).setdefault("superweapons", [])
+
+    for superweapon_name, building_name in SUPERWEAPON_BUILDINGS.items():
+        current_count = int(built_building_counts.get(building_name, 0) or 0)
+        previous_count = int(event_state.get(building_name, 0) or 0)
+        if current_count > previous_count:
+            superweapon_events.append(
+                {
+                    "type": "superweapon_built",
+                    "superweapon_name": superweapon_name,
+                    "building_name": building_name,
+                    "count": current_count - previous_count,
+                    "t_ms": int(elapsed_ms),
+                }
+            )
+        event_state[building_name] = current_count
+
+
 def _record_radar_tech_events(player_meta, elapsed_ms, player):
     faction_name = (player.faction or "").strip()
     tracked_buildings = RADAR_TECH_BUILDINGS.get(faction_name)
@@ -580,6 +609,7 @@ def _record_mcv_lost_events(player_meta, elapsed_ms, player):
 def _export_player_timeline_meta(player_meta):
     exported_meta = dict(player_meta)
     exported_meta.pop("_superweapon_event_state", None)
+    exported_meta.pop("_superweapon_build_event_state", None)
     exported_meta.pop("_radar_tech_event_state", None)
     exported_meta.pop("_battle_lab_event_state", None)
     exported_meta.pop("_special_unit_event_state", None)
@@ -621,6 +651,7 @@ def start_match_timeline(state):
         timeline["players"][player_id]["unit_series"] = {}
         timeline["players"][player_id]["events"] = {"superweapons": [], "radar_tech": [], "battle_lab": [], "special_units": [], "mcv_lost": []}
         timeline["players"][player_id]["_superweapon_event_state"] = {}
+        timeline["players"][player_id]["_superweapon_build_event_state"] = {}
         timeline["players"][player_id]["_radar_tech_event_state"] = {"owned": False}
         timeline["players"][player_id]["_battle_lab_event_state"] = {"owned": False}
         timeline["players"][player_id]["_special_unit_event_state"] = {}
@@ -675,6 +706,7 @@ def record_match_timeline_sample(state):
             series.setdefault(metric_id, []).append({"t_ms": elapsed_ms, "value": int(value)})
         _record_unit_series_sample(unit_series, elapsed_ms, player)
         _record_superweapon_events(timeline["players"][player_id], elapsed_ms, player)
+        _record_superweapon_build_events(timeline["players"][player_id], elapsed_ms, player)
         _record_radar_tech_events(timeline["players"][player_id], elapsed_ms, player)
         _record_battle_lab_events(timeline["players"][player_id], elapsed_ms, player)
         _record_special_unit_events(timeline["players"][player_id], elapsed_ms, player)

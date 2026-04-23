@@ -270,12 +270,16 @@ def _normalize_player_events(player_data):
         if not isinstance(event, dict):
             continue
         superweapon_name = (event.get("superweapon_name") or "").strip()
-        if not superweapon_name:
+        building_name = (event.get("building_name") or "").strip()
+        event_type = event.get("type") or "superweapon_used"
+        if not superweapon_name and not building_name:
             continue
         superweapon_events.append(
             {
-                "type": event.get("type") or "superweapon_used",
+                "type": event_type,
                 "superweapon_name": superweapon_name,
+                "building_name": building_name,
+                "count": max(1, int(event.get("count", 1) or 1)),
                 "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
             }
         )
@@ -333,7 +337,7 @@ def _normalize_player_events(player_data):
             }
         )
     return {
-        "superweapons": sorted(superweapon_events, key=lambda item: (item["t_ms"], item["superweapon_name"])),
+        "superweapons": sorted(superweapon_events, key=lambda item: (item["t_ms"], item.get("building_name", ""), item.get("superweapon_name", ""))),
         "radar_tech": sorted(radar_tech_events, key=lambda item: (item["t_ms"], item["building_name"])),
         "battle_lab": sorted(battle_lab_events, key=lambda item: (item["t_ms"], item["building_name"])),
         "special_units": sorted(special_unit_events, key=lambda item: (item["t_ms"], item["unit_name"])),
@@ -1150,16 +1154,32 @@ class MatchEventTimelineWidget(QWidget):
             if self.show_superweapons:
                 for event in ((player.get("events") or {}).get("superweapons") or []):
                     superweapon_name = event.get("superweapon_name") or ""
-                    events.append(
-                        {
-                            "t_ms": int(event.get("t_ms", 0) or 0),
-                            "player_name": player.get("username") or f"Player {player.get('index', '?')}",
-                            "accent_color": player.get("accent_color", "#d99a4e"),
-                            "title": f"{player.get('username') or f'Player {player.get('index', '?')}'} used {superweapon_name}",
-                            "detail": "Detected when the superweapon timer reset and then resumed charging.",
-                            "icon_path": name_to_path(superweapon_name),
-                        }
-                    )
+                    building_name = event.get("building_name") or ""
+                    player_name = player.get("username") or f"Player {player.get('index', '?')}"
+                    if event.get("type") == "superweapon_built":
+                        count = max(1, int(event.get("count", 1) or 1))
+                        detail_text = building_name if count == 1 else f"{building_name} x{count}"
+                        events.append(
+                            {
+                                "t_ms": int(event.get("t_ms", 0) or 0),
+                                "player_name": player_name,
+                                "accent_color": player.get("accent_color", "#d99a4e"),
+                                "title": f"{player_name} made a superweapon",
+                                "detail": detail_text,
+                                "icon_path": resolve_factory_image_path(building_name),
+                            }
+                        )
+                    else:
+                        events.append(
+                            {
+                                "t_ms": int(event.get("t_ms", 0) or 0),
+                                "player_name": player_name,
+                                "accent_color": player.get("accent_color", "#d99a4e"),
+                                "title": f"{player_name} used {superweapon_name}",
+                                "detail": "Detected when the superweapon timer reset and then resumed charging.",
+                                "icon_path": name_to_path(superweapon_name),
+                            }
+                        )
             if self.show_radar_tech:
                 for event in ((player.get("events") or {}).get("radar_tech") or []):
                     building_name = event.get("building_name") or ""
