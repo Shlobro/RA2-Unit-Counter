@@ -402,6 +402,29 @@ class ControlPanel(QMainWindow):
         game_time_group.setLayout(game_time_layout)
         layout.addWidget(game_time_group)
 
+        map_name_group = QGroupBox("Map Name Widget Settings")
+        map_name_layout = QFormLayout()
+        self.map_name_checkbox = QCheckBox("Show Map Name")
+        self.map_name_checkbox.setChecked(self.state.hud_positions.get('show_map_name', True))
+        self.map_name_checkbox.stateChanged.connect(self.toggle_map_name)
+        map_name_layout.addRow(self.map_name_checkbox)
+
+        map_name_size_label = QLabel("Map Name Widget Size:")
+        map_name_size = self.state.hud_positions.get('map_name_widget_size', 50)
+        self.map_name_size_spinbox = QSpinBox()
+        self.map_name_size_spinbox.setRange(5, 500)
+        self.map_name_size_spinbox.setValue(map_name_size)
+        self.map_name_size_spinbox.valueChanged.connect(self.update_map_name_widget_size)
+        map_name_layout.addRow(map_name_size_label, self.map_name_size_spinbox)
+
+        self.map_name_color_button = QPushButton()
+        self.map_name_color_button.clicked.connect(self.choose_map_name_color)
+        self._set_map_name_color_button(self.state.hud_positions.get('map_name_color', '#FFFFFF'))
+        map_name_layout.addRow(QLabel("Map Name Color:"), self.map_name_color_button)
+
+        map_name_group.setLayout(map_name_layout)
+        layout.addWidget(map_name_group)
+
         tab.setLayout(layout)
         self.tabs.addTab(tab, "Name/Flag/Money")
 
@@ -862,6 +885,27 @@ class ControlPanel(QMainWindow):
                 else:
                     window.hide()
 
+    def toggle_map_name(self, state_val):
+        visible = (state_val == 2)
+        self.state.hud_positions['show_map_name'] = visible
+        logging.info(f"Toggled show_map_name to: {visible}")
+        if self.state.hud_positions.get('combined_hud', False):
+            item = getattr(self.state, 'map_name_workspace_item', None)
+            if item is not None:
+                if visible:
+                    item.show()
+                    if getattr(item, 'inner_widget', None) is not None:
+                        item.inner_widget.show()
+                else:
+                    item.hide()
+        else:
+            window = getattr(self.state, 'map_name_window', None)
+            if window is not None:
+                if visible:
+                    window.show()
+                else:
+                    window.hide()
+
     def toggle_superweapons(self, state_val):
         enabled = (state_val == 2)
         if hasattr(self, 'show_superweapons_checkbox'):
@@ -971,6 +1015,59 @@ class ControlPanel(QMainWindow):
                 item._queue_sync_to_inner()
         else:
             window = getattr(self.state, 'game_time_window', None)
+            if window is not None:
+                window.update_text_color(color_name)
+
+    def update_map_name_widget_size(self):
+        new_size = self.map_name_size_spinbox.value()
+        self.state.hud_positions['map_name_widget_size'] = new_size
+        logging.info(f"Updated map name widget size: {new_size}")
+        if self.state.hud_positions.get('combined_hud', False):
+            widget = getattr(self.state, 'map_name_widget', None)
+            if widget is not None:
+                widget.update_data_size(new_size)
+            item = getattr(self.state, 'map_name_workspace_item', None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
+        else:
+            window = getattr(self.state, 'map_name_window', None)
+            if window is not None:
+                window.update_widget_size(new_size)
+
+    def _set_map_name_color_button(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            color = QColor('#FFFFFF')
+        self.map_name_color_button.setProperty('selected_color', color.name())
+        self.map_name_color_button.setText(color.name())
+        self.map_name_color_button.setStyleSheet(
+            f"background-color: {color.name()}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
+        )
+
+    def choose_map_name_color(self):
+        initial = QColor(self.state.hud_positions.get('map_name_color', '#FFFFFF'))
+        color = QColorDialog.getColor(initial, self, "Select Map Name Color")
+        if not color.isValid():
+            return
+        self.update_map_name_color(color.name())
+
+    def update_map_name_color(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        color_name = color.name()
+        self.state.hud_positions['map_name_color'] = color_name
+        self._set_map_name_color_button(color_name)
+        logging.info(f"Updated map name color: {color_name}")
+        if self.state.hud_positions.get('combined_hud', False):
+            widget = getattr(self.state, 'map_name_widget', None)
+            if widget is not None:
+                widget.update_color(new_text_color=color)
+            item = getattr(self.state, 'map_name_workspace_item', None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
+        else:
+            window = getattr(self.state, 'map_name_window', None)
             if window is not None:
                 window.update_text_color(color_name)
 
@@ -1156,6 +1253,15 @@ class ControlPanel(QMainWindow):
             self.state.game_time_workspace_item.close()
             self.state.game_time_workspace_item = None
             self.state.game_time_widget = None
+
+        if getattr(self.state, 'map_name_window', None) is not None:
+            self.state.map_name_window.close()
+            self.state.map_name_window = None
+
+        if getattr(self.state, 'map_name_workspace_item', None) is not None:
+            self.state.map_name_workspace_item.close()
+            self.state.map_name_workspace_item = None
+            self.state.map_name_widget = None
         
         # Clear the hud_windows list
         self.state.hud_windows.clear()

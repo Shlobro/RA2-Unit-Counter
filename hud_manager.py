@@ -26,6 +26,7 @@ from UnitWindow import (
 )
 from factory_window import FactoryWindow  # New import for the factory window
 from game_time_window import GameTimeWindow
+from map_name_window import MapNameWindow
 from player_identity import (
     get_combined_hud_title,
     get_player_bucket_key,
@@ -90,6 +91,9 @@ def load_hud_positions(state):
         'game_time_widget_size': 50,
         'game_time_color': '#FFFFFF',
         'game_time_font_family': 'Arial',
+        'show_map_name': True,
+        'map_name_widget_size': 50,
+        'map_name_color': '#FFFFFF',
         'combined_hud': False,    # False: separate HUD; True: combined HUD.
         'single_window_geometry': {
             'x': 50,
@@ -179,6 +183,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.game_time_size_spinbox, 'value', state.hud_positions.get('game_time_widget_size', 50))
                 if value is not None:
                     state.hud_positions['game_time_widget_size'] = value
+
+            if hasattr(cp, 'map_name_size_spinbox'):
+                value = safe_widget_value(cp.map_name_size_spinbox, 'value', state.hud_positions.get('map_name_widget_size', 50))
+                if value is not None:
+                    state.hud_positions['map_name_widget_size'] = value
             
             # Safely access checkbox values
             if hasattr(cp, 'name_checkbox'):
@@ -225,6 +234,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.game_time_checkbox, 'isChecked', state.hud_positions.get('show_game_time', True))
                 if value is not None:
                     state.hud_positions['show_game_time'] = value
+
+            if hasattr(cp, 'map_name_checkbox'):
+                value = safe_widget_value(cp.map_name_checkbox, 'isChecked', state.hud_positions.get('show_map_name', True))
+                if value is not None:
+                    state.hud_positions['show_map_name'] = value
 
             if hasattr(cp, 'superweapon_frame_checkbox'):
                 value = safe_widget_value(cp.superweapon_frame_checkbox, 'isChecked', state.hud_positions.get('show_superweapon_frames', True))
@@ -371,6 +385,12 @@ def save_hud_positions(state):
             except RuntimeError:
                 pass
 
+        if hasattr(state, 'control_panel') and state.control_panel and hasattr(state.control_panel, 'map_name_color_button'):
+            try:
+                state.hud_positions['map_name_color'] = state.control_panel.map_name_color_button.property('selected_color') or state.hud_positions.get('map_name_color', '#FFFFFF')
+            except RuntimeError:
+                pass
+
         with open(state.HUD_POSITION_FILE, 'w') as file:
             json.dump(state.hud_positions, file, indent=4)
         logging.info("HUD positions saved successfully.")
@@ -491,6 +511,13 @@ def create_hud_windows(state):
             state.game_time_workspace_item.close()
         state.game_time_workspace_item = None
         state.game_time_widget = None
+        if getattr(state, 'map_name_window', None) is not None:
+            state.map_name_window.close()
+        state.map_name_window = None
+        if getattr(state, 'map_name_workspace_item', None) is not None:
+            state.map_name_workspace_item.close()
+        state.map_name_workspace_item = None
+        state.map_name_widget = None
         if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
             state.single_window_workspace.close()
         state.single_window_workspace = None
@@ -516,7 +543,7 @@ def create_hud_windows(state):
         if state.hud_positions.get('combined_hud', False):
             state.single_window_workspace = SingleWindowWorkspace(state.hud_positions)
             from PySide6.QtGui import QColor, QFont
-            from DataWidget import GameTimeWidget
+            from DataWidget import GameTimeWidget, MapNameWidget
             from UnitWindow import GlobalWorkspaceWidgetContainer
             game_time_font = QFont(
                 state.hud_positions.get('game_time_font_family', 'Arial'),
@@ -542,6 +569,24 @@ def create_hud_windows(state):
                 state.game_time_workspace_item.show()
             else:
                 state.game_time_workspace_item.hide()
+            state.map_name_widget = MapNameWidget(
+                state=state,
+                text_color=QColor(state.hud_positions.get('map_name_color', '#FFFFFF')),
+                size=state.hud_positions.get('map_name_widget_size', 50),
+                font=QFont('Arial', 16, QFont.Bold),
+                parent=state.single_window_workspace.canvas,
+            )
+            state.map_name_widget.setToolTip("Current map name")
+            state.map_name_workspace_item = GlobalWorkspaceWidgetContainer(
+                state.map_name_widget,
+                state.hud_positions,
+                'map_name',
+                state.single_window_workspace.canvas,
+            )
+            if state.hud_positions.get('show_map_name', True):
+                state.map_name_workspace_item.show()
+            else:
+                state.map_name_workspace_item.hide()
             # One workspace manager per player; each HUD element remains independently movable.
             for player in state.players:
                 logging.info(f"Creating combined HUD for {player.username.value} with color {player.color_name}")
@@ -568,6 +613,11 @@ def create_hud_windows(state):
                 state.game_time_window.show()
             else:
                 state.game_time_window.hide()
+            state.map_name_window = MapNameWindow(state, state.hud_positions)
+            if state.hud_positions.get('show_map_name', True):
+                state.map_name_window.show()
+            else:
+                state.map_name_window.hide()
             # Resource windows + separate unit windows + separate factory windows
             for player in state.players:
                 logging.info(f"Creating ResourceWindow for {player.username.value} with color {player.color_name}")
@@ -748,6 +798,13 @@ def game_stopped_handler(state):
         state.game_time_workspace_item.close()
         state.game_time_workspace_item = None
     state.game_time_widget = None
+    if getattr(state, 'map_name_window', None) is not None:
+        state.map_name_window.close()
+        state.map_name_window = None
+    if getattr(state, 'map_name_workspace_item', None) is not None:
+        state.map_name_workspace_item.close()
+        state.map_name_workspace_item = None
+    state.map_name_widget = None
     for unit_window, resource_window in state.hud_windows:
         if unit_window:
             if isinstance(unit_window, tuple):

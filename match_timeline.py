@@ -13,6 +13,11 @@ CORE_METRIC_ORDER = [
     "income_total",
     "cash",
     "money_spent_total",
+    "infantry_built",
+    "vehicles_built",
+    "navy_built",
+    "buildings_built",
+    "aircraft_built",
     "units_current_total",
     "units_lost_total",
     "infantry_current",
@@ -168,6 +173,13 @@ def _derive_player_loss_metrics(players):
 
 
 def _compute_player_metrics(player, player_meta, derived_loss_metrics):
+    infantry_built = _sum_counts(player.built_infantry_counts)
+    miners_built = _sum_matching_counts(player.built_tank_counts, MINER_UNIT_NAMES, include_matches=True)
+    vehicles_built = _sum_matching_counts(player.built_tank_counts, NAVAL_UNIT_NAMES, include_matches=False)
+    vehicles_built = max(0, vehicles_built - miners_built)
+    navy_built = _sum_matching_counts(player.built_tank_counts, NAVAL_UNIT_NAMES, include_matches=True)
+    buildings_built = _sum_counts(player.built_building_counts)
+    aircraft_built = _sum_counts(player.built_aircraft_counts)
     infantry_current = _sum_counts(player.infantry_counts)
     miners_current = _sum_matching_counts(player.tank_counts, MINER_UNIT_NAMES, include_matches=True)
     vehicles_current = _sum_matching_counts(player.tank_counts, NAVAL_UNIT_NAMES, include_matches=False)
@@ -201,6 +213,11 @@ def _compute_player_metrics(player, player_meta, derived_loss_metrics):
         "income_total": income_total,
         "cash": int(player.balance),
         "money_spent_total": int(player.spent_credit),
+        "infantry_built": infantry_built,
+        "vehicles_built": vehicles_built,
+        "navy_built": navy_built,
+        "buildings_built": buildings_built,
+        "aircraft_built": aircraft_built,
         "units_current_total": infantry_current + miners_current + vehicles_current + navy_current + buildings_current + aircraft_current,
         "units_lost_total": infantry_lost + vehicles_lost + navy_lost + buildings_lost + aircraft_lost,
         "infantry_current": infantry_current,
@@ -215,6 +232,45 @@ def _compute_player_metrics(player, player_meta, derived_loss_metrics):
         "buildings_lost": buildings_lost,
         "aircraft_lost": aircraft_lost,
     }
+
+
+def _record_named_count_series(target_bucket, elapsed_ms, counts):
+    active_names = set()
+    for unit_name, count in counts.items():
+        active_names.add(unit_name)
+        target_bucket.setdefault(unit_name, []).append({"t_ms": elapsed_ms, "value": int(count)})
+
+    for unit_name, points in target_bucket.items():
+        if unit_name in active_names:
+            continue
+        last_value = int(points[-1]["value"]) if points else 0
+        points.append({"t_ms": elapsed_ms, "value": last_value})
+
+
+def _split_built_tank_counts(counts):
+    vehicle_counts = {}
+    navy_counts = {}
+    for unit_name, count in counts.items():
+        if unit_name in NAVAL_UNIT_NAMES:
+            navy_counts[unit_name] = count
+        elif unit_name not in MINER_UNIT_NAMES:
+            vehicle_counts[unit_name] = count
+    return vehicle_counts, navy_counts
+
+
+def _record_unit_series_sample(unit_series, elapsed_ms, player):
+    vehicle_counts, navy_counts = _split_built_tank_counts(player.built_tank_counts)
+    category_counts = {
+        "infantry_built": player.built_infantry_counts,
+        "vehicles_built": vehicle_counts,
+        "navy_built": navy_counts,
+        "buildings_built": player.built_building_counts,
+        "aircraft_built": player.built_aircraft_counts,
+    }
+
+    for metric_id, counts in category_counts.items():
+        target_bucket = unit_series.setdefault(metric_id, {})
+        _record_named_count_series(target_bucket, elapsed_ms, counts)
 
 
 def start_match_timeline(state):
@@ -241,6 +297,7 @@ def start_match_timeline(state):
         player_id = _player_id(player)
         timeline["players"][player_id] = _build_player_metadata(player)
         timeline["series"][player_id] = {metric_id: [] for metric_id in CORE_METRIC_ORDER}
+        timeline["players"][player_id]["unit_series"] = {}
 
     state.current_match_timeline = timeline
     state.completed_match_path = None
@@ -284,10 +341,12 @@ def record_match_timeline_sample(state):
             player_id,
             {metric_id: [] for metric_id in CORE_METRIC_ORDER},
         )
+        unit_series = timeline["players"][player_id].setdefault("unit_series", {})
         metrics = _compute_player_metrics(player, timeline["players"][player_id], derived_loss_metrics)
         player.derived_income_total = metrics["income_total"]
         for metric_id, value in metrics.items():
             series.setdefault(metric_id, []).append({"t_ms": elapsed_ms, "value": int(value)})
+        _record_unit_series_sample(unit_series, elapsed_ms, player)
 
     timeline["_last_sample_ms"] = elapsed_ms
 

@@ -160,7 +160,7 @@ def normalize_hud_positions(hud_positions):
 
     global_widgets = hud_positions.get(GLOBAL_WIDGETS_KEY)
     if isinstance(global_widgets, dict):
-        for key in ("game_time",):
+        for key in ("game_time", "map_name"):
             if key in global_widgets:
                 global_widgets[key] = normalize_position(global_widgets[key])
 

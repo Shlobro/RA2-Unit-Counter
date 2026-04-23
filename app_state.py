@@ -3,12 +3,17 @@ import os
 import threading
 import configparser
 import logging
+import re
 
 from constants import COLOR_NAME_MAPPING
 
 
+OIL_COUNTS_DIR = "oil counts"
+MAP_NAME_FILE = "map_name.txt"
+
+
 def initialize_oil_count_files():
-    folder_name = "oil counts"
+    folder_name = OIL_COUNTS_DIR
     # Ensure the folder exists.
     os.makedirs(folder_name, exist_ok=True)
     # Loop over all friendly color names and create a file with a default value of 0.
@@ -18,6 +23,24 @@ def initialize_oil_count_files():
         if not os.path.exists(filename):
             with open(filename, 'w') as file:
                 file.write("0")
+    map_filename = os.path.join(folder_name, MAP_NAME_FILE)
+    if not os.path.exists(map_filename):
+        with open(map_filename, 'w', encoding='utf-8') as file:
+            file.write("")
+
+
+def normalize_map_name(raw_map_name):
+    if not raw_map_name:
+        return ""
+    return re.sub(r"^\[[^\]]*\]\s*", "", raw_map_name).strip()
+
+
+def write_map_name_to_file(map_name):
+    folder_name = OIL_COUNTS_DIR
+    os.makedirs(folder_name, exist_ok=True)
+    filename = os.path.join(folder_name, MAP_NAME_FILE)
+    with open(filename, 'w', encoding='utf-8') as file:
+        file.write(normalize_map_name(map_name))
 
 
 class AppState:
@@ -30,6 +53,7 @@ class AppState:
         self.data_lock = threading.Lock()
         self.hud_positions = {}     # Stores HUD positions and settings
         self.process_handle = None  # Handle for the game process
+        self.process_id = None
         self.control_panel = None   # Reference to the ControlPanel instance
         self.data_update_thread = None  # Reference to the DataUpdateThread instance
         self.game_path = ''         # Game path (empty string by default)
@@ -39,11 +63,16 @@ class AppState:
         self.game_time_window = None
         self.game_time_workspace_item = None
         self.game_time_widget = None
+        self.map_name_window = None
+        self.map_name_workspace_item = None
+        self.map_name_widget = None
         self.post_game_scoreboard_shown = False
         self.last_live_scoreboard_snapshot = None
         self.current_match_timeline = None
         self.completed_match_path = None
         self.player_color_export_cache = {}
+        self.current_map_name = ""
+        self.map_name_address = None
         initialize_oil_count_files()
         os.makedirs(self.MATCH_HISTORY_DIR, exist_ok=True)
 

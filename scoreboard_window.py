@@ -5,6 +5,7 @@ import os
 from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QRectF, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QFont, QFontDatabase, QIcon, QPainter, QPainterPath, QPen, QPixmap
 from PySide6.QtWidgets import (
+    QDialog,
     QFrame,
     QGraphicsDropShadowEffect,
     QGraphicsOpacityEffect,
@@ -64,6 +65,11 @@ METRIC_OPTIONS = [
     {"id": "income_total", "label": "Income", "format": "money"},
     {"id": "cash", "label": "Cash", "format": "money"},
     {"id": "money_spent_total", "label": "Money Spent", "format": "money"},
+    {"id": "infantry_built", "label": "Inf Made", "format": "count"},
+    {"id": "vehicles_built", "label": "Veh Made", "format": "count"},
+    {"id": "navy_built", "label": "Navy Made", "format": "count"},
+    {"id": "buildings_built", "label": "Bld Made", "format": "count"},
+    {"id": "aircraft_built", "label": "Air Made", "format": "count"},
     {"id": "units_current_total", "label": "Units", "format": "count"},
     {"id": "units_lost_total", "label": "Lost", "format": "count"},
     {"id": "infantry_current", "label": "Infantry", "format": "count"},
@@ -86,6 +92,14 @@ LINE_STYLES = (
     Qt.PenStyle.DashDotLine,
     Qt.PenStyle.DashDotDotLine,
 )
+
+FILTERABLE_UNIT_METRICS = {
+    "infantry_built": "Infantry made",
+    "vehicles_built": "Vehicles made",
+    "navy_built": "Navy made",
+    "buildings_built": "Buildings made",
+    "aircraft_built": "Aircraft made",
+}
 
 
 def _load_ra_font(point_size, weight=QFont.Bold, fallback_family="Arial"):
@@ -275,10 +289,11 @@ def normalize_scoreboard_payload(payload, match_path=None):
                 "money_spent": _last_series_value(series_map, "money_spent_total"),
                 "current_balance": _last_series_value(series_map, "cash"),
                 "income_total": _last_series_value(series_map, "income_total"),
-                "infantry_built": 0,
-                "vehicles_built": 0,
-                "buildings_built": 0,
-                "aircraft_built": 0,
+                "infantry_built": _last_series_value(series_map, "infantry_built"),
+                "vehicles_built": _last_series_value(series_map, "vehicles_built"),
+                "navy_built": _last_series_value(series_map, "navy_built"),
+                "buildings_built": _last_series_value(series_map, "buildings_built"),
+                "aircraft_built": _last_series_value(series_map, "aircraft_built"),
                 "infantry_lost": _last_series_value(series_map, "infantry_lost"),
                 "vehicles_lost": _last_series_value(series_map, "vehicles_lost"),
                 "buildings_lost": _last_series_value(series_map, "buildings_lost"),
@@ -698,6 +713,7 @@ class TimelineChartWidget(QWidget):
         self.metric_id = "income_total"
         self.visible_player_ids = {player["player_id"] for player in self.timeline.get("players", [])}
         self.hover_t_ms = None
+        self.unit_filters = {}
         self.setMouseTracking(True)
         self.setMinimumHeight(540)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -707,6 +723,18 @@ class TimelineChartWidget(QWidget):
 
     def set_metric(self, metric_id):
         self.metric_id = metric_id
+        self.hover_t_ms = None
+        self.hoverTextChanged.emit(self._default_hover_text())
+        self.update()
+
+    def metric_supports_unit_filter(self):
+        return self.metric_id in FILTERABLE_UNIT_METRICS
+
+    def current_unit_selection(self):
+        return set(self.unit_filters.get(self.metric_id) or [])
+
+    def set_current_unit_selection(self, unit_names):
+        self.unit_filters[self.metric_id] = set(unit_names or [])
         self.hover_t_ms = None
         self.hoverTextChanged.emit(self._default_hover_text())
         self.update()
@@ -733,12 +761,45 @@ class TimelineChartWidget(QWidget):
                 ordered.append(player)
         return ordered
 
+    def available_unit_names(self, metric_id=None):
+        target_metric = metric_id or self.metric_id
+        if target_metric not in FILTERABLE_UNIT_METRICS:
+            return []
+        unit_names = set()
+        for player in self._player_entries():
+            for unit_name in ((player.get("unit_series") or {}).get(target_metric) or {}).keys():
+                unit_names.add(unit_name)
+        return sorted(unit_names)
+
+    def has_unit_series_data(self, metric_id=None):
+        return bool(self.available_unit_names(metric_id))
+
+    def _sum_point_series(self, series_list):
+        all_times = sorted({int(point["t_ms"]) for points in series_list for point in points})
+        return [{"t_ms": t_ms, "value": sum(int(self._value_at(points, t_ms)) for points in series_list)} for t_ms in all_times]
+
+    def _metric_points_for_player(self, player):
+        if self.metric_id not in FILTERABLE_UNIT_METRICS:
+            return player.get("series", {}).get(self.metric_id, [])
+
+        unit_series = (player.get("unit_series") or {}).get(self.metric_id) or {}
+        if not unit_series:
+            return player.get("series", {}).get(self.metric_id, [])
+
+        selected_unit_names = self.current_unit_selection()
+        if not selected_unit_names:
+            selected_unit_names = set(unit_series.keys())
+        selected_series = [unit_series[unit_name] for unit_name in selected_unit_names if unit_name in unit_series]
+        if not selected_series:
+            return []
+        return self._sum_point_series(selected_series)
+
     def _visible_series(self):
         visible = []
         for player in self._player_entries():
             if player["player_id"] not in self.visible_player_ids:
                 continue
-            points = player.get("series", {}).get(self.metric_id, [])
+            points = self._metric_points_for_player(player)
             if points:
                 visible.append((player, points))
         return visible
@@ -782,7 +843,24 @@ class TimelineChartWidget(QWidget):
         return int(left["value"] + (right["value"] - left["value"]) * ratio)
 
     def _default_hover_text(self):
+        if self.metric_supports_unit_filter():
+            selected_count = len(self.current_unit_selection()) or len(self.available_unit_names())
+            return f"{self._metric_label()} over {_format_duration(self.timeline.get('duration_ms') or 0)}   |   {selected_count} selected"
         return f"{self._metric_label()} over {_format_duration(self.timeline.get('duration_ms') or 0)}"
+
+    def selected_unit_summary_text(self):
+        if not self.metric_supports_unit_filter():
+            return ""
+        available_names = self.available_unit_names()
+        if not available_names:
+            return "No per-unit timeline data available for this metric."
+
+        selected_names = self.current_unit_selection()
+        if not selected_names or len(selected_names) == len(available_names):
+            return f"Including all {FILTERABLE_UNIT_METRICS[self.metric_id].lower()} units"
+        if len(selected_names) == 1:
+            return f"Including {_display_name(next(iter(selected_names)))} only"
+        return f"Including {len(selected_names)} selected units"
 
     def _draw_hover_value(self, painter, x, y, text, color, align_right=False):
         padding_x = 8
@@ -932,6 +1010,100 @@ class TimelineChartWidget(QWidget):
         super().leaveEvent(event)
 
 
+class UnitFilterDialog(QDialog):
+    def __init__(self, metric_id, unit_names, selected_unit_names, parent=None):
+        super().__init__(parent)
+        self.metric_id = metric_id
+        self.unit_names = unit_names or []
+        self.selected_names = set(selected_unit_names or self.unit_names)
+        self.buttons_by_name = {}
+
+        self.setWindowTitle(f"Select {FILTERABLE_UNIT_METRICS.get(metric_id, 'units')}")
+        self.resize(900, 640)
+        self._build_ui()
+
+    def _build_ui(self):
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(16, 16, 16, 16)
+        layout.setSpacing(12)
+
+        header = QLabel("Choose which units are included in the graph.")
+        header.setObjectName("graphSubText")
+        layout.addWidget(header)
+
+        actions_row = QHBoxLayout()
+        select_all_button = QPushButton("Select All")
+        select_all_button.clicked.connect(self._select_all)
+        actions_row.addWidget(select_all_button)
+        clear_all_button = QPushButton("Clear All")
+        clear_all_button.clicked.connect(self._clear_all)
+        actions_row.addWidget(clear_all_button)
+        actions_row.addStretch()
+        layout.addLayout(actions_row)
+
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        content = QWidget()
+        grid = QGridLayout(content)
+        grid.setContentsMargins(6, 6, 6, 6)
+        grid.setHorizontalSpacing(12)
+        grid.setVerticalSpacing(12)
+
+        for index, unit_name in enumerate(self.unit_names):
+            button = self._make_unit_button(unit_name)
+            self.buttons_by_name[unit_name] = button
+            grid.addWidget(button, index // 5, index % 5)
+
+        scroll.setWidget(content)
+        layout.addWidget(scroll, 1)
+
+        footer = QHBoxLayout()
+        footer.addStretch()
+        apply_button = QPushButton("Apply")
+        apply_button.clicked.connect(self.accept)
+        footer.addWidget(apply_button)
+        cancel_button = QPushButton("Cancel")
+        cancel_button.clicked.connect(self.reject)
+        footer.addWidget(cancel_button)
+        layout.addLayout(footer)
+
+    def _make_unit_button(self, unit_name):
+        button = QPushButton(_display_name(unit_name))
+        button.setCheckable(True)
+        button.setChecked(unit_name in self.selected_names)
+        button.setMinimumHeight(96)
+        button.setIconSize(QSize(56, 44))
+        pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 56, 44)
+        if pixmap is not None:
+            button.setIcon(QIcon(pixmap))
+        button.clicked.connect(lambda checked, target_name=unit_name: self._toggle_unit(target_name, checked))
+        return button
+
+    def _toggle_unit(self, unit_name, checked):
+        if checked:
+            self.selected_names.add(unit_name)
+            return
+        if len(self.selected_names) <= 1 and unit_name in self.selected_names:
+            self.buttons_by_name[unit_name].setChecked(True)
+            return
+        self.selected_names.discard(unit_name)
+
+    def _select_all(self):
+        self.selected_names = set(self.unit_names)
+        for unit_name, button in self.buttons_by_name.items():
+            button.setChecked(unit_name in self.selected_names)
+
+    def _clear_all(self):
+        if not self.unit_names:
+            return
+        self.selected_names = {self.unit_names[0]}
+        for unit_name, button in self.buttons_by_name.items():
+            button.setChecked(unit_name in self.selected_names)
+
+    def selected_unit_names(self):
+        return set(self.selected_names)
+
+
 class PostGameScoreboardWindow(QMainWindow):
     def __init__(self, payload):
         super().__init__()
@@ -941,6 +1113,8 @@ class PostGameScoreboardWindow(QMainWindow):
         self.match_path = normalized_payload.get("match_path")
         self.metric_buttons = {}
         self.legend_buttons = {}
+        self.filter_button = None
+        self.filter_status_label = None
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1680, 980)
         self._build_ui()
@@ -1302,6 +1476,20 @@ class PostGameScoreboardWindow(QMainWindow):
             metric_grid.addWidget(button, index // 5, index % 5)
         layout.addLayout(metric_grid)
 
+        filter_row = QHBoxLayout()
+        self.filter_button = QPushButton("Select Units")
+        self.filter_button.setObjectName("metricButton")
+        self.filter_button.setAutoDefault(False)
+        self.filter_button.setDefault(False)
+        self.filter_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.filter_button.clicked.connect(self._open_unit_filter_dialog)
+        filter_row.addWidget(self.filter_button)
+
+        self.filter_status_label = QLabel("")
+        self.filter_status_label.setObjectName("graphSubText")
+        filter_row.addWidget(self.filter_status_label, 1)
+        layout.addLayout(filter_row)
+
         self.chart_widget = TimelineChartWidget(self.timeline, self.summary["players"])
         layout.addWidget(self.chart_widget, 1)
 
@@ -1325,9 +1513,35 @@ class PostGameScoreboardWindow(QMainWindow):
         for button_metric_id, button in self.metric_buttons.items():
             button.setChecked(button_metric_id == metric_id)
         self.chart_widget.set_metric(metric_id)
+        self._refresh_filter_controls()
 
     def _toggle_player(self, player_id, checked):
         self.chart_widget.set_player_visible(player_id, checked)
         self.legend_buttons[player_id].setChecked(player_id in self.chart_widget.visible_player_ids)
+
+    def _refresh_filter_controls(self):
+        if self.filter_button is None or self.filter_status_label is None:
+            return
+
+        supports_filter = self.chart_widget.metric_supports_unit_filter()
+        has_data = self.chart_widget.has_unit_series_data()
+        self.filter_button.setVisible(supports_filter)
+        self.filter_status_label.setVisible(supports_filter)
+        self.filter_button.setEnabled(has_data)
+        self.filter_status_label.setText(self.chart_widget.selected_unit_summary_text() if supports_filter else "")
+
+    def _open_unit_filter_dialog(self):
+        if not self.chart_widget.metric_supports_unit_filter():
+            return
+
+        dialog = UnitFilterDialog(
+            self.chart_widget.metric_id,
+            self.chart_widget.available_unit_names(),
+            self.chart_widget.current_unit_selection(),
+            self,
+        )
+        if dialog.exec():
+            self.chart_widget.set_current_unit_selection(dialog.selected_unit_names())
+            self._refresh_filter_controls()
 
 

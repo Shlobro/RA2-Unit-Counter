@@ -17,3 +17,6 @@ Recent commits use short, imperative subjects such as `Fixed Yuri Slave miners` 
 
 ## Configuration & Data Files
 Treat `hud_positions.json`, `unit_selection.json`, and files under `oil counts/` as user or local state. Do not commit machine-specific edits unless the change intentionally updates shared defaults.
+
+## Reverse Engineering Notes
+For the live-memory scanning workflow used to discover new game values, including Python launcher issues, sandbox permission requirements, and the map-name address investigation, see `RE_MEMORY_WORKFLOW.md`.

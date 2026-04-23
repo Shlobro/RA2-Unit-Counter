@@ -465,3 +465,44 @@ class GameTimeWidget(BaseDataWidget):
         except Exception as e:
             logging.exception("Error adjusting size in GameTimeWidget: %s", e)
 
+
+class MapNameWidget(BaseDataWidget):
+    def __init__(self, state, text_color=Qt.white, size=16, font=None, parent=None):
+        super().__init__(
+            data="",
+            text_color=text_color,
+            size=size,
+            font=font,
+            use_fixed_width=False,
+            parent=parent,
+        )
+        self.state = state
+        self._timer = QTimer(self)
+        self._timer.setInterval(500)
+        self._timer.timeout.connect(self.refresh_map_name)
+        self.data_label.setAlignment(Qt.AlignCenter)
+        self.refresh_map_name()
+        self._timer.start()
+
+    def refresh_map_name(self):
+        self.update_data(getattr(self.state, "current_map_name", "") or "")
+
+    def on_value_changed(self, value):
+        try:
+            self.value = value or ""
+            self.data_label.setText(self.value)
+            self.data_label.adjustSize()
+            self.adjust_size()
+        except Exception as e:
+            logging.exception("Error in MapNameWidget.on_value_changed: %s", e)
+
+    def adjust_size(self):
+        try:
+            fm = QFontMetrics(self.data_label.font())
+            text_width = fm.horizontalAdvance(self.data_label.text() or "Map Name")
+            total_width = max(text_width, self.data_label.width()) + 8
+            total_height = self.data_label.height()
+            self.setFixedSize(total_width, total_height)
+        except Exception as e:
+            logging.exception("Error adjusting size in MapNameWidget: %s", e)
+

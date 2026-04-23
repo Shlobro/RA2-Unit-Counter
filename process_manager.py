@@ -36,6 +36,7 @@ def run_create_players_in_background(stop_event, state):
     if not state.process_handle:
         logging.error("Failed to obtain process handle.")
         return None
+    state.process_id = pid
     game_process = psutil.Process(pid)
     try:
         while not detect_if_all_players_are_loaded(state.process_handle):
@@ -45,6 +46,7 @@ def run_create_players_in_background(stop_event, state):
                 logging.info("Game process exited before players were loaded.")
                 ctypes.windll.kernel32.CloseHandle(state.process_handle)
                 state.process_handle = None
+                state.process_id = None
                 return None
             QThread.msleep(1000)
         valid_player_count = initialize_players_after_loading(game_data, state.process_handle)
