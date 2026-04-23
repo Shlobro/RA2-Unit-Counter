@@ -871,10 +871,10 @@ class ControlPanel(QMainWindow):
         if self.state.hud_positions.get('combined_hud', False):
             item = getattr(self.state, 'game_time_workspace_item', None)
             if item is not None:
-                if visible:
+                if hasattr(item, 'set_content_visible'):
+                    item.set_content_visible(visible)
+                elif visible:
                     item.show()
-                    if getattr(item, 'inner_widget', None) is not None:
-                        item.inner_widget.show()
                 else:
                     item.hide()
         else:
@@ -892,10 +892,10 @@ class ControlPanel(QMainWindow):
         if self.state.hud_positions.get('combined_hud', False):
             item = getattr(self.state, 'map_name_workspace_item', None)
             if item is not None:
-                if visible:
+                if hasattr(item, 'set_content_visible'):
+                    item.set_content_visible(visible)
+                elif visible:
                     item.show()
-                    if getattr(item, 'inner_widget', None) is not None:
-                        item.inner_widget.show()
                 else:
                     item.hide()
         else:

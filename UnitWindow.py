@@ -952,6 +952,7 @@ class WorkspaceWidgetContainer(QWidget):
         self.legacy_player_bucket_keys = get_player_legacy_bucket_keys(self.player, self.hud_pos)
         self._drag_offset = None
         self._sync_pending = False
+        self._explicitly_hidden = False
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1051,6 +1052,9 @@ class WorkspaceWidgetContainer(QWidget):
         if not self._has_live_inner_widget():
             self.hide()
             return
+        if self._explicitly_hidden:
+            self.hide()
+            return
         if self.inner_widget.isHidden():
             self.hide()
             return
@@ -1059,6 +1063,18 @@ class WorkspaceWidgetContainer(QWidget):
             self.setFixedSize(hint)
         self.show()
         self._refresh_geometry_from_saved_position()
+
+    def set_content_visible(self, visible):
+        self._explicitly_hidden = not visible
+        if not self._has_live_inner_widget():
+            self.hide()
+            return
+        if visible:
+            self.inner_widget.show()
+            self._sync_to_inner()
+        else:
+            self.inner_widget.hide()
+            self.hide()
 
     def _queue_sync_to_inner(self):
         if self._sync_pending or not self._has_live_inner_widget():
@@ -1105,6 +1121,7 @@ class GlobalWorkspaceWidgetContainer(QWidget):
         self.widget_key = widget_key
         self._drag_offset = None
         self._sync_pending = False
+        self._explicitly_hidden = False
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1186,6 +1203,9 @@ class GlobalWorkspaceWidgetContainer(QWidget):
         if not self._has_live_inner_widget():
             self.hide()
             return
+        if self._explicitly_hidden:
+            self.hide()
+            return
         if self.inner_widget.isHidden():
             self.hide()
             return
@@ -1194,6 +1214,18 @@ class GlobalWorkspaceWidgetContainer(QWidget):
             self.setFixedSize(hint)
         self.show()
         self._refresh_geometry_from_saved_position()
+
+    def set_content_visible(self, visible):
+        self._explicitly_hidden = not visible
+        if not self._has_live_inner_widget():
+            self.hide()
+            return
+        if visible:
+            self.inner_widget.show()
+            self._sync_to_inner()
+        else:
+            self.inner_widget.hide()
+            self.hide()
 
     def _queue_sync_to_inner(self):
         if self._sync_pending or not self._has_live_inner_widget():
@@ -1265,11 +1297,7 @@ class SingleWindowPlayerHud:
     def _set_workspace_item_visibility(self, item, visible):
         if item is None:
             return
-        if visible:
-            item.inner_widget.show()
-            item._sync_to_inner()
-        else:
-            item.hide()
+        item.set_content_visible(visible)
 
     def _create_resource_items(self):
         self._register_item(
@@ -1369,6 +1397,10 @@ class SingleWindowPlayerHud:
         self.set_element_visibility('superweapon_widget', self.hud_pos.get('show_superweapons', True))
 
     def set_element_visibility(self, widget_name, visible):
+        aliases = {
+            'money_spent_widget': 'money_widget_spent',
+        }
+        widget_name = aliases.get(widget_name, widget_name)
         if widget_name == 'unit_widget':
             for item in self.unit_items.values():
                 self._set_workspace_item_visibility(item, visible)
