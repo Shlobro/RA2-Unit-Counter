@@ -73,6 +73,19 @@ FACTION_TO_FLAG = {
     "Soviet": "RA2_Flag_Russia.png",
     "Yuri": "RA2_Yuricountry.png",
 }
+RADAR_TECH_BUILDINGS = {
+    "Yuri": ("Yuri Psychic Tower",),
+    "Soviet": ("Soviet Radar Tower",),
+    "Allied": (
+        "Allied Airforce Command Headquarters",
+        "Allied American Airforce Command Headquarters",
+    ),
+}
+BATTLE_LAB_BUILDINGS = {
+    "Yuri": ("Yuri Battle Lab",),
+    "Soviet": ("Soviet Battle Lab",),
+    "Allied": ("Allied Battle Lab",),
+}
 
 
 def _now_iso():
@@ -323,11 +336,75 @@ def _record_superweapon_events(player_meta, elapsed_ms, player):
         state["pending_reset"] = pending_reset
 
 
+def _record_radar_tech_events(player_meta, elapsed_ms, player):
+    faction_name = (player.faction or "").strip()
+    tracked_buildings = RADAR_TECH_BUILDINGS.get(faction_name)
+    if not tracked_buildings:
+        return
+
+    radar_events = player_meta.setdefault("events", {}).setdefault("radar_tech", [])
+    event_state = player_meta.setdefault("_radar_tech_event_state", {"owned": False})
+    building_counts = player.building_counts or {}
+
+    owned_building_name = None
+    for building_name in tracked_buildings:
+        if int(building_counts.get(building_name, 0) or 0) > 0:
+            owned_building_name = building_name
+            break
+
+    currently_owned = owned_building_name is not None
+    if currently_owned and not bool(event_state.get("owned")):
+        radar_events.append(
+            {
+                "type": "radar_tech_online",
+                "building_name": owned_building_name,
+                "t_ms": int(elapsed_ms),
+            }
+        )
+
+    event_state["owned"] = currently_owned
+    event_state["building_name"] = owned_building_name or ""
+
+
+def _record_battle_lab_events(player_meta, elapsed_ms, player):
+    faction_name = (player.faction or "").strip()
+    tracked_buildings = BATTLE_LAB_BUILDINGS.get(faction_name)
+    if not tracked_buildings:
+        return
+
+    battle_lab_events = player_meta.setdefault("events", {}).setdefault("battle_lab", [])
+    event_state = player_meta.setdefault("_battle_lab_event_state", {"owned": False})
+    building_counts = player.building_counts or {}
+
+    owned_building_name = None
+    for building_name in tracked_buildings:
+        if int(building_counts.get(building_name, 0) or 0) > 0:
+            owned_building_name = building_name
+            break
+
+    currently_owned = owned_building_name is not None
+    if currently_owned and not bool(event_state.get("owned")):
+        battle_lab_events.append(
+            {
+                "type": "battle_lab_online",
+                "building_name": owned_building_name,
+                "t_ms": int(elapsed_ms),
+            }
+        )
+
+    event_state["owned"] = currently_owned
+    event_state["building_name"] = owned_building_name or ""
+
+
 def _export_player_timeline_meta(player_meta):
     exported_meta = dict(player_meta)
     exported_meta.pop("_superweapon_event_state", None)
+    exported_meta.pop("_radar_tech_event_state", None)
+    exported_meta.pop("_battle_lab_event_state", None)
     exported_meta["events"] = {
         "superweapons": list(((player_meta.get("events") or {}).get("superweapons") or [])),
+        "radar_tech": list(((player_meta.get("events") or {}).get("radar_tech") or [])),
+        "battle_lab": list(((player_meta.get("events") or {}).get("battle_lab") or [])),
     }
     return exported_meta
 
@@ -357,8 +434,10 @@ def start_match_timeline(state):
         timeline["players"][player_id] = _build_player_metadata(player)
         timeline["series"][player_id] = {metric_id: [] for metric_id in CORE_METRIC_ORDER}
         timeline["players"][player_id]["unit_series"] = {}
-        timeline["players"][player_id]["events"] = {"superweapons": []}
+        timeline["players"][player_id]["events"] = {"superweapons": [], "radar_tech": [], "battle_lab": []}
         timeline["players"][player_id]["_superweapon_event_state"] = {}
+        timeline["players"][player_id]["_radar_tech_event_state"] = {"owned": False}
+        timeline["players"][player_id]["_battle_lab_event_state"] = {"owned": False}
 
     state.current_match_timeline = timeline
     state.completed_match_path = None
@@ -409,6 +488,8 @@ def record_match_timeline_sample(state):
             series.setdefault(metric_id, []).append({"t_ms": elapsed_ms, "value": int(value)})
         _record_unit_series_sample(unit_series, elapsed_ms, player)
         _record_superweapon_events(timeline["players"][player_id], elapsed_ms, player)
+        _record_radar_tech_events(timeline["players"][player_id], elapsed_ms, player)
+        _record_battle_lab_events(timeline["players"][player_id], elapsed_ms, player)
 
     timeline["_last_sample_ms"] = elapsed_ms
 

@@ -261,6 +261,8 @@ def _last_series_value(series_map, metric_id, default=0):
 def _normalize_player_events(player_data):
     events = player_data.get("events") or {}
     superweapon_events = []
+    radar_tech_events = []
+    battle_lab_events = []
     for event in events.get("superweapons") or []:
         if not isinstance(event, dict):
             continue
@@ -274,8 +276,36 @@ def _normalize_player_events(player_data):
                 "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
             }
         )
+    for event in events.get("radar_tech") or []:
+        if not isinstance(event, dict):
+            continue
+        building_name = (event.get("building_name") or "").strip()
+        if not building_name:
+            continue
+        radar_tech_events.append(
+            {
+                "type": event.get("type") or "radar_tech_online",
+                "building_name": building_name,
+                "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
+            }
+        )
+    for event in events.get("battle_lab") or []:
+        if not isinstance(event, dict):
+            continue
+        building_name = (event.get("building_name") or "").strip()
+        if not building_name:
+            continue
+        battle_lab_events.append(
+            {
+                "type": event.get("type") or "battle_lab_online",
+                "building_name": building_name,
+                "t_ms": max(0, int(event.get("t_ms", 0) or 0)),
+            }
+        )
     return {
         "superweapons": sorted(superweapon_events, key=lambda item: (item["t_ms"], item["superweapon_name"])),
+        "radar_tech": sorted(radar_tech_events, key=lambda item: (item["t_ms"], item["building_name"])),
+        "battle_lab": sorted(battle_lab_events, key=lambda item: (item["t_ms"], item["building_name"])),
     }
 
 
@@ -1041,10 +1071,22 @@ class MatchEventTimelineWidget(QWidget):
         self.timeline = timeline or {"players": [], "duration_ms": 0}
         self.summary_players = summary_players or []
         self.show_superweapons = True
+        self.show_radar_tech = True
+        self.show_battle_lab = True
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Maximum)
 
     def set_show_superweapons(self, show):
         self.show_superweapons = bool(show)
+        self.updateGeometry()
+        self.update()
+
+    def set_show_radar_tech(self, show):
+        self.show_radar_tech = bool(show)
+        self.updateGeometry()
+        self.update()
+
+    def set_show_battle_lab(self, show):
+        self.show_battle_lab = bool(show)
         self.updateGeometry()
         self.update()
 
@@ -1063,16 +1105,44 @@ class MatchEventTimelineWidget(QWidget):
         for player in self._ordered_players():
             if self.show_superweapons:
                 for event in ((player.get("events") or {}).get("superweapons") or []):
+                    superweapon_name = event.get("superweapon_name") or ""
                     events.append(
                         {
                             "t_ms": int(event.get("t_ms", 0) or 0),
                             "player_name": player.get("username") or f"Player {player.get('index', '?')}",
                             "accent_color": player.get("accent_color", "#d99a4e"),
-                            "superweapon_name": event.get("superweapon_name") or "",
-                            "icon_path": name_to_path(event.get("superweapon_name") or ""),
+                            "title": f"{player.get('username') or f'Player {player.get('index', '?')}'} used {superweapon_name}",
+                            "detail": "Detected when the superweapon timer reset and then resumed charging.",
+                            "icon_path": name_to_path(superweapon_name),
                         }
                     )
-        events.sort(key=lambda item: (item["t_ms"], item["player_name"].lower(), item["superweapon_name"]))
+            if self.show_radar_tech:
+                for event in ((player.get("events") or {}).get("radar_tech") or []):
+                    building_name = event.get("building_name") or ""
+                    events.append(
+                        {
+                            "t_ms": int(event.get("t_ms", 0) or 0),
+                            "player_name": player.get("username") or f"Player {player.get('index', '?')}",
+                            "accent_color": player.get("accent_color", "#d99a4e"),
+                            "title": f"{player.get('username') or f'Player {player.get('index', '?')}'} got radar tech",
+                            "detail": building_name,
+                            "icon_path": resolve_factory_image_path(building_name),
+                        }
+                    )
+            if self.show_battle_lab:
+                for event in ((player.get("events") or {}).get("battle_lab") or []):
+                    building_name = event.get("building_name") or ""
+                    events.append(
+                        {
+                            "t_ms": int(event.get("t_ms", 0) or 0),
+                            "player_name": player.get("username") or f"Player {player.get('index', '?')}",
+                            "accent_color": player.get("accent_color", "#d99a4e"),
+                            "title": f"{player.get('username') or f'Player {player.get('index', '?')}'} got battle lab tech",
+                            "detail": building_name,
+                            "icon_path": resolve_factory_image_path(building_name),
+                        }
+                    )
+        events.sort(key=lambda item: (item["t_ms"], item["player_name"].lower(), item.get("title", ""), item.get("detail", "")))
         return events
 
     def sizeHint(self):
@@ -1095,7 +1165,7 @@ class MatchEventTimelineWidget(QWidget):
         if not visible_events:
             painter.setPen(QColor("#f7d29d"))
             painter.setFont(_load_ra_font(14))
-            message = "No timeline events recorded yet." if self.show_superweapons else "Enable a timeline filter to view events."
+            message = "No timeline events recorded yet." if (self.show_superweapons or self.show_radar_tech or self.show_battle_lab) else "Enable a timeline filter to view events."
             painter.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, message)
             return
 
@@ -1145,7 +1215,7 @@ class MatchEventTimelineWidget(QWidget):
             painter.drawText(
                 QRectF(text_x, row_y - 2, self.width() - text_x - 30, 28),
                 Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
-                f"{item['player_name']} used {item['superweapon_name']}",
+                item.get("title") or "",
             )
 
             painter.setPen(QColor(222, 195, 167, 210))
@@ -1153,7 +1223,7 @@ class MatchEventTimelineWidget(QWidget):
             painter.drawText(
                 QRectF(text_x, row_y + 28, self.width() - text_x - 30, 24),
                 Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter,
-                "Detected when the superweapon timer reset and then resumed charging.",
+                item.get("detail") or "",
             )
 
 
@@ -1289,6 +1359,8 @@ class PostGameScoreboardWindow(QMainWindow):
         self.select_all_units_button = None
         self.unit_filter_buttons = {}
         self.superweapon_timeline_checkbox = None
+        self.radar_tech_timeline_checkbox = None
+        self.battle_lab_timeline_checkbox = None
         self.event_timeline_widget = None
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1680, 980)
@@ -1774,6 +1846,14 @@ class PostGameScoreboardWindow(QMainWindow):
         self.superweapon_timeline_checkbox.setChecked(True)
         self.superweapon_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
         filter_row.addWidget(self.superweapon_timeline_checkbox)
+        self.radar_tech_timeline_checkbox = QCheckBox("Radar Tech")
+        self.radar_tech_timeline_checkbox.setChecked(True)
+        self.radar_tech_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
+        filter_row.addWidget(self.radar_tech_timeline_checkbox)
+        self.battle_lab_timeline_checkbox = QCheckBox("Battle Lab")
+        self.battle_lab_timeline_checkbox.setChecked(True)
+        self.battle_lab_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
+        filter_row.addWidget(self.battle_lab_timeline_checkbox)
         filter_row.addStretch()
         layout.addLayout(filter_row)
 
@@ -1872,8 +1952,15 @@ class PostGameScoreboardWindow(QMainWindow):
         self._refresh_filter_controls()
 
     def _refresh_timeline_filters(self):
-        if self.event_timeline_widget is None or self.superweapon_timeline_checkbox is None:
+        if (
+            self.event_timeline_widget is None
+            or self.superweapon_timeline_checkbox is None
+            or self.radar_tech_timeline_checkbox is None
+            or self.battle_lab_timeline_checkbox is None
+        ):
             return
         self.event_timeline_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
+        self.event_timeline_widget.set_show_radar_tech(self.radar_tech_timeline_checkbox.isChecked())
+        self.event_timeline_widget.set_show_battle_lab(self.battle_lab_timeline_checkbox.isChecked())
 
 
