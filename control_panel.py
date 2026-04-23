@@ -16,9 +16,19 @@ from selected_units_utils import load_selected_units_file, save_selected_units_f
 
 
 class ControlPanel(QMainWindow):
+    DEFAULT_COLOR_LABELS = {
+        'name': 'Default (Player color)',
+        'money': 'Default (Use player color)',
+        'money_spent': 'Default (#76b5c5)',
+        'power': 'Default (Auto red/green)',
+        'game_time': 'Default (#ffffff)',
+        'map_name': 'Default (#ffffff)',
+    }
+
     def __init__(self, state):
         super().__init__()
         self.state = state
+        self.default_color_settings = self._capture_default_color_settings()
         # Load selected units into state.
         self.state.selected_units_dict = self.load_selected_units()
 
@@ -50,6 +60,114 @@ class ControlPanel(QMainWindow):
 
         normalized_position = normalize_position(saved_position)
         self.move(normalized_position['x'], normalized_position['y'])
+
+    def _capture_default_color_settings(self):
+        return {
+            'name': {
+                'mode': self.state.hud_positions.get('name_color_mode', 'default'),
+                'color': self.state.hud_positions.get('name_color'),
+            },
+            'money': {
+                'mode': self.state.hud_positions.get('money_color_mode', 'default'),
+                'color': self.state.hud_positions.get('money_custom_color'),
+                'legacy_mode': self.state.hud_positions.get('money_color', 'Use player color'),
+            },
+            'money_spent': {
+                'mode': self.state.hud_positions.get('money_spent_color_mode', 'default'),
+                'color': self.state.hud_positions.get('money_spent_color'),
+            },
+            'power': {
+                'mode': self.state.hud_positions.get('power_color_mode', 'default'),
+                'color': self.state.hud_positions.get('power_custom_color'),
+            },
+            'game_time': {
+                'mode': self.state.hud_positions.get('game_time_color_mode', 'custom'),
+                'color': self.state.hud_positions.get('game_time_color', '#FFFFFF'),
+            },
+            'map_name': {
+                'mode': self.state.hud_positions.get('map_name_color_mode', 'custom'),
+                'color': self.state.hud_positions.get('map_name_color', '#FFFFFF'),
+            },
+        }
+
+    def _get_default_setting(self, key):
+        return self.default_color_settings.get(key, {})
+
+    def _create_color_control_row(self, button_attr, choose_handler, reset_handler):
+        row = QWidget()
+        layout = QHBoxLayout(row)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(6)
+
+        color_button = QPushButton()
+        color_button.clicked.connect(choose_handler)
+        setattr(self, button_attr, color_button)
+        layout.addWidget(color_button)
+
+        default_button = QPushButton("Default")
+        default_button.clicked.connect(reset_handler)
+        layout.addWidget(default_button)
+
+        return row
+
+    def _set_color_button_state(self, button, color_value, default_label, custom_mode):
+        if custom_mode:
+            color = QColor(color_value)
+            if not color.isValid():
+                color = QColor('#FFFFFF')
+            button.setProperty('selected_color', color.name())
+            button.setProperty('custom_mode', True)
+            button.setText(color.name())
+            button.setStyleSheet(
+                f"background-color: {color.name()}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
+            )
+            return
+
+        button.setProperty('selected_color', '')
+        button.setProperty('custom_mode', False)
+        button.setText(default_label)
+        button.setStyleSheet("")
+
+    def _get_first_resource_window(self):
+        for _, resource_window in self.state.hud_windows:
+            if resource_window is not None:
+                return resource_window
+        return None
+
+    def _get_live_widget_color(self, attr_name, fallback):
+        resource_window = self._get_first_resource_window()
+        if resource_window is not None and hasattr(resource_window, attr_name):
+            widget = getattr(resource_window, attr_name)
+            color = getattr(widget, 'text_color', None)
+            if color is not None:
+                resolved = QColor(color)
+                if resolved.isValid():
+                    return resolved
+        return QColor(fallback)
+
+    def _get_name_picker_initial_color(self):
+        custom_color = self.state.hud_positions.get('name_color')
+        if self.state.hud_positions.get('name_color_mode') == 'custom' and custom_color:
+            return QColor(custom_color)
+        return self._get_live_widget_color('name_widget', '#FFFFFF')
+
+    def _get_money_picker_initial_color(self):
+        custom_color = self.state.hud_positions.get('money_custom_color')
+        if self.state.hud_positions.get('money_color_mode') == 'custom' and custom_color:
+            return QColor(custom_color)
+        return self._get_live_widget_color('money_widget', '#FFFFFF')
+
+    def _get_money_spent_picker_initial_color(self):
+        custom_color = self.state.hud_positions.get('money_spent_color')
+        if self.state.hud_positions.get('money_spent_color_mode') == 'custom' and custom_color:
+            return QColor(custom_color)
+        return self._get_live_widget_color('money_spent_widget', '#76B5C5')
+
+    def _get_power_picker_initial_color(self):
+        custom_color = self.state.hud_positions.get('power_custom_color')
+        if self.state.hud_positions.get('power_color_mode') == 'custom' and custom_color:
+            return QColor(custom_color)
+        return self._get_live_widget_color('power_widget', '#00FF00')
 
     def create_unit_settings_tab(self):
         tab = QWidget()
@@ -297,6 +415,13 @@ class ControlPanel(QMainWindow):
         self.name_size_spinbox.setValue(name_size)
         self.name_size_spinbox.valueChanged.connect(self.update_name_widget_size)
         name_layout.addRow(name_size_label, self.name_size_spinbox)
+        self.name_color_row = self._create_color_control_row(
+            'name_color_button',
+            self.choose_name_color,
+            self.reset_name_color,
+        )
+        self._set_name_color_button()
+        name_layout.addRow("Name Color:", self.name_color_row)
         name_group.setLayout(name_layout)
         layout.addWidget(name_group)
 
@@ -331,6 +456,13 @@ class ControlPanel(QMainWindow):
         self.money_size_spinbox.setValue(money_size)
         self.money_size_spinbox.valueChanged.connect(self.update_money_widget_size)
         money_layout.addRow(money_size_label, self.money_size_spinbox)
+        self.money_color_row = self._create_color_control_row(
+            'money_color_button',
+            self.choose_money_color,
+            self.reset_money_color,
+        )
+        self._set_money_color_button()
+        money_layout.addRow("Money Color:", self.money_color_row)
         money_group.setLayout(money_layout)
         layout.addWidget(money_group)
 
@@ -348,6 +480,13 @@ class ControlPanel(QMainWindow):
         self.money_spent_size_spinbox.setValue(money_spent_size)
         self.money_spent_size_spinbox.valueChanged.connect(self.update_money_spent_widget_size)
         money_spent_layout.addRow(money_spent_size_label, self.money_spent_size_spinbox)
+        self.money_spent_color_row = self._create_color_control_row(
+            'money_spent_color_button',
+            self.choose_money_spent_color,
+            self.reset_money_spent_color,
+        )
+        self._set_money_spent_color_button()
+        money_spent_layout.addRow("Money Spent Color:", self.money_spent_color_row)
         money_spent_group.setLayout(money_spent_layout)
         layout.addWidget(money_spent_group)
 
@@ -365,6 +504,13 @@ class ControlPanel(QMainWindow):
         self.power_size_spinbox.setValue(power_size)
         self.power_size_spinbox.valueChanged.connect(self.update_power_widget_size)
         power_layout.addRow(power_size_label, self.power_size_spinbox)
+        self.power_color_row = self._create_color_control_row(
+            'power_color_button',
+            self.choose_power_color,
+            self.reset_power_color,
+        )
+        self._set_power_color_button()
+        power_layout.addRow("Power Color:", self.power_color_row)
         power_group.setLayout(power_layout)
         layout.addWidget(power_group)
 
@@ -390,10 +536,13 @@ class ControlPanel(QMainWindow):
         self.game_time_font_combo.currentFontChanged.connect(self.update_game_time_font)
         game_time_layout.addRow(game_time_font_label, self.game_time_font_combo)
 
-        self.game_time_color_button = QPushButton()
-        self.game_time_color_button.clicked.connect(self.choose_game_time_color)
-        self._set_game_time_color_button(self.state.hud_positions.get('game_time_color', '#FFFFFF'))
-        game_time_layout.addRow("Game Time Color:", self.game_time_color_button)
+        self.game_time_color_row = self._create_color_control_row(
+            'game_time_color_button',
+            self.choose_game_time_color,
+            self.reset_game_time_color,
+        )
+        self._set_game_time_color_button()
+        game_time_layout.addRow("Game Time Color:", self.game_time_color_row)
 
         game_time_group.setLayout(game_time_layout)
         layout.addWidget(game_time_group)
@@ -413,10 +562,13 @@ class ControlPanel(QMainWindow):
         self.map_name_size_spinbox.valueChanged.connect(self.update_map_name_widget_size)
         map_name_layout.addRow(map_name_size_label, self.map_name_size_spinbox)
 
-        self.map_name_color_button = QPushButton()
-        self.map_name_color_button.clicked.connect(self.choose_map_name_color)
-        self._set_map_name_color_button(self.state.hud_positions.get('map_name_color', '#FFFFFF'))
-        map_name_layout.addRow(QLabel("Map Name Color:"), self.map_name_color_button)
+        self.map_name_color_row = self._create_color_control_row(
+            'map_name_color_button',
+            self.choose_map_name_color,
+            self.reset_map_name_color,
+        )
+        self._set_map_name_color_button()
+        map_name_layout.addRow(QLabel("Map Name Color:"), self.map_name_color_row)
 
         map_name_group.setLayout(map_name_layout)
         layout.addWidget(map_name_group)
@@ -743,17 +895,162 @@ class ControlPanel(QMainWindow):
                 msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
                 msg_box.exec()
 
-    def update_money_color(self, color):
-        color = color.strip()
-        self.state.hud_positions['money_color'] = color
-        logging.info(f"HUD money color updated to: '{color}'")
+    def _set_name_color_button(self):
+        self._set_color_button_state(
+            self.name_color_button,
+            self.state.hud_positions.get('name_color', '#FFFFFF'),
+            self.DEFAULT_COLOR_LABELS['name'],
+            self.state.hud_positions.get('name_color_mode') == 'custom',
+        )
+
+    def choose_name_color(self):
+        color = QColorDialog.getColor(self._get_name_picker_initial_color(), self, "Select Name Color")
+        if color.isValid():
+            self.update_name_color(color.name())
+
+    def reset_name_color(self):
+        default_setting = self._get_default_setting('name')
+        self.state.hud_positions['name_color_mode'] = default_setting.get('mode', 'default')
+        default_color = default_setting.get('color')
+        if default_color:
+            self.state.hud_positions['name_color'] = default_color
+        else:
+            self.state.hud_positions.pop('name_color', None)
+        self._set_name_color_button()
+        self.apply_resource_widget_colors()
+
+    def update_name_color(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        self.state.hud_positions['name_color_mode'] = 'custom'
+        self.state.hud_positions['name_color'] = color.name()
+        self._set_name_color_button()
+        self.apply_resource_widget_colors()
+
+    def _set_money_color_button(self):
+        legacy_mode = str(self._get_default_setting('money').get('legacy_mode', 'Use player color')).strip().lower()
+        default_label = "Default (White)" if legacy_mode == 'white' else self.DEFAULT_COLOR_LABELS['money']
+        self._set_color_button_state(
+            self.money_color_button,
+            self.state.hud_positions.get('money_custom_color', '#FFFFFF'),
+            default_label,
+            self.state.hud_positions.get('money_color_mode') == 'custom',
+        )
+
+    def choose_money_color(self):
+        color = QColorDialog.getColor(self._get_money_picker_initial_color(), self, "Select Money Color")
+        if color.isValid():
+            self.update_money_color(color.name())
+
+    def reset_money_color(self):
+        default_setting = self._get_default_setting('money')
+        self.state.hud_positions['money_color_mode'] = default_setting.get('mode', 'default')
+        self.state.hud_positions['money_color'] = default_setting.get('legacy_mode', 'Use player color')
+        default_color = default_setting.get('color')
+        if default_color:
+            self.state.hud_positions['money_custom_color'] = default_color
+        else:
+            self.state.hud_positions.pop('money_custom_color', None)
+        self._set_money_color_button()
+        self.apply_resource_widget_colors()
+
+    def update_money_color(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        self.state.hud_positions['money_color_mode'] = 'custom'
+        self.state.hud_positions['money_custom_color'] = color.name()
+        self._set_money_color_button()
+        self.apply_resource_widget_colors()
+
+    def _set_money_spent_color_button(self):
+        self._set_color_button_state(
+            self.money_spent_color_button,
+            self.state.hud_positions.get('money_spent_color', '#76B5C5'),
+            self.DEFAULT_COLOR_LABELS['money_spent'],
+            self.state.hud_positions.get('money_spent_color_mode') == 'custom',
+        )
+
+    def choose_money_spent_color(self):
+        color = QColorDialog.getColor(
+            self._get_money_spent_picker_initial_color(),
+            self,
+            "Select Money Spent Color",
+        )
+        if color.isValid():
+            self.update_money_spent_color(color.name())
+
+    def reset_money_spent_color(self):
+        default_setting = self._get_default_setting('money_spent')
+        self.state.hud_positions['money_spent_color_mode'] = default_setting.get('mode', 'default')
+        default_color = default_setting.get('color')
+        if default_color:
+            self.state.hud_positions['money_spent_color'] = default_color
+        else:
+            self.state.hud_positions.pop('money_spent_color', None)
+        self._set_money_spent_color_button()
+        self.apply_resource_widget_colors()
+
+    def update_money_spent_color(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        self.state.hud_positions['money_spent_color_mode'] = 'custom'
+        self.state.hud_positions['money_spent_color'] = color.name()
+        self._set_money_spent_color_button()
+        self.apply_resource_widget_colors()
+
+    def _set_power_color_button(self):
+        self._set_color_button_state(
+            self.power_color_button,
+            self.state.hud_positions.get('power_custom_color', '#00FF00'),
+            self.DEFAULT_COLOR_LABELS['power'],
+            self.state.hud_positions.get('power_color_mode') == 'custom',
+        )
+
+    def choose_power_color(self):
+        color = QColorDialog.getColor(self._get_power_picker_initial_color(), self, "Select Power Color")
+        if color.isValid():
+            self.update_power_color(color.name())
+
+    def reset_power_color(self):
+        default_setting = self._get_default_setting('power')
+        self.state.hud_positions['power_color_mode'] = default_setting.get('mode', 'default')
+        default_color = default_setting.get('color')
+        if default_color:
+            self.state.hud_positions['power_custom_color'] = default_color
+        else:
+            self.state.hud_positions.pop('power_custom_color', None)
+        self._set_power_color_button()
+        self.apply_resource_widget_colors()
+
+    def update_power_color(self, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        self.state.hud_positions['power_color_mode'] = 'custom'
+        self.state.hud_positions['power_custom_color'] = color.name()
+        self._set_power_color_button()
+        self.apply_resource_widget_colors()
+
+    def apply_resource_widget_colors(self):
         if self.state.hud_positions.get('combined_hud', False):
             for combined_window, _ in self.state.hud_windows:
                 if hasattr(combined_window, 'resource_widget'):
-                    combined_window.resource_widget.update_money_widget_color()
+                    resource_widget = combined_window.resource_widget
+                    resource_widget.update_name_widget_color()
+                    resource_widget.update_money_widget_color()
+                    resource_widget.update_money_spent_widget_color()
+                    resource_widget.update_power_widget_color()
         else:
             for _, resource_window in self.state.hud_windows:
+                if resource_window is None:
+                    continue
+                resource_window.update_name_widget_color()
                 resource_window.update_money_widget_color()
+                resource_window.update_money_spent_widget_color()
+                resource_window.update_power_widget_color()
 
     def update_layout(self, layout_type):
         self.state.hud_positions['unit_layout'] = layout_type
@@ -977,14 +1274,13 @@ class ControlPanel(QMainWindow):
             if window is not None:
                 window.update_font_family(family)
 
-    def _set_game_time_color_button(self, color_value):
-        color = QColor(color_value)
-        if not color.isValid():
-            color = QColor('#FFFFFF')
-        self.game_time_color_button.setProperty('selected_color', color.name())
-        self.game_time_color_button.setText(color.name())
-        self.game_time_color_button.setStyleSheet(
-            f"background-color: {color.name()}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
+    def _set_game_time_color_button(self):
+        custom_mode = self.state.hud_positions.get('game_time_color_mode', 'custom') == 'custom'
+        self._set_color_button_state(
+            self.game_time_color_button,
+            self.state.hud_positions.get('game_time_color', '#FFFFFF'),
+            self.DEFAULT_COLOR_LABELS['game_time'],
+            custom_mode,
         )
 
     def choose_game_time_color(self):
@@ -994,13 +1290,23 @@ class ControlPanel(QMainWindow):
             return
         self.update_game_time_color(color.name())
 
-    def update_game_time_color(self, color_value):
+    def reset_game_time_color(self):
+        default_setting = self._get_default_setting('game_time')
+        self.state.hud_positions['game_time_color_mode'] = default_setting.get('mode', 'custom')
+        self._set_game_time_color_button()
+        self.update_game_time_color(
+            default_setting.get('color', '#FFFFFF'),
+            custom_mode=default_setting.get('mode', 'custom') == 'custom',
+        )
+
+    def update_game_time_color(self, color_value, custom_mode=True):
         color = QColor(color_value)
         if not color.isValid():
             return
         color_name = color.name()
         self.state.hud_positions['game_time_color'] = color_name
-        self._set_game_time_color_button(color_name)
+        self.state.hud_positions['game_time_color_mode'] = 'custom' if custom_mode else 'default'
+        self._set_game_time_color_button()
         logging.info(f"Updated game time color: {color_name}")
         if self.state.hud_positions.get('combined_hud', False):
             widget = getattr(self.state, 'game_time_widget', None)
@@ -1030,14 +1336,13 @@ class ControlPanel(QMainWindow):
             if window is not None:
                 window.update_widget_size(new_size)
 
-    def _set_map_name_color_button(self, color_value):
-        color = QColor(color_value)
-        if not color.isValid():
-            color = QColor('#FFFFFF')
-        self.map_name_color_button.setProperty('selected_color', color.name())
-        self.map_name_color_button.setText(color.name())
-        self.map_name_color_button.setStyleSheet(
-            f"background-color: {color.name()}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
+    def _set_map_name_color_button(self):
+        custom_mode = self.state.hud_positions.get('map_name_color_mode', 'custom') == 'custom'
+        self._set_color_button_state(
+            self.map_name_color_button,
+            self.state.hud_positions.get('map_name_color', '#FFFFFF'),
+            self.DEFAULT_COLOR_LABELS['map_name'],
+            custom_mode,
         )
 
     def choose_map_name_color(self):
@@ -1047,13 +1352,23 @@ class ControlPanel(QMainWindow):
             return
         self.update_map_name_color(color.name())
 
-    def update_map_name_color(self, color_value):
+    def reset_map_name_color(self):
+        default_setting = self._get_default_setting('map_name')
+        self.state.hud_positions['map_name_color_mode'] = default_setting.get('mode', 'custom')
+        self._set_map_name_color_button()
+        self.update_map_name_color(
+            default_setting.get('color', '#FFFFFF'),
+            custom_mode=default_setting.get('mode', 'custom') == 'custom',
+        )
+
+    def update_map_name_color(self, color_value, custom_mode=True):
         color = QColor(color_value)
         if not color.isValid():
             return
         color_name = color.name()
         self.state.hud_positions['map_name_color'] = color_name
-        self._set_map_name_color_button(color_name)
+        self.state.hud_positions['map_name_color_mode'] = 'custom' if custom_mode else 'default'
+        self._set_map_name_color_button()
         logging.info(f"Updated map name color: {color_name}")
         if self.state.hud_positions.get('combined_hud', False):
             widget = getattr(self.state, 'map_name_widget', None)

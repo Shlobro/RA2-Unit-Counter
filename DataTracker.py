@@ -32,6 +32,8 @@ faction_to_flag = {
 }
 
 class ResourceWindow(QMainWindow):
+    DEFAULT_MONEY_SPENT_COLOR = QColor(118, 181, 197)
+
     def __init__(self, player, player_count, hud_positions, player_index, combined_mode=False):
         """
         If combined_mode is True, all resource widgets are embedded in a single window.
@@ -68,7 +70,7 @@ class ResourceWindow(QMainWindow):
         self.name_widget = NameWidget(
             data=self.player.username.value,
             image_path=None,
-            text_color=self.player.color,
+            text_color=self.get_name_widget_color(),
             size=name_widget_size,
             font=username_font
         )
@@ -77,30 +79,24 @@ class ResourceWindow(QMainWindow):
             size=flag_widget_size
         )
         self.export_flag_image_if_needed()
-        money_color_option = self.hud_positions.get('money_color', 'Use player color')
-        if money_color_option == 'Use player color':
-            money_text_color = self.player.color
-        elif money_color_option == 'White':
-            money_text_color = Qt.white
-        else:
-            money_text_color = Qt.white
         self.money_widget = MoneyWidget(
             data=self.player.balance,
-            text_color=money_text_color,
+            text_color=self.get_money_widget_color(),
             size=money_widget_size,
             font=money_font
         )
+        power_image_color, power_text_color = self.get_power_widget_colors()
         self.power_widget = PowerWidget(
             data=self.player.power,
             image_path='icons/bolt.png',
-            image_color=Qt.green,
-            text_color=Qt.green,
+            image_color=power_image_color,
+            text_color=power_text_color,
             size=power_widget_size,
             font=power_font
         )
         self.money_spent_widget = MoneySpentWidget(
             data=self.player.spent_credit,
-            text_color=QColor(118, 181, 197),
+            text_color=self.get_money_spent_widget_color(),
             size=money_spent_widget_size,
             font=money_font
         )
@@ -319,14 +315,14 @@ class ResourceWindow(QMainWindow):
     def update_labels(self):
         """Update the money, money spent, and power values."""
         self.refresh_flag_widget()
+        self.update_name_widget_color()
+        self.update_money_widget_color()
+        self.update_money_spent_widget_color()
+        self.update_power_widget_color()
         self.money_widget.update_data(self.player.balance)
         self.money_spent_widget.update_data(self.player.spent_credit)
         self.power_widget.update_data(self.player.power)
         self.superweapon_widget.update_labels()
-        if self.player.power < 0:
-            self.power_widget.update_color(new_image_color=Qt.red, new_text_color=Qt.red)
-        else:
-            self.power_widget.update_color(new_image_color=Qt.green, new_text_color=Qt.green)
 
     def update_all_data_size(self, new_size):
         """Resize all DataWidgets in this ResourceWindow."""
@@ -383,11 +379,64 @@ class ResourceWindow(QMainWindow):
         self.export_flag_image_if_needed()
 
     def update_money_widget_color(self):
-        money_color_option = self.hud_positions.get('money_color', 'Use player color').strip().lower()
-        if money_color_option == 'use player color':
-            money_text_color = self.player.color
-        elif money_color_option == 'white':
-            money_text_color = QColor(Qt.white)
-        else:
-            money_text_color = QColor(Qt.white)
-        self.money_widget.update_color(new_text_color=money_text_color)
+        self.money_widget.update_color(new_text_color=self.get_money_widget_color())
+
+    def update_name_widget_color(self):
+        self.name_widget.update_color(new_text_color=self.get_name_widget_color())
+
+    def update_money_spent_widget_color(self):
+        self.money_spent_widget.update_color(new_text_color=self.get_money_spent_widget_color())
+        self.money_spent_widget.load_and_set_image()
+        self.money_spent_widget.adjust_size()
+
+    def update_power_widget_color(self):
+        image_color, text_color = self.get_power_widget_colors()
+        self.power_widget.update_color(new_image_color=image_color, new_text_color=text_color)
+
+    def get_name_widget_color(self):
+        return self._resolve_custom_or_default_color(
+            mode_key='name_color_mode',
+            color_key='name_color',
+            default_color=self.player.color,
+        )
+
+    def get_money_widget_color(self):
+        mode = str(self.hud_positions.get('money_color_mode', '')).strip().lower()
+        custom_color = self._get_custom_color('money_custom_color')
+        if mode == 'custom' and custom_color is not None:
+            return custom_color
+
+        money_color_option = str(self.hud_positions.get('money_color', 'Use player color')).strip().lower()
+        if money_color_option == 'white':
+            return QColor(Qt.white)
+        return QColor(self.player.color)
+
+    def get_money_spent_widget_color(self):
+        return self._resolve_custom_or_default_color(
+            mode_key='money_spent_color_mode',
+            color_key='money_spent_color',
+            default_color=self.DEFAULT_MONEY_SPENT_COLOR,
+        )
+
+    def get_power_widget_colors(self):
+        custom_color = self._get_custom_color('power_custom_color')
+        mode = str(self.hud_positions.get('power_color_mode', '')).strip().lower()
+        if mode == 'custom' and custom_color is not None:
+            return custom_color, custom_color
+
+        default_color = QColor(Qt.red) if self.player.power < 0 else QColor(Qt.green)
+        return default_color, default_color
+
+    def _get_custom_color(self, key):
+        color_value = self.hud_positions.get(key)
+        color = QColor(color_value) if color_value else QColor()
+        if color.isValid():
+            return color
+        return None
+
+    def _resolve_custom_or_default_color(self, mode_key, color_key, default_color):
+        mode = str(self.hud_positions.get(mode_key, '')).strip().lower()
+        custom_color = self._get_custom_color(color_key)
+        if mode == 'custom' and custom_color is not None:
+            return custom_color
+        return QColor(default_color)
