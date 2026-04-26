@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>A slick Windows HUD companion for Red Alert 2 / Yuri's Revenge.</strong><br />
-  Live unit counts, money, factory production, superweapon timers, and a post-game scoreboard for <code>gamemd-spawn.exe</code>.
+  Live unit counts, money, power, game-time/map widgets, factory production, superweapon timers, and a post-game scoreboard for <code>gamemd-spawn.exe</code>.
 </p>
 
 <p align="center">
@@ -20,12 +20,13 @@
 RA2 Unit Counter attaches to a running Yuri's Revenge / RA2 session, reads live game state from memory, and renders draggable HUD windows for each player.
 
 - Track selected unit counts in real time
-- Show player name, flag, money, and money spent
+- Show player name, flag, money, money spent, power, game time, and map name
 - Watch live factory production and queue order
 - Display superweapon timers
 - Switch between separate windows and a combined HUD layout
+- Customize widget fonts, colors, and optional background rectangles for readability
 - Save window positions and UI settings between sessions
-- Show a styled post-game scoreboard when the match ends
+- Show a styled post-game scoreboard with timeline, graphs, and player breakdown views
 
 ## Features
 
@@ -37,6 +38,40 @@ You can run the app in either of these modes:
 - `Combined HUD`: each player gets one compact stacked panel
 
 The control panel lets you resize widgets, swap vertical/horizontal layouts, toggle frames, and choose which units appear.
+For the regular Widgets tab items, you can also enable a per-widget background rectangle, choose its color, and set its width and height.
+
+### Widget Coverage
+
+The HUD can show:
+
+- Unit counters
+- Player name and flag
+- Money and money spent
+- Power status
+- Game time
+- Current map name
+- Factory queues
+- Superweapon panels
+
+### Styling Controls
+
+Most HUD widgets can be styled from the control panel:
+
+- Change font family per widget
+- Choose custom text colors
+- Keep default/player-color behavior where applicable
+- Add optional solid background rectangles with custom color and size
+
+### Post-Game Scoreboard
+
+When a match ends, the app can open a full post-game scoreboard with:
+
+- A match timeline view
+- Per-player breakdown cards
+- Graph tabs for score, economy, army, and other tracked metrics
+- Inline per-unit graph filtering
+- Match event tracking for superweapon use/build progress, radar tech, battle lab tech, special units, and MCV loss
+- Saved scoreboard management from the Scoreboard tab
 
 ### Built for Live Matches
 
@@ -83,6 +118,12 @@ When the app opens:
 2. Point it at the directory that contains `spawn.ini`.
 3. Launch or join a game.
 4. Drag the HUD windows where you want them.
+5. If text is hard to read over the map, enable widget backgrounds from the `Widgets` tab.
+
+For reliable overlay behavior:
+
+- Run the app as Administrator
+- Use borderless-windowed RA2/YR instead of exclusive fullscreen
 
 ## Build An EXE
 

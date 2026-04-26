@@ -2101,6 +2101,19 @@ class ControlPanel(QMainWindow):
             flexible in layout. Toggle this in the <b>General</b> tab under HUD Mode.
         </p>
 
+        <h3>Widget Backgrounds</h3>
+        <p>
+            In the <b>Widgets</b> tab, the non-unit HUD widgets now support an optional solid
+            background rectangle behind the content. This is useful when text or numbers are hard
+            to read over bright or busy map areas.
+        </p>
+        <ul>
+            <li>You can turn the background on or off per widget.</li>
+            <li>You can choose the background color, including transparency.</li>
+            <li>You can set a custom width and height for the rectangle.</li>
+            <li>These settings are saved and work in both separate-window mode and single-window mode.</li>
+        </ul>
+
         <hr/>
 
         <h2>How Window Positions Are Saved</h2>
@@ -2191,6 +2204,206 @@ class ControlPanel(QMainWindow):
             <li>All settings are saved automatically on close — no save button needed.</li>
             <li>Hover over any <b>?</b> badge next to a setting for a quick explanation.</li>
             <li>The HUD windows are always-on-top and click-through — they won't interfere with gameplay.</li>
+            <li>If a window disappears off-screen, delete <b>hud_positions.json</b> to reset all positions.</li>
+        </ul>
+        """)
+
+        layout.addWidget(text)
+        tab.setLayout(layout)
+        self.tabs.addTab(tab, "Help")
+
+    def create_help_tab(self):
+        tab = QWidget()
+        layout = QVBoxLayout()
+        layout.setSpacing(12)
+
+        text = QTextEdit()
+        text.setReadOnly(True)
+        text.setFrameShape(QTextEdit.Shape.NoFrame)
+        text.setStyleSheet(
+            "QTextEdit { background-color: #16213e; color: #c0c0e0; font-size: 13px; border: none; }"
+        )
+        text.setHtml("""
+        <style>
+            body  { font-family: 'Segoe UI', Arial, sans-serif; font-size: 13px; color: #c0c0e0; }
+            h2    { color: #e94560; margin-bottom: 4px; margin-top: 20px; }
+            h3    { color: #a0c0ff; margin-bottom: 2px; margin-top: 14px; }
+            p     { margin: 4px 0 8px 0; line-height: 1.6; }
+            ul    { margin: 4px 0 8px 16px; line-height: 1.7; }
+            b     { color: #e0e0ff; }
+            hr    { border: none; border-top: 1px solid #2d2d4e; margin: 16px 0; }
+        </style>
+
+        <h2>Getting Started</h2>
+        <p>
+            <b>Run this app as Administrator.</b> Without administrator privileges the app
+            may fail to read game memory or fail to spawn HUD windows correctly.
+            Right-click the executable and choose <b>Run as administrator</b>, or set it
+            permanently via Properties -> Compatibility -> "Run this program as an administrator".
+        </p>
+        <p>
+            Start by setting your <b>Game Path</b> in the General tab. Point it to the folder
+            where your Red Alert 2 / Yuri's Revenge is installed. The app reads live memory from
+            the game process, so the game must be running for the HUD to display data.
+        </p>
+        <p>
+            <b>Run the game in Borderless Window mode.</b> If the game is set to exclusive
+            fullscreen, the HUD windows will be hidden behind it and will not appear on top.
+            Borderless window mode allows the overlay to sit above the game as intended.
+        </p>
+        <p>
+            The recommended renderer is <b>CnC-DDraw (Stretched)</b>. This renderer supports
+            borderless window mode and is the most compatible option for running the overlay
+            correctly on top of the game.
+        </p>
+        <p>
+            Once the game is running, HUD windows will appear automatically. Drag them anywhere
+            on screen. Your layout is saved when you close this control panel.
+        </p>
+
+        <hr/>
+
+        <h2>HUD Modes</h2>
+        <h3>Separate Windows (Default)</h3>
+        <p>
+            Each element (name, money, power, units, factory, superweapons) is its own
+            independent draggable window. You can place them anywhere on screen with full flexibility.
+        </p>
+        <h3>Single Window Mode</h3>
+        <p>
+            All elements for a player are combined into one window. Easier to manage but less
+            flexible in layout. Toggle this in the <b>General</b> tab under HUD Mode.
+        </p>
+
+        <h3>Widget Backgrounds</h3>
+        <p>
+            In the <b>Widgets</b> tab, the non-unit HUD widgets support an optional solid
+            background rectangle behind the content. This is useful when text or numbers are hard
+            to read over bright or busy map areas.
+        </p>
+        <ul>
+            <li>You can turn the background on or off per widget.</li>
+            <li>You can choose the background color, including transparency.</li>
+            <li>You can set a custom width and height for the rectangle.</li>
+            <li>These settings are saved and work in both separate-window mode and single-window mode.</li>
+        </ul>
+
+        <h3>Fonts and Colors</h3>
+        <p>
+            Most HUD widgets can be styled directly from the control panel. You can choose a font
+            family per widget, use custom colors, or fall back to the default/player-color behavior
+            where that makes sense.
+        </p>
+
+        <hr/>
+
+        <h2>How Window Positions Are Saved</h2>
+        <p>
+            Every HUD window remembers its position on screen. Positions are saved automatically
+            when you close the control panel and restored the next time the app starts.
+            Positions are saved <b>per player identity</b>, so each player's windows remember
+            exactly where you placed them independently of other players.
+        </p>
+
+        <h3>Color Mode (Default)</h3>
+        <p>
+            The app identifies each player by their <b>in-game color</b> (red, blue, green, etc.).
+            Each color has its own saved window positions.
+        </p>
+        <ul>
+            <li>Place a player's windows wherever you like during a game.</li>
+            <li>Next game, if that same color appears, the windows snap back to exactly where you left them.</li>
+            <li>Different colors each have independent positions.</li>
+        </ul>
+
+        <h3>Player Number Mode</h3>
+        <p>
+            If players use <b>random colors</b>, color-based tracking will not work reliably.
+            Enable <b>"Use Player Numbers Instead of Colors"</b> (General tab) to identify
+            players by their slot number (Player 1-8) regardless of color.
+        </p>
+        <p>
+            You can optionally enter a player's name for each slot. When a name is set, the app
+            matches that player to the correct slot even if they join in a different order.
+            <b>If no name is set</b>, players are assigned to slots in the order they are detected -
+            positions are still saved and restored correctly by slot number.
+        </p>
+
+        <hr/>
+
+        <h2>Widgets</h2>
+        <p>
+            The <b>Widgets</b> tab controls the main non-unit HUD elements. In addition to player
+            name, flag, money, money spent, and power, the app can also show:
+        </p>
+        <ul>
+            <li><b>Game Time</b> as a live match clock with adjustable size, font, color, and background.</li>
+            <li><b>Map Name</b> as a separate HUD element with its own size, font, color, and background settings.</li>
+        </ul>
+
+        <hr/>
+
+        <h2>Unit Counter</h2>
+        <p>
+            Use the <b>Select Units</b> button in the Units tab to choose which units to track
+            for each faction. Units are organized by faction and type (Infantry, Tank, Aircraft, etc.).
+        </p>
+        <ul>
+            <li><b>Left-click</b> a unit to select or deselect it.</li>
+            <li><b>Right-click</b> a unit to lock its position (it will not move even as other units are added or removed) or to set an exact position number.</li>
+            <li>The number badge on a unit image shows its current display position in the counter.</li>
+        </ul>
+        <p>
+            In <b>Separate Counter Mode</b> (Units tab), unit images and unit numbers appear in
+            two separate windows so you can position them independently - useful for streamers
+            who want numbers in one corner and images in another.
+        </p>
+
+        <hr/>
+
+        <h2>Factory &amp; Superweapon Panels</h2>
+        <p>
+            The factory panel shows what each player is currently building, including a queue
+            of upcoming units. The superweapon panel shows each player's available superweapons
+            and their countdown timers.
+        </p>
+        <p>
+            Both panels support <b>Vertical</b> and <b>Horizontal</b> layouts and adjustable
+            cameo sizes. Frames around each cameo are colored with the player's in-game color.
+        </p>
+
+        <hr/>
+
+        <h2>Post-Game Scoreboard</h2>
+        <p>
+            When a match ends, a scoreboard automatically appears with match stats.
+            You can also open saved scoreboards at any time from the <b>Scoreboard</b> tab.
+            Set a limit on how many scoreboards are saved to disk, or leave it unlimited.
+        </p>
+        <ul>
+            <li><b>Timeline</b> tab: estimated score timeline plus match-event tracking.</li>
+            <li><b>Player Breakdown</b> tab: per-player summary cards and unit totals.</li>
+            <li><b>Graphs</b> tab: switch between tracked metrics and filter unit-based graphs inline.</li>
+            <li>Timeline events can include superweapon usage/build progress, radar tech, battle lab tech, special-unit builds, and MCV loss.</li>
+            <li>Timeline filter preferences are remembered between scoreboard sessions.</li>
+        </ul>
+
+        <hr/>
+
+        <h2>Update Frequency</h2>
+        <p>
+            The app reads game memory every <b>1000 ms (1 second)</b> by default.
+            You can lower this in the General tab for more responsive updates, or raise it
+            to reduce CPU usage. Values below 200 ms are not recommended.
+        </p>
+
+        <hr/>
+
+        <h2>Tips</h2>
+        <ul>
+            <li>All settings are saved automatically on close - no save button needed.</li>
+            <li>Hover over any <b>?</b> badge next to a setting for a quick explanation.</li>
+            <li>The HUD windows are always-on-top and click-through - they will not interfere with gameplay.</li>
             <li>If a window disappears off-screen, delete <b>hud_positions.json</b> to reset all positions.</li>
         </ul>
         """)
