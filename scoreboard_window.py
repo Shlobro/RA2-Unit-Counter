@@ -1472,6 +1472,8 @@ class PostGameScoreboardWindow(QMainWindow):
         self.unit_filter_empty_label = None
         self.select_all_units_button = None
         self.unit_filter_buttons = {}
+        self.timeline_chart_widget = None
+        self.timeline_legend_buttons = {}
         self.superweapon_timeline_checkbox = None
         self.radar_tech_timeline_checkbox = None
         self.battle_lab_timeline_checkbox = None
@@ -1981,47 +1983,34 @@ class PostGameScoreboardWindow(QMainWindow):
         layout.setSpacing(12)
 
         header_row = QHBoxLayout()
-        title = QLabel("MATCH EVENTS")
+        title = QLabel("ESTIMATED SCORE TIMELINE")
         title.setObjectName("graphHeading")
         header_row.addWidget(title)
         header_row.addStretch()
         layout.addLayout(header_row)
 
-        filter_row = QHBoxLayout()
-        self.superweapon_timeline_checkbox = QCheckBox("Superweapons")
-        self.superweapon_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_superweapons', True))
-        self.superweapon_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
-        filter_row.addWidget(self.superweapon_timeline_checkbox)
-        self.radar_tech_timeline_checkbox = QCheckBox("Radar Tech")
-        self.radar_tech_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_radar_tech', True))
-        self.radar_tech_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
-        filter_row.addWidget(self.radar_tech_timeline_checkbox)
-        self.battle_lab_timeline_checkbox = QCheckBox("Battle Lab")
-        self.battle_lab_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_battle_lab', True))
-        self.battle_lab_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
-        filter_row.addWidget(self.battle_lab_timeline_checkbox)
-        self.special_units_timeline_checkbox = QCheckBox("Special Units")
-        self.special_units_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_special_units', True))
-        self.special_units_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
-        filter_row.addWidget(self.special_units_timeline_checkbox)
-        self.mcv_lost_timeline_checkbox = QCheckBox("MCV Lost")
-        self.mcv_lost_timeline_checkbox.setChecked(self._timeline_pref('scoreboard_timeline_show_mcv_lost', True))
-        self.mcv_lost_timeline_checkbox.toggled.connect(self._refresh_timeline_filters)
-        filter_row.addWidget(self.mcv_lost_timeline_checkbox)
-        filter_row.addStretch()
-        layout.addLayout(filter_row)
+        subtitle = QLabel("Graph height uses the estimated score already calculated in the match timeline data.")
+        subtitle.setObjectName("graphSubText")
+        layout.addWidget(subtitle)
 
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setFrameShape(QFrame.Shape.NoFrame)
-        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.timeline_chart_widget = TimelineChartWidget(self.timeline, self.summary["players"])
+        self.timeline_chart_widget.set_metric("estimated_score")
+        layout.addWidget(self.timeline_chart_widget, 1)
 
-        self.event_timeline_widget = MatchEventTimelineWidget(self.timeline, self.summary["players"])
-        scroll_area.setWidget(self.event_timeline_widget)
-        layout.addWidget(scroll_area, 1)
-
-        self._refresh_timeline_filters()
+        legend_layout = QHBoxLayout()
+        for player in self.summary["players"]:
+            button = QPushButton(player["username"])
+            button.setObjectName("legendButton")
+            button.setCheckable(True)
+            button.setChecked(True)
+            button.setStyleSheet(f"QPushButton#legendButton {{ border-left: 5px solid {player['accent_color']}; }}")
+            button.clicked.connect(
+                lambda checked, player_id=player["player_id"]: self._toggle_timeline_player(player_id, checked)
+            )
+            self.timeline_legend_buttons[player["player_id"]] = button
+            legend_layout.addWidget(button)
+        legend_layout.addStretch()
+        layout.addLayout(legend_layout)
         return panel
 
     def _set_metric(self, metric_id):
@@ -2033,6 +2022,14 @@ class PostGameScoreboardWindow(QMainWindow):
     def _toggle_player(self, player_id, checked):
         self.chart_widget.set_player_visible(player_id, checked)
         self.legend_buttons[player_id].setChecked(player_id in self.chart_widget.visible_player_ids)
+
+    def _toggle_timeline_player(self, player_id, checked):
+        if self.timeline_chart_widget is None:
+            return
+        self.timeline_chart_widget.set_player_visible(player_id, checked)
+        self.timeline_legend_buttons[player_id].setChecked(
+            player_id in self.timeline_chart_widget.visible_player_ids
+        )
 
     def _refresh_filter_controls(self):
         if self.filter_status_label is None or self.unit_filter_panel is None:
