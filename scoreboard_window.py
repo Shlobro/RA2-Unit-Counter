@@ -172,26 +172,53 @@ def _normalize_country_name(country_name):
     return (country_name or "").split("\x00", 1)[0].strip()
 
 
+def _candidate_flag_asset_names(flag_name):
+    normalized_flag_name = (flag_name or "").strip()
+    if not normalized_flag_name:
+        return []
+
+    stem, ext = os.path.splitext(normalized_flag_name)
+    if ext:
+        return [normalized_flag_name]
+
+    return [f"{stem}.png", f"{stem}.webp"]
+
+
+def _resolve_packaged_flag_path(flag_name):
+    for candidate_name in _candidate_flag_asset_names(flag_name):
+        for candidate in _existing_asset_paths("Flags", "PNG", candidate_name):
+            return candidate
+        for candidate in _existing_asset_paths("Flags", candidate_name):
+            return candidate
+    return None
+
+
 def _country_flag_path(country_name):
     normalized_country_name = _normalize_country_name(country_name)
     flag_name = COUNTRY_TO_FLAG.get(normalized_country_name)
     if not flag_name:
         return None
-    for candidate in _existing_asset_paths("Flags", "PNG", flag_name):
-        return candidate
-    return None
+    return _resolve_packaged_flag_path(flag_name)
 
 
 def _faction_flag_path(faction_name):
     flag_name = FACTION_TO_FLAG.get((faction_name or "").strip())
     if not flag_name:
         return None
-    for candidate in _existing_asset_paths("Flags", "PNG", flag_name):
-        return candidate
-    return None
+    return _resolve_packaged_flag_path(flag_name)
 
 
 def _player_flag_path(player_snapshot):
+    direct_flag_path = player_snapshot.get("flag_asset_path")
+    if direct_flag_path and os.path.exists(direct_flag_path):
+        return direct_flag_path
+
+    flag_asset_name = (player_snapshot.get("flag_asset_name") or "").strip()
+    if flag_asset_name:
+        packaged_flag_path = _resolve_packaged_flag_path(flag_asset_name)
+        if packaged_flag_path:
+            return packaged_flag_path
+
     flag_stems = []
 
     flag_file_stem = (player_snapshot.get("flag_file_stem") or "").strip()
@@ -213,10 +240,6 @@ def _player_flag_path(player_snapshot):
         for candidate in _existing_asset_paths("player flags", f"{stem}_flag.png"):
             return candidate
 
-    direct_flag_path = player_snapshot.get("flag_asset_path")
-    if direct_flag_path and os.path.exists(direct_flag_path):
-        return direct_flag_path
-
     country_flag = _country_flag_path(player_snapshot.get("country"))
     if country_flag:
         return country_flag
@@ -225,15 +248,7 @@ def _player_flag_path(player_snapshot):
     if faction_flag:
         return faction_flag
 
-    flag_asset_name = (player_snapshot.get("flag_asset_name") or "").strip()
-    if flag_asset_name:
-        for candidate in _existing_asset_paths("Flags", "PNG", flag_asset_name):
-            return candidate
-
-    for candidate in _existing_asset_paths("Flags", "PNG", "RA2_Yuricountry.png"):
-        return candidate
-
-    return None
+    return _resolve_packaged_flag_path("RA2_Yuricountry.png")
 
 
 def _sort_units(unit_counts):
