@@ -20,9 +20,10 @@ class MapNameWindow(QWidget):
             state=self.state,
             text_color=QColor(self.hud_positions.get("map_name_color", "#FFFFFF")),
             size=self.hud_positions.get("map_name_widget_size", 50),
-            font=font,
+            font=QFont(self.hud_positions.get("map_name_font_family", font.family()), 16, QFont.Bold),
         )
         self.map_name_widget.setToolTip("Current map name")
+        self._apply_background_settings()
 
         self.setWindowTitle("Map Name")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
@@ -62,3 +63,19 @@ class MapNameWindow(QWidget):
     def update_text_color(self, color):
         self.map_name_widget.update_color(new_text_color=QColor(color))
         self.adjustSize()
+
+    def update_font_family(self, family):
+        self.map_name_widget.update_font_family(family)
+        self.adjustSize()
+
+    def _apply_background_settings(self):
+        self.map_name_widget.configure_background(
+            enabled=self.hud_positions.get('map_name_background_enabled', False),
+            color=self.hud_positions.get('map_name_background_color', '#A0000000'),
+            width=self.hud_positions.get('map_name_background_width', 0),
+            height=self.hud_positions.get('map_name_background_height', 0),
+        )
+        self.adjustSize()
+
+    def update_background_settings(self):
+        self._apply_background_settings()

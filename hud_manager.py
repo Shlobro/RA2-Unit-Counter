@@ -97,6 +97,7 @@ def load_hud_positions(state):
         'game_time_font_family': 'Arial',
         'show_map_name': True,
         'map_name_widget_size': 50,
+        'map_name_font_family': 'Arial',
         'map_name_color': '#FFFFFF',
         'map_name_color_mode': 'custom',
         'combined_hud': False,    # False: separate HUD; True: combined HUD.
@@ -124,8 +125,22 @@ def load_hud_positions(state):
         # Toggle to show/hide the entire factory window
         'show_factory_window': True
     }
+    background_defaults = {
+        'name': {'enabled': False, 'color': '#A0000000', 'width': 240, 'height': 48},
+        'flag': {'enabled': False, 'color': '#A0000000', 'width': 64, 'height': 48},
+        'money': {'enabled': False, 'color': '#A0000000', 'width': 200, 'height': 48},
+        'money_spent': {'enabled': False, 'color': '#A0000000', 'width': 220, 'height': 48},
+        'power': {'enabled': False, 'color': '#A0000000', 'width': 180, 'height': 48},
+        'game_time': {'enabled': False, 'color': '#A0000000', 'width': 180, 'height': 48},
+        'map_name': {'enabled': False, 'color': '#A0000000', 'width': 300, 'height': 48},
+    }
     for key, value in defaults.items():
         state.hud_positions.setdefault(key, value)
+    for prefix, config in background_defaults.items():
+        state.hud_positions.setdefault(f'{prefix}_background_enabled', config['enabled'])
+        state.hud_positions.setdefault(f'{prefix}_background_color', config['color'])
+        state.hud_positions.setdefault(f'{prefix}_background_width', config['width'])
+        state.hud_positions.setdefault(f'{prefix}_background_height', config['height'])
     state.hud_positions['save_flags_as_images'] = True
 
 
@@ -281,6 +296,11 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.game_time_font_combo, 'currentFont', None)
                 if value is not None:
                     state.hud_positions['game_time_font_family'] = value.family()
+
+            if hasattr(cp, 'map_name_font_combo'):
+                value = safe_widget_value(cp.map_name_font_combo, 'currentFont', None)
+                if value is not None:
+                    state.hud_positions['map_name_font_family'] = value.family()
             
             # Additional safe widget accesses
             if hasattr(cp, 'money_spent_size_spinbox'):
@@ -312,6 +332,30 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.use_player_numbers_checkbox, 'isChecked', state.hud_positions.get('use_player_numbers', False))
                 if value is not None:
                     state.hud_positions['use_player_numbers'] = value
+
+            for prefix in ('name', 'flag', 'money', 'money_spent', 'power', 'game_time', 'map_name'):
+                checkbox = getattr(cp, f'{prefix}_background_checkbox', None)
+                if checkbox is not None:
+                    value = safe_widget_value(checkbox, 'isChecked', state.hud_positions.get(f'{prefix}_background_enabled', False))
+                    if value is not None:
+                        state.hud_positions[f'{prefix}_background_enabled'] = value
+
+                color_button = getattr(cp, f'{prefix}_background_color_button', None)
+                if color_button is not None:
+                    value = color_button.property('selected_color') or state.hud_positions.get(f'{prefix}_background_color', '#A0000000')
+                    state.hud_positions[f'{prefix}_background_color'] = value
+
+                width_spinbox = getattr(cp, f'{prefix}_background_width_spinbox', None)
+                if width_spinbox is not None:
+                    value = safe_widget_value(width_spinbox, 'value', state.hud_positions.get(f'{prefix}_background_width', 0))
+                    if value is not None:
+                        state.hud_positions[f'{prefix}_background_width'] = value
+
+                height_spinbox = getattr(cp, f'{prefix}_background_height_spinbox', None)
+                if height_spinbox is not None:
+                    value = safe_widget_value(height_spinbox, 'value', state.hud_positions.get(f'{prefix}_background_height', 0))
+                    if value is not None:
+                        state.hud_positions[f'{prefix}_background_height'] = value
 
             if hasattr(cp, 'pos'):
                 try:
@@ -566,6 +610,12 @@ def create_hud_windows(state):
                 font=game_time_font,
                 parent=state.single_window_workspace.canvas,
             )
+            state.game_time_widget.configure_background(
+                enabled=state.hud_positions.get('game_time_background_enabled', False),
+                color=state.hud_positions.get('game_time_background_color', '#A0000000'),
+                width=state.hud_positions.get('game_time_background_width', 180),
+                height=state.hud_positions.get('game_time_background_height', 48),
+            )
             state.game_time_widget.setToolTip("Game time")
             state.game_time_workspace_item = GlobalWorkspaceWidgetContainer(
                 state.game_time_widget,
@@ -581,8 +631,14 @@ def create_hud_windows(state):
                 state=state,
                 text_color=QColor(state.hud_positions.get('map_name_color', '#FFFFFF')),
                 size=state.hud_positions.get('map_name_widget_size', 50),
-                font=QFont('Arial', 16, QFont.Bold),
+                font=QFont(state.hud_positions.get('map_name_font_family', 'Arial'), 16, QFont.Bold),
                 parent=state.single_window_workspace.canvas,
+            )
+            state.map_name_widget.configure_background(
+                enabled=state.hud_positions.get('map_name_background_enabled', False),
+                color=state.hud_positions.get('map_name_background_color', '#A0000000'),
+                width=state.hud_positions.get('map_name_background_width', 300),
+                height=state.hud_positions.get('map_name_background_height', 48),
             )
             state.map_name_widget.setToolTip("Current map name")
             state.map_name_workspace_item = GlobalWorkspaceWidgetContainer(

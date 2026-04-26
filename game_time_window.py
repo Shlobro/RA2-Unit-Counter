@@ -28,6 +28,7 @@ class GameTimeWindow(QWidget):
             font=font,
         )
         self.game_time_widget.setToolTip("Game time")
+        self._apply_background_settings()
 
         self.setWindowTitle("Game Time")
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.X11BypassWindowManagerHint)
@@ -71,3 +72,15 @@ class GameTimeWindow(QWidget):
     def update_font_family(self, family):
         self.game_time_widget.update_font_family(family)
         self.adjustSize()
+
+    def _apply_background_settings(self):
+        self.game_time_widget.configure_background(
+            enabled=self.hud_positions.get('game_time_background_enabled', False),
+            color=self.hud_positions.get('game_time_background_color', '#A0000000'),
+            width=self.hud_positions.get('game_time_background_width', 0),
+            height=self.hud_positions.get('game_time_background_height', 0),
+        )
+        self.adjustSize()
+
+    def update_background_settings(self):
+        self._apply_background_settings()

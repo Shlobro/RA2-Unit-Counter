@@ -10,6 +10,7 @@ __pycache__/
 oil counts/
 match_history/
 dist/
+build/
 *.log
 
 .pycache_check/

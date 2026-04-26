@@ -31,6 +31,25 @@ class ControlPanel(QMainWindow):
         'game_time': 'Default (#ffffff)',
         'map_name': 'Default (#ffffff)',
     }
+    BACKGROUND_WIDGET_LABELS = {
+        'name': 'Name',
+        'flag': 'Flag',
+        'money': 'Money',
+        'money_spent': 'Money Spent',
+        'power': 'Power',
+        'game_time': 'Game Time',
+        'map_name': 'Map Name',
+    }
+    BACKGROUND_DEFAULT_SIZES = {
+        'name': (240, 48),
+        'flag': (64, 48),
+        'money': (200, 48),
+        'money_spent': (220, 48),
+        'power': (180, 48),
+        'game_time': (180, 48),
+        'map_name': (300, 48),
+    }
+    DEFAULT_BACKGROUND_COLOR = '#A0000000'
 
     def __init__(self, state):
         super().__init__()
@@ -353,11 +372,12 @@ class ControlPanel(QMainWindow):
             color = QColor(color_value)
             if not color.isValid():
                 color = QColor('#FFFFFF')
-            button.setProperty('selected_color', color.name())
+            color_name = self._color_to_storage(color)
+            button.setProperty('selected_color', color_name)
             button.setProperty('custom_mode', True)
-            button.setText(color.name())
+            button.setText(color_name)
             button.setStyleSheet(
-                f"background-color: {color.name()}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
+                f"background-color: {color_name}; color: {'#000000' if color.lightness() > 128 else '#FFFFFF'};"
             )
             return
 
@@ -365,6 +385,142 @@ class ControlPanel(QMainWindow):
         button.setProperty('custom_mode', False)
         button.setText(default_label)
         button.setStyleSheet("")
+
+    def _color_to_storage(self, color):
+        if isinstance(color, QColor):
+            return color.name(QColor.HexArgb)
+        resolved = QColor(color)
+        return resolved.name(QColor.HexArgb) if resolved.isValid() else self.DEFAULT_BACKGROUND_COLOR
+
+    def _get_background_default_size(self, prefix):
+        return self.BACKGROUND_DEFAULT_SIZES.get(prefix, (180, 48))
+
+    def _set_background_color_button(self, prefix):
+        button = getattr(self, f'{prefix}_background_color_button')
+        color_value = self.state.hud_positions.get(f'{prefix}_background_color', self.DEFAULT_BACKGROUND_COLOR)
+        self._set_color_button_state(
+            button,
+            color_value,
+            f"Default ({self.DEFAULT_BACKGROUND_COLOR})",
+            True,
+        )
+
+    def _sync_background_controls_enabled(self, prefix):
+        enabled = self.state.hud_positions.get(f'{prefix}_background_enabled', False)
+        for attr in (
+            f'{prefix}_background_color_button',
+            f'{prefix}_background_width_spinbox',
+            f'{prefix}_background_height_spinbox',
+        ):
+            widget = getattr(self, attr, None)
+            if widget is not None:
+                widget.setEnabled(enabled)
+
+    def _choose_background_color(self, prefix):
+        initial = QColor(self.state.hud_positions.get(f'{prefix}_background_color', self.DEFAULT_BACKGROUND_COLOR))
+        color = QColorDialog.getColor(initial, self, f"Select {self.BACKGROUND_WIDGET_LABELS[prefix]} Background Color", QColorDialog.ShowAlphaChannel)
+        if color.isValid():
+            self._update_background_color(prefix, color)
+
+    def _reset_background_color(self, prefix):
+        self.state.hud_positions[f'{prefix}_background_color'] = self.DEFAULT_BACKGROUND_COLOR
+        self._set_background_color_button(prefix)
+        self._apply_background_settings(prefix)
+
+    def _update_background_color(self, prefix, color_value):
+        color = QColor(color_value)
+        if not color.isValid():
+            return
+        self.state.hud_positions[f'{prefix}_background_color'] = self._color_to_storage(color)
+        self._set_background_color_button(prefix)
+        self._apply_background_settings(prefix)
+
+    def _update_background_dimension(self, prefix, dimension, value):
+        self.state.hud_positions[f'{prefix}_background_{dimension}'] = int(value)
+        self._apply_background_settings(prefix)
+
+    def _toggle_background_enabled(self, prefix, state_val):
+        enabled = (state_val == 2)
+        self.state.hud_positions[f'{prefix}_background_enabled'] = enabled
+        self._sync_background_controls_enabled(prefix)
+        self._apply_background_settings(prefix)
+
+    def _apply_player_widget_background(self, prefix):
+        if self.state.hud_positions.get('combined_hud', False):
+            for combined_window, _ in self.state.hud_windows:
+                if hasattr(combined_window, 'resource_widget'):
+                    combined_window.resource_widget.apply_widget_background(prefix)
+        else:
+            for _, resource_window in self.state.hud_windows:
+                if resource_window is not None:
+                    resource_window.apply_widget_background(prefix)
+
+    def _apply_global_widget_background(self, prefix):
+        widget_attr = f'{prefix}_widget'
+        workspace_attr = f'{prefix}_workspace_item'
+        window_attr = f'{prefix}_window'
+        if self.state.hud_positions.get('combined_hud', False):
+            widget = getattr(self.state, widget_attr, None)
+            if widget is not None and hasattr(widget, 'configure_background'):
+                widget.configure_background(
+                    enabled=self.state.hud_positions.get(f'{prefix}_background_enabled', False),
+                    color=self.state.hud_positions.get(f'{prefix}_background_color', self.DEFAULT_BACKGROUND_COLOR),
+                    width=self.state.hud_positions.get(f'{prefix}_background_width', 0),
+                    height=self.state.hud_positions.get(f'{prefix}_background_height', 0),
+                )
+            item = getattr(self.state, workspace_attr, None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
+        else:
+            window = getattr(self.state, window_attr, None)
+            if window is not None and hasattr(window, 'update_background_settings'):
+                window.update_background_settings()
+
+    def _apply_background_settings(self, prefix):
+        if prefix in ('game_time', 'map_name'):
+            self._apply_global_widget_background(prefix)
+        else:
+            self._apply_player_widget_background(prefix)
+
+    def _add_background_controls(self, form_layout, prefix):
+        width_default, height_default = self._get_background_default_size(prefix)
+        self.state.hud_positions.setdefault(f'{prefix}_background_enabled', False)
+        self.state.hud_positions.setdefault(f'{prefix}_background_color', self.DEFAULT_BACKGROUND_COLOR)
+        self.state.hud_positions.setdefault(f'{prefix}_background_width', width_default)
+        self.state.hud_positions.setdefault(f'{prefix}_background_height', height_default)
+
+        checkbox = QCheckBox("Show Background")
+        checkbox.setChecked(self.state.hud_positions.get(f'{prefix}_background_enabled', False))
+        checkbox.stateChanged.connect(lambda state_val, p=prefix: self._toggle_background_enabled(p, state_val))
+        setattr(self, f'{prefix}_background_checkbox', checkbox)
+        form_layout.addRow(self._with_help(
+            checkbox,
+            "Draw a solid rectangle behind this widget so text and numbers remain readable over the game."
+        ))
+
+        color_row = self._create_color_control_row(
+            f'{prefix}_background_color_button',
+            lambda p=prefix: self._choose_background_color(p),
+            lambda p=prefix: self._reset_background_color(p),
+        )
+        self._set_background_color_button(prefix)
+        form_layout.addRow("Background Color:", color_row)
+
+        width_spinbox = QSpinBox()
+        width_spinbox.setRange(1, 1200)
+        width_spinbox.setValue(self.state.hud_positions.get(f'{prefix}_background_width', width_default))
+        width_spinbox.valueChanged.connect(lambda value, p=prefix: self._update_background_dimension(p, 'width', value))
+        setattr(self, f'{prefix}_background_width_spinbox', width_spinbox)
+        form_layout.addRow("Background Width:", width_spinbox)
+
+        height_spinbox = QSpinBox()
+        height_spinbox.setRange(1, 1200)
+        height_spinbox.setValue(self.state.hud_positions.get(f'{prefix}_background_height', height_default))
+        height_spinbox.valueChanged.connect(lambda value, p=prefix: self._update_background_dimension(p, 'height', value))
+        setattr(self, f'{prefix}_background_height_spinbox', height_spinbox)
+        form_layout.addRow("Background Height:", height_spinbox)
+
+        self._sync_background_controls_enabled(prefix)
 
     def _get_first_resource_window(self):
         for _, resource_window in self.state.hud_windows:
@@ -673,6 +829,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_name_color_button()
         name_layout.addRow("Name Color:", self.name_color_row)
+        self._add_background_controls(name_layout, 'name')
         name_group.setLayout(name_layout)
         layout.addWidget(name_group)
 
@@ -691,6 +848,7 @@ class ControlPanel(QMainWindow):
         self.flag_size_spinbox.setValue(flag_size)
         self.flag_size_spinbox.valueChanged.connect(self.update_flag_widget_size)
         flag_layout.addRow(flag_size_label, self.flag_size_spinbox)
+        self._add_background_controls(flag_layout, 'flag')
         flag_group.setLayout(flag_layout)
         layout.addWidget(flag_group)
 
@@ -717,6 +875,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_money_color_button()
         money_layout.addRow("Money Color:", self.money_color_row)
+        self._add_background_controls(money_layout, 'money')
         money_group.setLayout(money_layout)
         layout.addWidget(money_group)
 
@@ -743,6 +902,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_money_spent_color_button()
         money_spent_layout.addRow("Money Spent Color:", self.money_spent_color_row)
+        self._add_background_controls(money_spent_layout, 'money_spent')
         money_spent_group.setLayout(money_spent_layout)
         layout.addWidget(money_spent_group)
 
@@ -778,6 +938,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_power_low_color_button()
         power_layout.addRow("Low Power Color:", self.power_low_color_row)
+        self._add_background_controls(power_layout, 'power')
         power_group.setLayout(power_layout)
         layout.addWidget(power_group)
 
@@ -806,6 +967,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_game_time_color_button()
         game_time_layout.addRow("Game Time Color:", self.game_time_color_row)
+        self._add_background_controls(game_time_layout, 'game_time')
 
         game_time_group.setLayout(game_time_layout)
         layout.addWidget(game_time_group)
@@ -834,6 +996,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_map_name_color_button()
         map_name_layout.addRow(QLabel("Map Name Color:"), self.map_name_color_row)
+        self._add_background_controls(map_name_layout, 'map_name')
 
         map_name_group.setLayout(map_name_layout)
         layout.addWidget(map_name_group)
@@ -1686,6 +1849,9 @@ class ControlPanel(QMainWindow):
             widget = getattr(self.state, 'map_name_widget', None)
             if widget is not None:
                 widget.update_font_family(family)
+            item = getattr(self.state, 'map_name_workspace_item', None)
+            if item is not None and hasattr(item, '_queue_sync_to_inner'):
+                item._queue_sync_to_inner()
         else:
             window = getattr(self.state, 'map_name_window', None)
             if window is not None and hasattr(window, 'update_font_family'):

@@ -18,6 +18,10 @@ class BaseDataWidget(QWidget):
         self.text_color = text_color
         self.use_fixed_width = use_fixed_width
         self.max_digits = max_digits
+        self.background_enabled = False
+        self.background_color = QColor(0, 0, 0, 160)
+        self.background_width = 0
+        self.background_height = 0
 
         # Create label for displaying data
         self.data_label = QLabel(str(self.value), self)
@@ -39,6 +43,33 @@ class BaseDataWidget(QWidget):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(1)
         self.layout.addWidget(self.data_label, alignment=Qt.AlignVCenter)
+        self.layout.setAlignment(Qt.AlignCenter)
+
+    def configure_background(self, enabled=False, color=None, width=0, height=0):
+        self.background_enabled = bool(enabled)
+        if color is not None:
+            resolved = QColor(color)
+            if resolved.isValid():
+                self.background_color = resolved
+        self.background_width = max(0, int(width or 0))
+        self.background_height = max(0, int(height or 0))
+        self.update()
+        self.adjust_size()
+
+    def _content_size(self):
+        return self.layout.sizeHint()
+
+    def _background_size(self, content_width, content_height):
+        if not self.background_enabled:
+            return content_width, content_height
+        return max(content_width, self.background_width), max(content_height, self.background_height)
+
+    def paintEvent(self, event):
+        if self.background_enabled:
+            painter = QPainter(self)
+            painter.setRenderHint(QPainter.Antialiasing, False)
+            painter.fillRect(self.rect(), self.background_color)
+        super().paintEvent(event)
 
     def compute_fixed_width(self):
         """
@@ -91,8 +122,9 @@ class BaseDataWidget(QWidget):
         """
         Recalculate the widget's size.
         """
-        total_width = self.data_label.width() + 1
-        self.setFixedSize(total_width, self.data_label.height())
+        content_size = self._content_size()
+        total_width, total_height = self._background_size(content_size.width(), content_size.height())
+        self.setFixedSize(total_width, total_height)
 
     def on_value_changed(self, value):
         """
@@ -227,8 +259,8 @@ class PowerWidget(BaseDataWidget):
 
     def adjust_size(self):
         try:
-            total_width = self.icon_label.width() + self.data_label.width()
-            total_height = max(self.icon_label.height(), self.data_label.height())
+            content_size = self._content_size()
+            total_width, total_height = self._background_size(content_size.width(), content_size.height())
             self.setFixedSize(total_width, total_height)
         except Exception as e:
             logging.exception("Error adjusting size in PowerWidget: %s", e)
@@ -294,7 +326,9 @@ class NameWidget(BaseDataWidget):
     def adjust_size(self):
         try:
             if self.image_path:
-                self.setFixedSize(self.icon_label.width() + self.data_label.width() + 1, max(self.icon_label.height(), self.data_label.height()))
+                content_size = self._content_size()
+                total_width, total_height = self._background_size(content_size.width(), content_size.height())
+                self.setFixedSize(total_width, total_height)
             else:
                 super().adjust_size()
         except Exception as e:
@@ -305,15 +339,38 @@ class FlagWidget(QWidget):
         super().__init__(parent)
         self.image_path = image_path
         self.size = size
+        self.background_enabled = False
+        self.background_color = QColor(0, 0, 0, 160)
+        self.background_width = 0
+        self.background_height = 0
 
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
+        self.layout.setAlignment(Qt.AlignCenter)
 
         self.icon_label = QLabel(self)
         self.load_and_set_image()
         self.layout.addWidget(self.icon_label, alignment=Qt.AlignVCenter)
         self.adjust_size()
+
+    def configure_background(self, enabled=False, color=None, width=0, height=0):
+        self.background_enabled = bool(enabled)
+        if color is not None:
+            resolved = QColor(color)
+            if resolved.isValid():
+                self.background_color = resolved
+        self.background_width = max(0, int(width or 0))
+        self.background_height = max(0, int(height or 0))
+        self.update()
+        self.adjust_size()
+
+    def paintEvent(self, event):
+        if self.background_enabled:
+            painter = QPainter(self)
+            painter.setRenderHint(QPainter.Antialiasing, False)
+            painter.fillRect(self.rect(), self.background_color)
+        super().paintEvent(event)
 
     def load_and_set_image(self):
         try:
@@ -335,7 +392,13 @@ class FlagWidget(QWidget):
 
     def adjust_size(self):
         try:
-            self.setFixedSize(self.icon_label.width(), self.icon_label.height())
+            content_size = self.layout.sizeHint()
+            width = content_size.width()
+            height = content_size.height()
+            if self.background_enabled:
+                width = max(width, self.background_width)
+                height = max(height, self.background_height)
+            self.setFixedSize(width, height)
         except Exception as e:
             logging.exception("Error adjusting size in FlagWidget: %s", e)
 
@@ -399,11 +462,8 @@ class MoneySpentWidget(BaseDataWidget):
 
     def adjust_size(self):
         try:
-            # Use QFontMetrics to calculate the current text width
-            fm = QFontMetrics(self.data_label.font())
-            text_width = fm.horizontalAdvance(self.data_label.text())
-            total_width = self.icon_label.width() + text_width + self.layout.spacing()
-            total_height = max(self.icon_label.height(), self.data_label.height())
+            content_size = self._content_size()
+            total_width, total_height = self._background_size(content_size.width(), content_size.height())
             self.setFixedSize(total_width, total_height)
         except Exception as e:
             logging.exception("Error adjusting size in MoneySpentWidget: %s", e)
@@ -465,8 +525,9 @@ class GameTimeWidget(BaseDataWidget):
         try:
             fm = QFontMetrics(self.data_label.font())
             text_width = fm.horizontalAdvance("88:88:88")
-            total_width = max(text_width, self.data_label.width()) + 4
-            total_height = self.data_label.height()
+            content_width = max(text_width, self.data_label.width()) + 4
+            content_height = self.data_label.height()
+            total_width, total_height = self._background_size(content_width, content_height)
             self.setFixedSize(total_width, total_height)
         except Exception as e:
             logging.exception("Error adjusting size in GameTimeWidget: %s", e)
@@ -506,8 +567,9 @@ class MapNameWidget(BaseDataWidget):
         try:
             fm = QFontMetrics(self.data_label.font())
             text_width = fm.horizontalAdvance(self.data_label.text() or "Map Name")
-            total_width = max(text_width, self.data_label.width()) + 8
-            total_height = self.data_label.height()
+            content_width = max(text_width, self.data_label.width()) + 8
+            content_height = self.data_label.height()
+            total_width, total_height = self._background_size(content_width, content_height)
             self.setFixedSize(total_width, total_height)
         except Exception as e:
             logging.exception("Error adjusting size in MapNameWidget: %s", e)

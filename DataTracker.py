@@ -33,6 +33,13 @@ faction_to_flag = {
 
 class ResourceWindow(QMainWindow):
     DEFAULT_MONEY_SPENT_COLOR = QColor(118, 181, 197)
+    BACKGROUND_WIDGET_MAP = {
+        'name': 'name_widget',
+        'flag': 'flag_widget',
+        'money': 'money_widget',
+        'money_spent': 'money_spent_widget',
+        'power': 'power_widget',
+    }
 
     def __init__(self, player, player_count, hud_positions, player_index, combined_mode=False):
         """
@@ -106,6 +113,7 @@ class ResourceWindow(QMainWindow):
         )
         self.superweapon_widget.update_size(superweapon_widget_size)
         self._apply_widget_tooltips()
+        self.apply_all_widget_backgrounds()
 
         if self.combined_mode:
             # Combined mode: Create one composite widget for all resource widgets.
@@ -329,6 +337,37 @@ class ResourceWindow(QMainWindow):
         self.name_widget.update_data_size(new_size)
         self.money_widget.update_data_size(new_size)
         self.power_widget.update_data_size(new_size)
+
+    def _get_background_config(self, prefix):
+        return {
+            'enabled': self.hud_positions.get(f'{prefix}_background_enabled', False),
+            'color': self.hud_positions.get(f'{prefix}_background_color', '#A0000000'),
+            'width': self.hud_positions.get(f'{prefix}_background_width', 0),
+            'height': self.hud_positions.get(f'{prefix}_background_height', 0),
+        }
+
+    def apply_widget_background(self, prefix):
+        widget_attr = self.BACKGROUND_WIDGET_MAP.get(prefix)
+        if not widget_attr or not hasattr(self, widget_attr):
+            return
+        widget = getattr(self, widget_attr)
+        if not hasattr(widget, 'configure_background'):
+            return
+        config = self._get_background_config(prefix)
+        widget.configure_background(
+            enabled=config['enabled'],
+            color=config['color'],
+            width=config['width'],
+            height=config['height'],
+        )
+        container = getattr(widget, '_container_window', None)
+        if container is not None:
+            container.adjustSize()
+        self.adjustSize()
+
+    def apply_all_widget_backgrounds(self):
+        for prefix in self.BACKGROUND_WIDGET_MAP:
+            self.apply_widget_background(prefix)
 
     def export_flag_image_if_needed(self):
         try:
