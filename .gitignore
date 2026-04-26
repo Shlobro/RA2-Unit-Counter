@@ -8,6 +8,8 @@ __pycache__/
 
 # Local data
 oil counts/
+match_history/
+dist/
 *.log
 
 .pycache_check/

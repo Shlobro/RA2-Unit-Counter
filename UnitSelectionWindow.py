@@ -225,6 +225,18 @@ class UnitSelectionWindow(QMainWindow):
         position_action.triggered.connect(lambda: self.set_position(faction, unit_type, unit_name, label))
         menu.addAction(position_action)
 
+        reset_position_action = QAction("Reset Unit Position", self)
+        reset_position_action.triggered.connect(
+            lambda: self.reset_unit_position(faction, unit_type, unit_name, label)
+        )
+        menu.addAction(reset_position_action)
+
+        next_available_position_action = QAction("Use Next Available Position", self)
+        next_available_position_action.triggered.connect(
+            lambda: self.use_next_available_position(faction, unit_type, unit_name, label)
+        )
+        menu.addAction(next_available_position_action)
+
         menu.exec(event.globalPos())
 
     def set_position(self, faction, unit_type, unit_name, label):
@@ -262,6 +274,32 @@ class UnitSelectionWindow(QMainWindow):
             self.save_unit_positions()
         except KeyError:
             print(f"Error: Unit '{unit_name}' of type '{unit_type}' in faction '{faction}' not found.")
+
+    def reset_unit_position(self, faction, unit_type, unit_name, label):
+        self.handle_position_change(-1, faction, unit_type, unit_name, label)
+
+    def use_next_available_position(self, faction, unit_type, unit_name, label):
+        next_position = self.get_next_available_position(faction, unit_type, unit_name)
+        self.handle_position_change(next_position, faction, unit_type, unit_name, label)
+
+    def get_next_available_position(self, faction, unit_type, unit_name):
+        used_positions = set()
+        target_key = (faction, unit_type, unit_name)
+
+        for current_faction, current_unit_type, current_unit_name, unit_info in self.iter_selected_units():
+            if current_faction != faction:
+                continue
+            if (current_faction, current_unit_type, current_unit_name) == target_key:
+                continue
+
+            position = unit_info.get('position', -1)
+            if position >= 0:
+                used_positions.add(position)
+
+        next_position = 0
+        while next_position in used_positions:
+            next_position += 1
+        return next_position
 
     def get_max_valid_position(self):
         """Allow positions across the full counter, not just one category."""
