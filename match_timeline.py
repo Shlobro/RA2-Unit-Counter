@@ -411,14 +411,54 @@ def _split_built_tank_counts(counts):
     return vehicle_counts, navy_counts
 
 
+def _split_tank_counts_with_miners(counts):
+    vehicle_counts = {}
+    navy_counts = {}
+    miner_counts = {}
+    for unit_name, count in counts.items():
+        if unit_name in NAVAL_UNIT_NAMES:
+            navy_counts[unit_name] = count
+        elif unit_name in MINER_UNIT_NAMES:
+            miner_counts[unit_name] = count
+        else:
+            vehicle_counts[unit_name] = count
+    return vehicle_counts, navy_counts, miner_counts
+
+
 def _record_unit_series_sample(unit_series, elapsed_ms, player):
-    vehicle_counts, navy_counts = _split_built_tank_counts(player.built_tank_counts)
+    built_vehicle_counts, built_navy_counts = _split_built_tank_counts(player.built_tank_counts)
+    current_vehicle_counts, current_navy_counts, current_miner_counts = _split_tank_counts_with_miners(player.tank_counts)
+    lost_vehicle_counts, lost_navy_counts, _ = _split_tank_counts_with_miners(player.lost_tank_counts)
+
+    units_current_total = {}
+    for source in (player.infantry_counts, current_miner_counts, current_vehicle_counts, current_navy_counts, player.building_counts, player.aircraft_counts):
+        for unit_name, count in source.items():
+            units_current_total[unit_name] = units_current_total.get(unit_name, 0) + count
+
+    units_lost_total = {}
+    for source in (player.lost_infantry_counts, lost_vehicle_counts, lost_navy_counts, player.lost_building_counts, player.lost_aircraft_counts):
+        for unit_name, count in source.items():
+            units_lost_total[unit_name] = units_lost_total.get(unit_name, 0) + count
+
     category_counts = {
         "infantry_built": player.built_infantry_counts,
-        "vehicles_built": vehicle_counts,
-        "navy_built": navy_counts,
+        "vehicles_built": built_vehicle_counts,
+        "navy_built": built_navy_counts,
         "buildings_built": player.built_building_counts,
         "aircraft_built": player.built_aircraft_counts,
+        "infantry_current": player.infantry_counts,
+        "miners_current": current_miner_counts,
+        "vehicles_current": current_vehicle_counts,
+        "navy_current": current_navy_counts,
+        "buildings_current": player.building_counts,
+        "aircraft_current": player.aircraft_counts,
+        "infantry_lost": player.lost_infantry_counts,
+        "vehicles_lost": lost_vehicle_counts,
+        "navy_lost": lost_navy_counts,
+        "buildings_lost": player.lost_building_counts,
+        "aircraft_lost": player.lost_aircraft_counts,
+        "units_current_total": units_current_total,
+        "units_lost_total": units_lost_total,
     }
 
     for metric_id, counts in category_counts.items():

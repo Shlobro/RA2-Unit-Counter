@@ -149,7 +149,7 @@
             "y": 77
         }
     },
-    "save_flags_as_images": false,
+    "save_flags_as_images": true,
     "magenta": {
         "name": {
             "x": 100,
@@ -329,8 +329,8 @@
             "y": 100
         },
         "factory": {
-            "x": 475,
-            "y": 77
+            "x": 493,
+            "y": 419
         },
         "unit_counter_combined": {
             "x": 100,
@@ -380,15 +380,142 @@
         }
     },
     "single_window_geometry": {
-        "x": 0,
-        "y": 0,
-        "width": 2560,
-        "height": 1440,
+        "x": -9,
+        "y": -42,
+        "width": 2578,
+        "height": 1491,
         "maximized": false
     },
     "control_panel_position": {
-        "x": -1947,
-        "y": 107
+        "x": -2077,
+        "y": 120
     },
-    "single_window_show_window_bar": true
+    "single_window_show_window_bar": false,
+    "name_color_mode": "default",
+    "money_color_mode": "default",
+    "money_spent_color_mode": "default",
+    "power_color_mode": "default",
+    "show_game_time": true,
+    "game_time_widget_size": 50,
+    "game_time_color": "#ffffffff",
+    "game_time_color_mode": "custom",
+    "game_time_font_family": "Arial",
+    "show_map_name": true,
+    "map_name_widget_size": 50,
+    "map_name_font_family": "Arial",
+    "map_name_color": "#ffffffff",
+    "map_name_color_mode": "custom",
+    "saved_scoreboard_limit": -1,
+    "scoreboard_timeline_show_superweapons": true,
+    "scoreboard_timeline_show_radar_tech": true,
+    "scoreboard_timeline_show_battle_lab": true,
+    "scoreboard_timeline_show_special_units": true,
+    "scoreboard_timeline_show_mcv_lost": true,
+    "name_background_enabled": false,
+    "name_background_color": "#a0000000",
+    "name_background_width": 240,
+    "name_background_height": 48,
+    "flag_background_enabled": false,
+    "flag_background_color": "#a0000000",
+    "flag_background_width": 64,
+    "flag_background_height": 48,
+    "money_background_enabled": false,
+    "money_background_color": "#a0000000",
+    "money_background_width": 200,
+    "money_background_height": 48,
+    "money_spent_background_enabled": false,
+    "money_spent_background_color": "#a0000000",
+    "money_spent_background_width": 220,
+    "money_spent_background_height": 48,
+    "power_background_enabled": false,
+    "power_background_color": "#a0000000",
+    "power_background_width": 180,
+    "power_background_height": 48,
+    "game_time_background_enabled": false,
+    "game_time_background_color": "#a0000000",
+    "game_time_background_width": 180,
+    "game_time_background_height": 48,
+    "map_name_background_enabled": false,
+    "map_name_background_color": "#a0000000",
+    "map_name_background_width": 300,
+    "map_name_background_height": 48,
+    "global_widgets": {
+        "game_time": {
+            "x": 100,
+            "y": 100
+        },
+        "map_name": {
+            "x": 1013,
+            "y": 200
+        }
+    },
+    "single_window_always_on_top": false,
+    "player_1": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "player_2": {
+        "name": {
+            "x": 100,
+            "y": 100
+        },
+        "flag": {
+            "x": 100,
+            "y": 100
+        },
+        "money": {
+            "x": 100,
+            "y": 100
+        },
+        "money_spent": {
+            "x": 100,
+            "y": 100
+        },
+        "power": {
+            "x": 100,
+            "y": 100
+        },
+        "superweapons": {
+            "x": 100,
+            "y": 100
+        },
+        "unit_counter_combined": {
+            "x": 100,
+            "y": 100
+        },
+        "factory": {
+            "x": 100,
+            "y": 100
+        }
+    }
 }

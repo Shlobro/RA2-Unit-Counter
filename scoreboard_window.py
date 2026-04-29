@@ -101,6 +101,25 @@ FILTERABLE_UNIT_METRICS = {
     "navy_built": "Navy made",
     "buildings_built": "Buildings made",
     "aircraft_built": "Aircraft made",
+    "units_current_total": "Active units",
+    "units_lost_total": "Lost units",
+    "infantry_current": "Active infantry",
+    "miners_current": "Active miners",
+    "vehicles_current": "Active vehicles",
+    "navy_current": "Active navy",
+    "buildings_current": "Active buildings",
+    "aircraft_current": "Active aircraft",
+    "infantry_lost": "Lost infantry",
+    "vehicles_lost": "Lost vehicles",
+    "navy_lost": "Lost navy",
+    "buildings_lost": "Lost buildings",
+    "aircraft_lost": "Lost aircraft",
+}
+
+EXCLUDED_FILTER_UNIT_NAMES = {
+    "Allied Construction Yard",
+    "Soviet Construction Yard",
+    "Yuri Construction Yard",
 }
 
 
@@ -945,6 +964,8 @@ class TimelineChartWidget(QWidget):
         unit_names = set()
         for player in self._player_entries():
             for unit_name in ((player.get("unit_series") or {}).get(target_metric) or {}).keys():
+                if unit_name in EXCLUDED_FILTER_UNIT_NAMES:
+                    continue
                 unit_names.add(unit_name)
         return sorted(unit_names)
 
@@ -963,10 +984,18 @@ class TimelineChartWidget(QWidget):
         if not unit_series:
             return player.get("series", {}).get(self.metric_id, [])
 
+        filtered_unit_series = {
+            unit_name: points
+            for unit_name, points in unit_series.items()
+            if unit_name not in EXCLUDED_FILTER_UNIT_NAMES
+        }
+        if not filtered_unit_series:
+            return player.get("series", {}).get(self.metric_id, [])
+
         selected_unit_names = self.current_unit_selection()
         if not selected_unit_names:
-            selected_unit_names = set(unit_series.keys())
-        selected_series = [unit_series[unit_name] for unit_name in selected_unit_names if unit_name in unit_series]
+            selected_unit_names = set(filtered_unit_series.keys())
+        selected_series = [filtered_unit_series[unit_name] for unit_name in selected_unit_names if unit_name in filtered_unit_series]
         if not selected_series:
             return []
         return self._sum_point_series(selected_series)
@@ -1034,10 +1063,10 @@ class TimelineChartWidget(QWidget):
 
         selected_names = self.current_unit_selection()
         if not selected_names or len(selected_names) == len(available_names):
-            return f"Including all {FILTERABLE_UNIT_METRICS[self.metric_id].lower()} units"
+            return f"Including all {len(available_names)} units"
         if len(selected_names) == 1:
             return f"Including {_display_name(next(iter(selected_names)))} only"
-        return f"Including {len(selected_names)} selected units"
+        return f"Including {len(selected_names)} of {len(available_names)} units"
 
     def _draw_hover_value(self, painter, x, y, text, color, align_right=False):
         padding_x = 8
@@ -1563,19 +1592,39 @@ class UnitFilterDialog(QDialog):
 
 class UnitFilterChip(QPushButton):
     def __init__(self, unit_name, selected=True, parent=None):
-        super().__init__(_display_name(unit_name), parent)
+        super().__init__("", parent)
         self.unit_name = unit_name
         self.setObjectName("unitFilterChip")
         self.setCheckable(True)
-        self.setChecked(selected)
-        self.setMinimumSize(118, 104)
-        self.setMaximumWidth(140)
-        self.setIconSize(QSize(56, 44))
+        self.setToolTip(_display_name(unit_name))
+        self.setFixedSize(60, 48)
+        self.setIconSize(QSize(60, 48))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setAutoDefault(False)
         self.setDefault(False)
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 56, 44)
+        self._selected_pixmap = None
+        self._unselected_pixmap = None
+        base_pixmap = _load_pixmap(resolve_factory_image_path(unit_name), 60, 48)
+        if base_pixmap is not None and not base_pixmap.isNull():
+            self._selected_pixmap = self._build_pixmap(base_pixmap, selected_state=True)
+            self._unselected_pixmap = self._build_pixmap(base_pixmap, selected_state=False)
+        self.setChecked(selected)
+        self._refresh_icon()
+        self.toggled.connect(lambda _checked: self._refresh_icon())
+
+    @staticmethod
+    def _build_pixmap(base_pixmap, selected_state):
+        image = base_pixmap.toImage()
+        for x in range(image.width()):
+            for y in range(image.height()):
+                color = image.pixelColor(x, y)
+                color = color.lighter(150) if selected_state else color.darker(180)
+                image.setPixelColor(x, y, color)
+        return QPixmap.fromImage(image)
+
+    def _refresh_icon(self):
+        pixmap = self._selected_pixmap if self.isChecked() else self._unselected_pixmap
         if pixmap is not None:
             self.setIcon(QIcon(pixmap))
 
@@ -1854,26 +1903,21 @@ class PostGameScoreboardWindow(QMainWindow):
                 border-radius: 14px;
             }}
             QPushButton#unitFilterChip {{
-                background-color: rgba(18, 12, 10, 0.9);
-                border: 1px solid rgba(201, 112, 50, 0.45);
-                border-radius: 12px;
-                padding: 10px 8px;
-                color: #f1dbbe;
-                font-size: 13px;
-                font-weight: 700;
-                text-align: center;
+                background-color: transparent;
+                border: none;
+                padding: 0px;
+                margin: 0px;
             }}
             QPushButton#unitFilterChip:hover {{
-                background-color: rgba(30, 18, 14, 0.94);
-                border-color: rgba(228, 145, 76, 0.7);
+                background-color: rgba(228, 145, 76, 0.18);
+                border-radius: 6px;
             }}
             QPushButton#unitFilterChip:checked {{
-                background-color: rgba(114, 55, 24, 0.96);
-                border: 1px solid rgba(255, 214, 150, 0.95);
-                color: #fff4d3;
+                background-color: transparent;
             }}
-            QPushButton#unitFilterChip:pressed {{
-                background-color: rgba(141, 68, 29, 0.98);
+            QPushButton#unitFilterChip:!checked {{
+                background-color: rgba(0, 0, 0, 0.55);
+                border-radius: 6px;
             }}
             QLabel#hoverReadout {{
                 color: #fff1cf;
@@ -2053,7 +2097,7 @@ class PostGameScoreboardWindow(QMainWindow):
             button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             button.clicked.connect(lambda checked, metric_id=metric["id"]: self._set_metric(metric_id))
             self.metric_buttons[metric["id"]] = button
-            metric_grid.addWidget(button, index // 5, index % 5)
+            metric_grid.addWidget(button, index // 6, index % 6)
         layout.addLayout(metric_grid)
 
         filter_row = QHBoxLayout()
@@ -2077,20 +2121,22 @@ class PostGameScoreboardWindow(QMainWindow):
         self.unit_filter_panel = QFrame()
         self.unit_filter_panel.setObjectName("unitFilterPanel")
         unit_filter_layout = QVBoxLayout(self.unit_filter_panel)
-        unit_filter_layout.setContentsMargins(12, 12, 12, 12)
-        unit_filter_layout.setSpacing(10)
+        unit_filter_layout.setContentsMargins(8, 6, 8, 6)
+        unit_filter_layout.setSpacing(6)
 
         self.unit_filter_scroll = QScrollArea()
         self.unit_filter_scroll.setWidgetResizable(True)
         self.unit_filter_scroll.setFrameShape(QFrame.Shape.NoFrame)
-        self.unit_filter_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.unit_filter_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.unit_filter_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.unit_filter_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.unit_filter_scroll.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self.unit_filter_scroll.setFixedHeight(64)
 
         filter_content = QWidget()
-        self.unit_filter_grid = QGridLayout(filter_content)
+        self.unit_filter_grid = QHBoxLayout(filter_content)
         self.unit_filter_grid.setContentsMargins(0, 0, 0, 0)
-        self.unit_filter_grid.setHorizontalSpacing(10)
-        self.unit_filter_grid.setVerticalSpacing(10)
+        self.unit_filter_grid.setSpacing(4)
+        self.unit_filter_grid.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.unit_filter_scroll.setWidget(filter_content)
         unit_filter_layout.addWidget(self.unit_filter_scroll)
 
@@ -2240,11 +2286,11 @@ class PostGameScoreboardWindow(QMainWindow):
         if not selected_names:
             selected_names = set(unit_names)
 
-        for index, unit_name in enumerate(unit_names):
+        for unit_name in unit_names:
             button = UnitFilterChip(unit_name, selected=unit_name in selected_names, parent=self.unit_filter_panel)
             button.clicked.connect(lambda checked, target_name=unit_name: self._toggle_graph_unit_filter(target_name, checked))
             self.unit_filter_buttons[unit_name] = button
-            self.unit_filter_grid.addWidget(button, index // 8, index % 8)
+            self.unit_filter_grid.addWidget(button)
 
     def _toggle_graph_unit_filter(self, unit_name, checked):
         selected_names = self.chart_widget.current_unit_selection()
