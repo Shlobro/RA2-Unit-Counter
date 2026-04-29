@@ -380,7 +380,10 @@ def save_hud_positions(state):
             return get_player_bucket_key(player, state.hud_positions)
 
         if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
-            state.single_window_workspace.save_geometry_to_state()
+            if hasattr(state.single_window_workspace, 'save_layout_to_state'):
+                state.single_window_workspace.save_layout_to_state()
+            else:
+                state.single_window_workspace.save_geometry_to_state()
 
         def get_saved_window_position(window, embedded_widget=None):
             if window is None or not hasattr(window, 'pos'):

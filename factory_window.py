@@ -18,6 +18,18 @@ from player_identity import (
     get_player_legacy_bucket_keys,
 )
 
+
+def _clamp_half_visible_to_parent(widget, x, y):
+    parent = widget.parentWidget()
+    if parent is None:
+        return x, y
+    min_x = -(widget.width() // 2)
+    min_y = -(widget.height() // 2)
+    max_x = parent.width() - (widget.width() // 2)
+    max_y = parent.height() - (widget.height() // 2)
+    return max(min_x, min(x, max_x)), max(min_y, min(y, max_y))
+
+
 class FactoryWindow(QMainWindow):
     EXPANSION_SETTING_KEY = 'factory_expansion_direction'
 
@@ -243,12 +255,7 @@ class FactoryWindow(QMainWindow):
         set_player_position(self.hud_pos, self.player_bucket_key, 'factory', anchor['x'], anchor['y'])
 
     def _clamp_to_parent(self, x, y):
-        parent = self.parentWidget()
-        if parent is None:
-            return x, y
-        max_x = max(0, parent.width() - self.width())
-        max_y = max(0, parent.height() - self.height())
-        return max(0, min(x, max_x)), max(0, min(y, max_y))
+        return _clamp_half_visible_to_parent(self, x, y)
 
     def show_context_menu(self, global_pos):
         menu = apply_context_menu_style(QMenu(self))

@@ -62,6 +62,7 @@ class ResourceWindow(QMainWindow):
         flag_widget_size = self.hud_positions.get('flag_widget_size', 50)
         money_spent_widget_size = self.hud_positions.get('money_spent_widget_size', 50)
         superweapon_widget_size = self.hud_positions.get('superweapon_widget_size', 100)
+        numeric_animation_duration = self.hud_positions.get('data_update_frequency', 1000)
 
         # Load fonts
         font_id = QFontDatabase.addApplicationFont("Other/Futured.ttf")
@@ -90,7 +91,8 @@ class ResourceWindow(QMainWindow):
             data=self.player.balance,
             text_color=self.get_money_widget_color(),
             size=money_widget_size,
-            font=money_font
+            font=money_font,
+            animation_duration_ms=numeric_animation_duration
         )
         power_image_color, power_text_color = self.get_power_widget_colors()
         self.power_widget = PowerWidget(
@@ -105,7 +107,8 @@ class ResourceWindow(QMainWindow):
             data=self.player.spent_credit,
             text_color=self.get_money_spent_widget_color(),
             size=money_spent_widget_size,
-            font=money_font
+            font=money_font,
+            animation_duration_ms=numeric_animation_duration
         )
         self.superweapon_widget = SuperweaponTimerPanel(
             player=self.player,
@@ -327,10 +330,16 @@ class ResourceWindow(QMainWindow):
         self.update_money_widget_color()
         self.update_money_spent_widget_color()
         self.update_power_widget_color()
+        self.update_numeric_animation_duration(self.hud_positions.get('data_update_frequency', 1000))
         self.money_widget.update_data(self.player.balance)
         self.money_spent_widget.update_data(self.player.spent_credit)
         self.power_widget.update_data(self.player.power)
         self.superweapon_widget.update_labels()
+
+    def update_numeric_animation_duration(self, duration_ms):
+        for widget in (self.money_widget, self.money_spent_widget):
+            if hasattr(widget, 'set_animation_duration_ms'):
+                widget.set_animation_duration_ms(duration_ms)
 
     def update_all_data_size(self, new_size):
         """Resize all DataWidgets in this ResourceWindow."""

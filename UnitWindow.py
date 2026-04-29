@@ -36,6 +36,17 @@ from player_identity import (
 )
 
 
+def _clamp_half_visible_to_parent(widget, x, y):
+    parent = widget.parentWidget()
+    if parent is None:
+        return x, y
+    min_x = -(widget.width() // 2)
+    min_y = -(widget.height() // 2)
+    max_x = parent.width() - (widget.width() // 2)
+    max_y = parent.height() - (widget.height() // 2)
+    return max(min_x, min(x, max_x)), max(min_y, min(y, max_y))
+
+
 # =============================================================================
 # UnitWindowBase: Shared functionality for unit counter windows.
 # =============================================================================
@@ -245,12 +256,7 @@ class UnitWindowBase(QMainWindow):
         self.mouseReleaseEvent = mouse_release_event
 
     def _clamp_to_parent(self, x, y):
-        parent = self.parentWidget()
-        if parent is None:
-            return x, y
-        max_x = max(0, parent.width() - self.width())
-        max_y = max(0, parent.height() - self.height())
-        return max(0, min(x, max_x)), max(0, min(y, max_y))
+        return _clamp_half_visible_to_parent(self, x, y)
 
     def _is_reverse_expansion(self):
         return get_player_setting(
@@ -873,8 +879,14 @@ class SingleWindowWorkspace(QMainWindow):
             'maximized': self.isMaximized(),
         }
 
-    def closeEvent(self, event):
+    def save_layout_to_state(self):
         self.save_geometry_to_state()
+        for child in self.canvas.findChildren(QWidget):
+            if child.parentWidget() is self.canvas and hasattr(child, 'save_position_to_state'):
+                child.save_position_to_state()
+
+    def closeEvent(self, event):
+        self.save_layout_to_state()
         super().closeEvent(event)
 
     def is_window_bar_visible(self):
@@ -971,6 +983,7 @@ class SingleWindowWorkspace(QMainWindow):
 
     def set_always_on_top(self, enabled):
         enabled = bool(enabled)
+        self.save_layout_to_state()
         self.hud_pos[self.ALWAYS_ON_TOP_KEY] = enabled
         self._apply_window_chrome(self.is_window_bar_visible())
 
@@ -1066,12 +1079,7 @@ class WorkspaceWidgetContainer(QWidget):
         return event.globalPos()
 
     def _clamp_to_parent(self, x, y):
-        parent = self.parentWidget()
-        if parent is None:
-            return x, y
-        max_x = max(0, parent.width() - self.width())
-        max_y = max(0, parent.height() - self.height())
-        return max(0, min(x, max_x)), max(0, min(y, max_y))
+        return _clamp_half_visible_to_parent(self, x, y)
 
     def _get_saved_anchor_position(self):
         if self._has_live_inner_widget() and hasattr(self.inner_widget, 'get_saved_anchor_position'):
@@ -1089,6 +1097,9 @@ class WorkspaceWidgetContainer(QWidget):
             self.inner_widget.save_anchor_position(self.inner_widget.top_left_to_anchor(x, y, self.size()))
         else:
             set_player_position(self.hud_pos, self.player_bucket_key, self.hud_type, x, y)
+
+    def save_position_to_state(self):
+        self._save_position(self.x(), self.y())
 
     def _refresh_geometry_from_saved_position(self):
         anchor = self._get_saved_anchor_position()
@@ -1235,18 +1246,16 @@ class GlobalWorkspaceWidgetContainer(QWidget):
         return event.globalPos()
 
     def _clamp_to_parent(self, x, y):
-        parent = self.parentWidget()
-        if parent is None:
-            return x, y
-        max_x = max(0, parent.width() - self.width())
-        max_y = max(0, parent.height() - self.height())
-        return max(0, min(x, max_x)), max(0, min(y, max_y))
+        return _clamp_half_visible_to_parent(self, x, y)
 
     def _get_saved_position(self):
         return get_global_widget_position(self.hud_pos, self.widget_key)
 
     def _save_position(self, x, y):
         set_global_widget_position(self.hud_pos, self.widget_key, x, y)
+
+    def save_position_to_state(self):
+        self._save_position(self.x(), self.y())
 
     def _refresh_geometry_from_saved_position(self):
         pos = self._get_saved_position()

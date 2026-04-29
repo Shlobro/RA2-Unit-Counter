@@ -1,5 +1,6 @@
 # DataWidget.py
 import logging
+import time
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap, QColor, QPainter, QFont, QFontMetrics
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
@@ -163,13 +164,19 @@ class BaseDataWidget(QWidget):
 
 
 class MoneyWidget(BaseDataWidget):
-    def __init__(self, data=None, text_color=Qt.white, size=16, font=None, parent=None):
+    def __init__(self, data=None, text_color=Qt.white, size=16, font=None, animation_duration_ms=1000, parent=None):
         super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=True, max_digits=10, parent=parent)
+        self.animation_duration_ms = max(1, int(animation_duration_ms or 1000))
+        self.animation_start_value = int(self.value)
+        self.animation_start_time = 0.0
         self.target_value = int(self.value)
         self.animation_timer = QTimer(self)
         self.animation_timer.setInterval(16)
         self.animation_timer.timeout.connect(self._animate_step)
         self.update_data_label()
+
+    def set_animation_duration_ms(self, duration_ms):
+        self.animation_duration_ms = max(1, int(duration_ms or 1000))
 
     def on_value_changed(self, value):
         try:
@@ -183,31 +190,37 @@ class MoneyWidget(BaseDataWidget):
 
     def update_data(self, new_data):
         try:
-            self.target_value = int(new_data)
-            if not self.animation_timer.isActive():
-                self.animation_timer.start()
+            new_target = int(new_data)
+            if new_target == int(self.target_value):
+                return
+            self.animation_start_value = int(self.value)
+            self.animation_start_time = time.monotonic()
+            self.target_value = new_target
+            self.animation_timer.start()
         except Exception as e:
             logging.exception("Error updating money data: %s", e)
 
     def _animate_step(self):
         try:
-            current_value = int(self.value)
             target_value = int(self.target_value)
-            delta = target_value - current_value
+            start_value = int(self.animation_start_value)
+            delta = target_value - start_value
 
             if delta == 0:
                 self.animation_timer.stop()
                 return
 
-            step = max(1, abs(delta) // 5)
-            if delta > 0:
-                self.value = min(current_value + step, target_value)
-            else:
-                self.value = max(current_value - step, target_value)
+            elapsed_ms = (time.monotonic() - self.animation_start_time) * 1000
+            progress = min(1.0, elapsed_ms / self.animation_duration_ms)
+            self.value = int(round(start_value + (delta * progress)))
 
             self.update_data_label()
             self.data_label.adjustSize()
             self.adjust_size()
+            if progress >= 1.0:
+                self.value = target_value
+                self.update_data_label()
+                self.animation_timer.stop()
         except Exception as e:
             self.animation_timer.stop()
             logging.exception("Error animating money widget: %s", e)
@@ -404,9 +417,16 @@ class FlagWidget(QWidget):
 
 
 class MoneySpentWidget(BaseDataWidget):
-    def __init__(self, data=None, text_color=Qt.red, size=16, font=None, parent=None):
+    def __init__(self, data=None, text_color=Qt.red, size=16, font=None, animation_duration_ms=1000, parent=None):
         # Disable fixed-width so that it can expand dynamically.
         super().__init__(data=data, text_color=text_color, size=size, font=font, use_fixed_width=False, parent=parent)
+        self.animation_duration_ms = max(1, int(animation_duration_ms or 1000))
+        self.animation_start_value = int(self.value)
+        self.animation_start_time = 0.0
+        self.target_value = int(self.value)
+        self.animation_timer = QTimer(self)
+        self.animation_timer.setInterval(16)
+        self.animation_timer.timeout.connect(self._animate_step)
         self.image_path = 'icons/money_spent_icon.png'
         self.icon_label = QLabel(self)
         # Insert the icon before the data label in the layout.
@@ -416,6 +436,9 @@ class MoneySpentWidget(BaseDataWidget):
         self.load_and_set_image()
         self.update_data_label()
         self.adjust_size()
+
+    def set_animation_duration_ms(self, duration_ms):
+        self.animation_duration_ms = max(1, int(duration_ms or 1000))
 
     def load_and_set_image(self):
         try:
@@ -447,12 +470,50 @@ class MoneySpentWidget(BaseDataWidget):
 
     def on_value_changed(self, value):
         try:
-            self.value = value
+            self.value = int(value)
+            self.target_value = self.value
             self.update_data_label()
             self.data_label.adjustSize()
             self.adjust_size()
         except Exception as e:
             logging.exception("Error in MoneySpentWidget.on_value_changed: %s", e)
+
+    def update_data(self, new_data):
+        try:
+            new_target = int(new_data)
+            if new_target == int(self.target_value):
+                return
+            self.animation_start_value = int(self.value)
+            self.animation_start_time = time.monotonic()
+            self.target_value = new_target
+            self.animation_timer.start()
+        except Exception as e:
+            logging.exception("Error updating money spent data: %s", e)
+
+    def _animate_step(self):
+        try:
+            target_value = int(self.target_value)
+            start_value = int(self.animation_start_value)
+            delta = target_value - start_value
+
+            if delta == 0:
+                self.animation_timer.stop()
+                return
+
+            elapsed_ms = (time.monotonic() - self.animation_start_time) * 1000
+            progress = min(1.0, elapsed_ms / self.animation_duration_ms)
+            self.value = int(round(start_value + (delta * progress)))
+
+            self.update_data_label()
+            self.data_label.adjustSize()
+            self.adjust_size()
+            if progress >= 1.0:
+                self.value = target_value
+                self.update_data_label()
+                self.animation_timer.stop()
+        except Exception as e:
+            self.animation_timer.stop()
+            logging.exception("Error animating money spent widget: %s", e)
 
     def update_data_label(self):
         try:

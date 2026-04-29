@@ -734,6 +734,15 @@ class ControlPanel(QMainWindow):
         logging.info(f"Toggled single_window_always_on_top to: {enabled}")
 
         workspace = getattr(self.state, 'single_window_workspace', None)
+        if workspace is not None and hasattr(workspace, 'save_layout_to_state'):
+            workspace.save_layout_to_state()
+
+        try:
+            from hud_manager import save_hud_positions
+            save_hud_positions(self.state)
+        except Exception as save_error:
+            logging.exception("Error saving HUD positions before topmost toggle: %s", save_error)
+
         if workspace is not None and hasattr(workspace, 'set_always_on_top'):
             workspace.set_always_on_top(enabled)
 
@@ -1759,6 +1768,16 @@ class ControlPanel(QMainWindow):
         new_freq = self.update_frequency_spinbox.value()
         self.state.hud_positions['data_update_frequency'] = new_freq
         logging.info(f"Update frequency set to: {new_freq} ms")
+        if self.state.hud_windows:
+            if self.state.hud_positions.get('combined_hud', False):
+                for combined_window, _ in self.state.hud_windows:
+                    resource_widget = getattr(combined_window, 'resource_widget', None)
+                    if resource_widget is not None:
+                        resource_widget.update_numeric_animation_duration(new_freq)
+            else:
+                for _, resource_window in self.state.hud_windows:
+                    if resource_window is not None:
+                        resource_window.update_numeric_animation_duration(new_freq)
 
     def toggle_flag(self, state_val):
         self.toggle_hud_element('show_flag', 'flag_widget', state_val)
