@@ -265,19 +265,22 @@ class FactoryWindow(QMainWindow):
         else:
             expand_forward.setChecked(True)
 
-        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        workspace = self.window() if hasattr(self.window(), 'add_window_context_actions') else None
         if workspace is not None:
             menu.addSeparator()
-            toggle_window_bar = workspace.add_window_bar_toggle_action(menu)
+            workspace_actions = workspace.add_window_context_actions(menu)
+            toggle_window_bar = workspace_actions['toggle_window_bar']
+            minimize_window = workspace_actions['minimize']
         else:
             toggle_window_bar = None
+            minimize_window = None
 
         selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
-        elif toggle_window_bar is not None and selected_action == toggle_window_bar:
+        elif selected_action in (toggle_window_bar, minimize_window):
             return
 
     def contextMenuEvent(self, event):

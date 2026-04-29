@@ -4,6 +4,7 @@ from collections import Counter
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QLayout, QMenu
 
+from CounterWidget import apply_context_menu_style
 from factory_queue_item_widget import FactoryQueueItemWidget
 from factory_widget import FactoryWidget
 from hud_position_utils import get_player_setting, set_player_setting
@@ -74,7 +75,7 @@ class FactoryPanel(QWidget):
         self.adjustSize()
 
     def contextMenuEvent(self, event):
-        menu = QMenu(self)
+        menu = apply_context_menu_style(QMenu(self))
         if self.layout_type == 'Horizontal':
             expand_forward = menu.addAction("Expand Right")
             expand_reverse = menu.addAction("Expand Left")
@@ -88,11 +89,23 @@ class FactoryPanel(QWidget):
         else:
             expand_forward.setChecked(True)
 
+        workspace = self.window() if hasattr(self.window(), 'add_window_context_actions') else None
+        if workspace is not None:
+            menu.addSeparator()
+            workspace_actions = workspace.add_window_context_actions(menu)
+            toggle_window_bar = workspace_actions['toggle_window_bar']
+            minimize_window = workspace_actions['minimize']
+        else:
+            toggle_window_bar = None
+            minimize_window = None
+
         selected_action = menu.exec(event.globalPos())
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
+        elif selected_action in (toggle_window_bar, minimize_window):
+            return
 
     def load_factories_and_create_widgets(self):
         show_frames = self.hud_pos.get('show_factory_frames', True)

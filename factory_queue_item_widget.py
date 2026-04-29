@@ -81,11 +81,11 @@ class FactoryQueueItemWidget(QLabel):
             handler.show_context_menu(event.globalPos())
             return
 
-        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        workspace = self.window() if hasattr(self.window(), 'add_window_context_actions') else None
         if workspace is None:
             super().contextMenuEvent(event)
             return
 
         menu = apply_context_menu_style(QMenu(self))
-        workspace.add_window_bar_toggle_action(menu)
+        workspace.add_window_context_actions(menu)
         menu.exec(event.globalPos())

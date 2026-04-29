@@ -302,19 +302,22 @@ class UnitWindowBase(QMainWindow):
         else:
             expand_forward.setChecked(True)
 
-        workspace = self.window() if hasattr(self.window(), 'add_window_bar_toggle_action') else None
+        workspace = self.window() if hasattr(self.window(), 'add_window_context_actions') else None
         if workspace is not None:
             menu.addSeparator()
-            toggle_window_bar = workspace.add_window_bar_toggle_action(menu)
+            workspace_actions = workspace.add_window_context_actions(menu)
+            toggle_window_bar = workspace_actions['toggle_window_bar']
+            minimize_window = workspace_actions['minimize']
         else:
             toggle_window_bar = None
+            minimize_window = None
 
         selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
-        elif toggle_window_bar is not None and selected_action == toggle_window_bar:
+        elif selected_action in (toggle_window_bar, minimize_window):
             return
 
     def contextMenuEvent(self, event):
@@ -933,11 +936,26 @@ class SingleWindowWorkspace(QMainWindow):
     def toggle_window_bar_visible(self):
         self.set_window_bar_visible(not self.is_window_bar_visible())
 
+    def minimize_window(self):
+        self.save_geometry_to_state()
+        self.showMinimized()
+
+    def add_minimize_action(self, menu):
+        action = menu.addAction("Minimize Window")
+        action.triggered.connect(self.minimize_window)
+        return action
+
     def add_window_bar_toggle_action(self, menu):
         action_text = "Hide Window Bar" if self.is_window_bar_visible() else "Show Window Bar"
         action = menu.addAction(action_text)
         action.triggered.connect(self.toggle_window_bar_visible)
         return action
+
+    def add_window_context_actions(self, menu):
+        return {
+            'minimize': self.add_minimize_action(menu),
+            'toggle_window_bar': self.add_window_bar_toggle_action(menu),
+        }
 
 
 class WorkspaceWidgetContainer(QWidget):
@@ -983,7 +1001,7 @@ class WorkspaceWidgetContainer(QWidget):
     def _find_workspace(self):
         current = self.parentWidget()
         while current is not None:
-            if hasattr(current, 'add_window_bar_toggle_action'):
+            if hasattr(current, 'add_window_context_actions'):
                 return current
             current = current.parentWidget()
         return None
@@ -1088,7 +1106,7 @@ class WorkspaceWidgetContainer(QWidget):
             workspace = self._find_workspace()
             if workspace is not None:
                 menu = apply_context_menu_style(QMenu(self))
-                workspace.add_window_bar_toggle_action(menu)
+                workspace.add_window_context_actions(menu)
                 menu.exec(self._event_global_point(event))
                 return True
         if event_type == QEvent.MouseButtonPress and event.button() == Qt.LeftButton:
@@ -1152,7 +1170,7 @@ class GlobalWorkspaceWidgetContainer(QWidget):
     def _find_workspace(self):
         current = self.parentWidget()
         while current is not None:
-            if hasattr(current, 'add_window_bar_toggle_action'):
+            if hasattr(current, 'add_window_context_actions'):
                 return current
             current = current.parentWidget()
         return None
@@ -1239,7 +1257,7 @@ class GlobalWorkspaceWidgetContainer(QWidget):
             workspace = self._find_workspace()
             if workspace is not None:
                 menu = apply_context_menu_style(QMenu(self))
-                workspace.add_window_bar_toggle_action(menu)
+                workspace.add_window_context_actions(menu)
                 menu.exec(self._event_global_point(event))
                 return True
         if event_type == QEvent.MouseButtonPress and event.button() == Qt.LeftButton:
