@@ -807,7 +807,7 @@ class PlayerReportCard(QFrame):
 class TimelineChartWidget(QWidget):
     hoverTextChanged = Signal(str)
 
-    def __init__(self, timeline, summary_players):
+    def __init__(self, timeline, summary_players, enable_event_icons=False):
         super().__init__()
         self.timeline = timeline or {"players": []}
         self.summary_players = summary_players or []
@@ -815,7 +815,9 @@ class TimelineChartWidget(QWidget):
         self.visible_player_ids = {player["player_id"] for player in self.timeline.get("players", [])}
         self.hover_t_ms = None
         self.unit_filters = {}
-        self.show_superweapons = True
+        self.enable_event_icons = bool(enable_event_icons)
+        self.show_superweapons_built = True
+        self.show_superweapons_used = True
         self.show_radar_tech = True
         self.show_battle_lab = True
         self.show_special_units = True
@@ -824,8 +826,12 @@ class TimelineChartWidget(QWidget):
         self.setMinimumHeight(540)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-    def set_show_superweapons(self, show):
-        self.show_superweapons = bool(show)
+    def set_show_superweapons_built(self, show):
+        self.show_superweapons_built = bool(show)
+        self.update()
+
+    def set_show_superweapons_used(self, show):
+        self.show_superweapons_used = bool(show)
         self.update()
 
     def set_show_radar_tech(self, show):
@@ -847,13 +853,17 @@ class TimelineChartWidget(QWidget):
     def _collect_player_event_icons(self, player):
         icons = []
         events = player.get("events") or {}
-        if self.show_superweapons:
-            for event in events.get("superweapons") or []:
-                if event.get("type") == "superweapon_built":
-                    icon_path = resolve_factory_image_path(event.get("building_name") or "")
-                else:
-                    icon_path = name_to_path(event.get("superweapon_name") or "")
-                icons.append({"t_ms": int(event.get("t_ms", 0) or 0), "icon_path": icon_path, "cross_out": False})
+        for event in events.get("superweapons") or []:
+            event_type = event.get("type")
+            if event_type == "superweapon_built":
+                if not self.show_superweapons_built:
+                    continue
+                icon_path = resolve_factory_image_path(event.get("building_name") or "")
+            else:
+                if not self.show_superweapons_used:
+                    continue
+                icon_path = name_to_path(event.get("superweapon_name") or "")
+            icons.append({"t_ms": int(event.get("t_ms", 0) or 0), "icon_path": icon_path, "cross_out": False})
         if self.show_radar_tech:
             for event in events.get("radar_tech") or []:
                 icons.append({
@@ -1134,10 +1144,11 @@ class TimelineChartWidget(QWidget):
             painter.setPen(QPen(color, 3, line_style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
             painter.drawPath(path)
 
-        painter.setClipping(False)
-        for player, points in visible_series:
-            self._draw_player_event_icons(painter, player, points, plot_rect, max_t_ms, max_value)
-        painter.setClipRect(plot_rect.adjusted(-2, -2, 2, 2))
+        if self.enable_event_icons:
+            painter.setClipping(False)
+            for player, points in visible_series:
+                self._draw_player_event_icons(painter, player, points, plot_rect, max_t_ms, max_value)
+            painter.setClipRect(plot_rect.adjusted(-2, -2, 2, 2))
 
         if self.hover_t_ms is not None:
             hover_x, _ = self._point_to_xy(self.hover_t_ms, 0, plot_rect, max_t_ms, max_value)
@@ -1187,7 +1198,7 @@ class TimelineChartWidget(QWidget):
             return
 
         accent_color = _as_color(player.get("accent_color"))
-        icon_size = 26
+        icon_size = 40
         half = icon_size / 2
         last_x_per_lane = []
 
@@ -1590,12 +1601,12 @@ class PostGameScoreboardWindow(QMainWindow):
         self.unit_filter_buttons = {}
         self.timeline_chart_widget = None
         self.timeline_legend_buttons = {}
-        self.superweapon_timeline_checkbox = None
+        self.superweapon_built_timeline_checkbox = None
+        self.superweapon_used_timeline_checkbox = None
         self.radar_tech_timeline_checkbox = None
         self.battle_lab_timeline_checkbox = None
         self.special_units_timeline_checkbox = None
         self.mcv_lost_timeline_checkbox = None
-        self.event_timeline_widget = None
         self.setWindowTitle("Post-Game Scoreboard")
         self.resize(1680, 980)
         self._build_ui()
@@ -1609,21 +1620,19 @@ class PostGameScoreboardWindow(QMainWindow):
     def _save_timeline_preferences(self):
         if self.app_state is None:
             return
-        self.app_state.hud_positions['scoreboard_timeline_show_superweapons'] = bool(
-            self.superweapon_timeline_checkbox.isChecked()
-        ) if self.superweapon_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_superweapons', True)
-        self.app_state.hud_positions['scoreboard_timeline_show_radar_tech'] = bool(
-            self.radar_tech_timeline_checkbox.isChecked()
-        ) if self.radar_tech_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_radar_tech', True)
-        self.app_state.hud_positions['scoreboard_timeline_show_battle_lab'] = bool(
-            self.battle_lab_timeline_checkbox.isChecked()
-        ) if self.battle_lab_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_battle_lab', True)
-        self.app_state.hud_positions['scoreboard_timeline_show_special_units'] = bool(
-            self.special_units_timeline_checkbox.isChecked()
-        ) if self.special_units_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_special_units', True)
-        self.app_state.hud_positions['scoreboard_timeline_show_mcv_lost'] = bool(
-            self.mcv_lost_timeline_checkbox.isChecked()
-        ) if self.mcv_lost_timeline_checkbox is not None else self._timeline_pref('scoreboard_timeline_show_mcv_lost', True)
+        checkbox_pref_pairs = (
+            (self.superweapon_built_timeline_checkbox, 'scoreboard_timeline_show_superweapons_built'),
+            (self.superweapon_used_timeline_checkbox, 'scoreboard_timeline_show_superweapons_used'),
+            (self.radar_tech_timeline_checkbox, 'scoreboard_timeline_show_radar_tech'),
+            (self.battle_lab_timeline_checkbox, 'scoreboard_timeline_show_battle_lab'),
+            (self.special_units_timeline_checkbox, 'scoreboard_timeline_show_special_units'),
+            (self.mcv_lost_timeline_checkbox, 'scoreboard_timeline_show_mcv_lost'),
+        )
+        for checkbox, pref_key in checkbox_pref_pairs:
+            if checkbox is not None:
+                self.app_state.hud_positions[pref_key] = bool(checkbox.isChecked())
+            else:
+                self.app_state.hud_positions[pref_key] = self._timeline_pref(pref_key, True)
 
         try:
             with open(self.app_state.HUD_POSITION_FILE, 'w') as file:
@@ -1817,6 +1826,27 @@ class PostGameScoreboardWindow(QMainWindow):
                 background: rgba(36, 20, 15, 0.95);
                 border: 1px solid rgba(255, 214, 150, 0.95);
                 color: #fff4d3;
+            }}
+            QCheckBox#timelineEventCheckbox {{
+                color: #f4dfc2;
+                font-size: 14px;
+                font-weight: 700;
+                spacing: 8px;
+                padding: 4px 10px;
+            }}
+            QCheckBox#timelineEventCheckbox::indicator {{
+                width: 18px;
+                height: 18px;
+                border: 1px solid rgba(201, 112, 50, 0.85);
+                border-radius: 4px;
+                background: rgba(18, 12, 10, 0.9);
+            }}
+            QCheckBox#timelineEventCheckbox::indicator:hover {{
+                border: 1px solid rgba(255, 214, 150, 0.95);
+            }}
+            QCheckBox#timelineEventCheckbox::indicator:checked {{
+                background: rgba(160, 77, 33, 0.95);
+                border: 1px solid rgba(255, 214, 150, 0.95);
             }}
             QFrame#unitFilterPanel {{
                 background-color: rgba(7, 5, 5, 0.5);
@@ -2099,27 +2129,16 @@ class PostGameScoreboardWindow(QMainWindow):
         layout.setSpacing(12)
 
         header_row = QHBoxLayout()
-        title = QLabel("ESTIMATED SCORE TIMELINE")
+        title = QLabel("Scoreboard - Timeline")
         title.setObjectName("graphHeading")
         header_row.addWidget(title)
         header_row.addStretch()
-        layout.addLayout(header_row)
 
-        subtitle = QLabel("Graph height uses the estimated score already calculated in the match timeline data.")
-        subtitle.setObjectName("graphSubText")
-        layout.addWidget(subtitle)
-
-        self.timeline_chart_widget = TimelineChartWidget(self.timeline, self.summary["players"])
-        self.timeline_chart_widget.set_metric("estimated_score")
-        layout.addWidget(self.timeline_chart_widget, 1)
-
-        events_row = QHBoxLayout()
-        events_label = QLabel("Show events:")
-        events_label.setObjectName("graphSubText")
-        events_row.addWidget(events_label)
-
-        self.superweapon_timeline_checkbox = self._make_event_checkbox(
-            "Superweapons", "scoreboard_timeline_show_superweapons"
+        self.superweapon_built_timeline_checkbox = self._make_event_checkbox(
+            "Superweapons built", "scoreboard_timeline_show_superweapons_built"
+        )
+        self.superweapon_used_timeline_checkbox = self._make_event_checkbox(
+            "Superweapons used", "scoreboard_timeline_show_superweapons_used"
         )
         self.radar_tech_timeline_checkbox = self._make_event_checkbox(
             "Radar tech", "scoreboard_timeline_show_radar_tech"
@@ -2134,15 +2153,19 @@ class PostGameScoreboardWindow(QMainWindow):
             "MCV lost", "scoreboard_timeline_show_mcv_lost"
         )
         for checkbox in (
-            self.superweapon_timeline_checkbox,
+            self.superweapon_built_timeline_checkbox,
+            self.superweapon_used_timeline_checkbox,
             self.radar_tech_timeline_checkbox,
             self.battle_lab_timeline_checkbox,
             self.special_units_timeline_checkbox,
             self.mcv_lost_timeline_checkbox,
         ):
-            events_row.addWidget(checkbox)
-        events_row.addStretch()
-        layout.addLayout(events_row)
+            header_row.addWidget(checkbox)
+        layout.addLayout(header_row)
+
+        self.timeline_chart_widget = TimelineChartWidget(self.timeline, self.summary["players"], enable_event_icons=True)
+        self.timeline_chart_widget.set_metric("estimated_score")
+        layout.addWidget(self.timeline_chart_widget, 1)
         self._refresh_timeline_filters()
 
         legend_layout = QHBoxLayout()
@@ -2252,21 +2275,25 @@ class PostGameScoreboardWindow(QMainWindow):
 
     def _make_event_checkbox(self, label, pref_key):
         checkbox = QCheckBox(label)
+        checkbox.setObjectName("timelineEventCheckbox")
         checkbox.setChecked(self._timeline_pref(pref_key, True))
+        checkbox.setCursor(Qt.CursorShape.PointingHandCursor)
         checkbox.toggled.connect(lambda _checked: self._refresh_timeline_filters())
         return checkbox
 
     def _refresh_timeline_filters(self):
         if (
             self.timeline_chart_widget is None
-            or self.superweapon_timeline_checkbox is None
+            or self.superweapon_built_timeline_checkbox is None
+            or self.superweapon_used_timeline_checkbox is None
             or self.radar_tech_timeline_checkbox is None
             or self.battle_lab_timeline_checkbox is None
             or self.special_units_timeline_checkbox is None
             or self.mcv_lost_timeline_checkbox is None
         ):
             return
-        self.timeline_chart_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_superweapons_built(self.superweapon_built_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_superweapons_used(self.superweapon_used_timeline_checkbox.isChecked())
         self.timeline_chart_widget.set_show_radar_tech(self.radar_tech_timeline_checkbox.isChecked())
         self.timeline_chart_widget.set_show_battle_lab(self.battle_lab_timeline_checkbox.isChecked())
         self.timeline_chart_widget.set_show_special_units(self.special_units_timeline_checkbox.isChecked())

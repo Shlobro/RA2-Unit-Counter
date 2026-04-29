@@ -184,17 +184,17 @@ class SuperweaponTimerPanel(QWidget):
             menu.addSeparator()
             workspace_actions = workspace.add_window_context_actions(menu)
             toggle_window_bar = workspace_actions['toggle_window_bar']
-            minimize_window = workspace_actions['minimize']
+            toggle_always_on_top = workspace_actions['toggle_always_on_top']
         else:
             toggle_window_bar = None
-            minimize_window = None
+            toggle_always_on_top = None
 
         selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
-        elif selected_action in (toggle_window_bar, minimize_window):
+        elif selected_action in (toggle_window_bar, toggle_always_on_top):
             return
 
     def contextMenuEvent(self, event):

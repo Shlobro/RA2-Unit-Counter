@@ -1,3 +1,4 @@
+import ctypes
 import logging
 from PySide6.QtCore import Qt, QEvent, QTimer
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLayout, QMenu, QLabel
@@ -307,17 +308,17 @@ class UnitWindowBase(QMainWindow):
             menu.addSeparator()
             workspace_actions = workspace.add_window_context_actions(menu)
             toggle_window_bar = workspace_actions['toggle_window_bar']
-            minimize_window = workspace_actions['minimize']
+            toggle_always_on_top = workspace_actions['toggle_always_on_top']
         else:
             toggle_window_bar = None
-            minimize_window = None
+            toggle_always_on_top = None
 
         selected_action = menu.exec(global_pos)
         if selected_action == expand_forward:
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
-        elif selected_action in (toggle_window_bar, minimize_window):
+        elif selected_action in (toggle_window_bar, toggle_always_on_top):
             return
 
     def contextMenuEvent(self, event):
@@ -827,6 +828,7 @@ class CombinedHudWindow(QWidget):
 class SingleWindowWorkspace(QMainWindow):
     GEOMETRY_KEY = 'single_window_geometry'
     WINDOW_BAR_KEY = 'single_window_show_window_bar'
+    ALWAYS_ON_TOP_KEY = 'single_window_always_on_top'
 
     def __init__(self, hud_pos):
         super().__init__()
@@ -878,16 +880,22 @@ class SingleWindowWorkspace(QMainWindow):
     def is_window_bar_visible(self):
         return bool(self.hud_pos.get(self.WINDOW_BAR_KEY, False))
 
+    def is_always_on_top(self):
+        return bool(self.hud_pos.get(self.ALWAYS_ON_TOP_KEY, True))
+
     def _apply_window_chrome(self, show_window_bar, keep_geometry=True):
         normal_geometry = self.normalGeometry() if keep_geometry and self.isMaximized() else self.geometry()
         maximized = self.isMaximized() if keep_geometry else False
         was_visible = self.isVisible()
+        flags = Qt.Window
+        if self.is_always_on_top():
+            flags |= Qt.WindowStaysOnTopHint
 
         if was_visible:
             self.hide()
 
         if show_window_bar:
-            self.setWindowFlags(Qt.Window | Qt.WindowStaysOnTopHint)
+            self.setWindowFlags(flags)
             self.setAttribute(Qt.WA_TranslucentBackground, False)
             self.setAttribute(Qt.WA_NoSystemBackground, False)
             self.canvas.setAttribute(Qt.WA_TranslucentBackground, False)
@@ -902,7 +910,7 @@ class SingleWindowWorkspace(QMainWindow):
         else:
             # Keep this as a real top-level window so OBS can still enumerate it
             # for window capture while the title bar is hidden.
-            self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+            self.setWindowFlags(flags | Qt.FramelessWindowHint)
             self.setAttribute(Qt.WA_TranslucentBackground, True)
             self.setAttribute(Qt.WA_NoSystemBackground, False)
             self.canvas.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -923,8 +931,33 @@ class SingleWindowWorkspace(QMainWindow):
             self.updateGeometry()
         if maximized:
             self.showMaximized()
+        self._sync_native_topmost_state()
+        QTimer.singleShot(0, self._sync_native_topmost_state)
         self.canvas.update()
         self.update()
+
+    def _sync_native_topmost_state(self):
+        if not hasattr(ctypes, 'windll'):
+            return
+        hwnd = int(self.winId())
+        if not hwnd:
+            return
+        hwnd_topmost = -1
+        hwnd_notopmost = -2
+        swp_nosize = 0x0001
+        swp_nomove = 0x0002
+        swp_noactivate = 0x0010
+        swp_showwindow = 0x0040
+        insert_after = hwnd_topmost if self.is_always_on_top() else hwnd_notopmost
+        ctypes.windll.user32.SetWindowPos(
+            hwnd,
+            insert_after,
+            0,
+            0,
+            0,
+            0,
+            swp_nomove | swp_nosize | swp_noactivate | swp_showwindow,
+        )
 
     def set_window_bar_visible(self, visible):
         visible = bool(visible)
@@ -936,13 +969,19 @@ class SingleWindowWorkspace(QMainWindow):
     def toggle_window_bar_visible(self):
         self.set_window_bar_visible(not self.is_window_bar_visible())
 
-    def minimize_window(self):
-        self.save_geometry_to_state()
-        self.showMinimized()
+    def set_always_on_top(self, enabled):
+        enabled = bool(enabled)
+        self.hud_pos[self.ALWAYS_ON_TOP_KEY] = enabled
+        self._apply_window_chrome(self.is_window_bar_visible())
 
-    def add_minimize_action(self, menu):
-        action = menu.addAction("Minimize Window")
-        action.triggered.connect(self.minimize_window)
+    def toggle_always_on_top(self):
+        self.set_always_on_top(not self.is_always_on_top())
+
+    def add_always_on_top_action(self, menu):
+        action = menu.addAction("Always On Top")
+        action.setCheckable(True)
+        action.setChecked(self.is_always_on_top())
+        action.triggered.connect(self.toggle_always_on_top)
         return action
 
     def add_window_bar_toggle_action(self, menu):
@@ -953,7 +992,7 @@ class SingleWindowWorkspace(QMainWindow):
 
     def add_window_context_actions(self, menu):
         return {
-            'minimize': self.add_minimize_action(menu),
+            'toggle_always_on_top': self.add_always_on_top_action(menu),
             'toggle_window_bar': self.add_window_bar_toggle_action(menu),
         }
 

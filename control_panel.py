@@ -728,6 +728,15 @@ class ControlPanel(QMainWindow):
         from hud_manager import create_hud_windows
         create_hud_windows(self.state)
 
+    def toggle_single_window_always_on_top(self, state_val):
+        enabled = (state_val != 0)
+        self.state.hud_positions['single_window_always_on_top'] = enabled
+        logging.info(f"Toggled single_window_always_on_top to: {enabled}")
+
+        workspace = getattr(self.state, 'single_window_workspace', None)
+        if workspace is not None and hasattr(workspace, 'set_always_on_top'):
+            workspace.set_always_on_top(enabled)
+
     def toggle_player_number_mode(self, state_val):
         enabled = (state_val != 0)
         self.state.hud_positions['use_player_numbers'] = enabled
@@ -1242,6 +1251,14 @@ class ControlPanel(QMainWindow):
         hud_mode_layout.addRow(self._with_help(self.combined_hud_checkbox,
             "Merge all HUD elements for each player into a single movable window.\n"
             "When off, each element (name, money, units, etc.) is its own separate draggable window."))
+        self.single_window_always_on_top_checkbox = QCheckBox("Single Window Always On Top")
+        self.single_window_always_on_top_checkbox.setChecked(
+            self.state.hud_positions.get('single_window_always_on_top', True)
+        )
+        self.single_window_always_on_top_checkbox.stateChanged.connect(self.toggle_single_window_always_on_top)
+        hud_mode_layout.addRow(self._with_help(self.single_window_always_on_top_checkbox,
+            "Keep the single-window HUD above other windows.\n"
+            "Turn this off when you want the game to cover the HUD while OBS can still capture the HUD window."))
         self.use_player_numbers_checkbox = QCheckBox("Use Player Numbers Instead of Colors")
         self.use_player_numbers_checkbox.setChecked(self.state.hud_positions.get('use_player_numbers', False))
         self.use_player_numbers_checkbox.stateChanged.connect(self.toggle_player_number_mode)
