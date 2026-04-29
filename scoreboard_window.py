@@ -815,9 +815,75 @@ class TimelineChartWidget(QWidget):
         self.visible_player_ids = {player["player_id"] for player in self.timeline.get("players", [])}
         self.hover_t_ms = None
         self.unit_filters = {}
+        self.show_superweapons = True
+        self.show_radar_tech = True
+        self.show_battle_lab = True
+        self.show_special_units = True
+        self.show_mcv_lost = True
         self.setMouseTracking(True)
         self.setMinimumHeight(540)
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+
+    def set_show_superweapons(self, show):
+        self.show_superweapons = bool(show)
+        self.update()
+
+    def set_show_radar_tech(self, show):
+        self.show_radar_tech = bool(show)
+        self.update()
+
+    def set_show_battle_lab(self, show):
+        self.show_battle_lab = bool(show)
+        self.update()
+
+    def set_show_special_units(self, show):
+        self.show_special_units = bool(show)
+        self.update()
+
+    def set_show_mcv_lost(self, show):
+        self.show_mcv_lost = bool(show)
+        self.update()
+
+    def _collect_player_event_icons(self, player):
+        icons = []
+        events = player.get("events") or {}
+        if self.show_superweapons:
+            for event in events.get("superweapons") or []:
+                if event.get("type") == "superweapon_built":
+                    icon_path = resolve_factory_image_path(event.get("building_name") or "")
+                else:
+                    icon_path = name_to_path(event.get("superweapon_name") or "")
+                icons.append({"t_ms": int(event.get("t_ms", 0) or 0), "icon_path": icon_path, "cross_out": False})
+        if self.show_radar_tech:
+            for event in events.get("radar_tech") or []:
+                icons.append({
+                    "t_ms": int(event.get("t_ms", 0) or 0),
+                    "icon_path": resolve_factory_image_path(event.get("building_name") or ""),
+                    "cross_out": False,
+                })
+        if self.show_battle_lab:
+            for event in events.get("battle_lab") or []:
+                icons.append({
+                    "t_ms": int(event.get("t_ms", 0) or 0),
+                    "icon_path": resolve_factory_image_path(event.get("building_name") or ""),
+                    "cross_out": False,
+                })
+        if self.show_special_units:
+            for event in events.get("special_units") or []:
+                icons.append({
+                    "t_ms": int(event.get("t_ms", 0) or 0),
+                    "icon_path": resolve_factory_image_path(event.get("unit_name") or ""),
+                    "cross_out": False,
+                })
+        if self.show_mcv_lost:
+            for event in events.get("mcv_lost") or []:
+                icons.append({
+                    "t_ms": int(event.get("t_ms", 0) or 0),
+                    "icon_path": resolve_factory_image_path(event.get("unit_name") or ""),
+                    "cross_out": True,
+                })
+        icons.sort(key=lambda item: item["t_ms"])
+        return icons
 
     def _metric_label(self):
         return next((item["label"] for item in METRIC_OPTIONS if item["id"] == self.metric_id), self.metric_id)
@@ -1068,6 +1134,11 @@ class TimelineChartWidget(QWidget):
             painter.setPen(QPen(color, 3, line_style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
             painter.drawPath(path)
 
+        painter.setClipping(False)
+        for player, points in visible_series:
+            self._draw_player_event_icons(painter, player, points, plot_rect, max_t_ms, max_value)
+        painter.setClipRect(plot_rect.adjusted(-2, -2, 2, 2))
+
         if self.hover_t_ms is not None:
             hover_x, _ = self._point_to_xy(self.hover_t_ms, 0, plot_rect, max_t_ms, max_value)
             painter.setPen(QPen(QColor(255, 238, 210, 140), 1, Qt.PenStyle.DashLine))
@@ -1109,6 +1180,56 @@ class TimelineChartWidget(QWidget):
         self.hoverTextChanged.emit(self._default_hover_text())
         self.update()
         super().leaveEvent(event)
+
+    def _draw_player_event_icons(self, painter, player, points, plot_rect, max_t_ms, max_value):
+        icons = self._collect_player_event_icons(player)
+        if not icons:
+            return
+
+        accent_color = _as_color(player.get("accent_color"))
+        icon_size = 26
+        half = icon_size / 2
+        last_x_per_lane = []
+
+        for item in icons:
+            t_ms = item["t_ms"]
+            if t_ms < 0 or t_ms > max_t_ms:
+                continue
+            value = self._value_at(points, t_ms)
+            x, y = self._point_to_xy(t_ms, value, plot_rect, max_t_ms, max_value)
+
+            lane = 0
+            while lane < len(last_x_per_lane) and x - last_x_per_lane[lane] < icon_size + 2:
+                lane += 1
+            if lane == len(last_x_per_lane):
+                last_x_per_lane.append(x)
+            else:
+                last_x_per_lane[lane] = x
+
+            icon_y = y - half - 4 - lane * (icon_size + 4)
+            min_y = plot_rect.top() + 2
+            if icon_y < min_y:
+                icon_y = y + half + 4 + lane * (icon_size + 4)
+
+            icon_rect = QRectF(x - half, icon_y - half, icon_size, icon_size)
+            painter.setPen(QPen(accent_color, 2))
+            painter.setBrush(QColor(12, 9, 8, 220))
+            painter.drawRoundedRect(icon_rect, 6, 6)
+
+            pixmap = _load_pixmap(item.get("icon_path"), icon_size - 4, icon_size - 4)
+            if pixmap is not None:
+                draw_x = icon_rect.left() + (icon_rect.width() - pixmap.width()) / 2
+                draw_y = icon_rect.top() + (icon_rect.height() - pixmap.height()) / 2
+                painter.drawPixmap(int(draw_x), int(draw_y), pixmap)
+            else:
+                painter.setPen(QColor("#f7d29d"))
+                painter.setFont(_load_ra_font(8))
+                painter.drawText(icon_rect, Qt.AlignmentFlag.AlignCenter, "?")
+
+            if item.get("cross_out"):
+                painter.setPen(QPen(QColor(210, 52, 38, 235), 2.5, Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap))
+                painter.drawLine(icon_rect.topLeft(), icon_rect.bottomRight())
+                painter.drawLine(icon_rect.topRight(), icon_rect.bottomLeft())
 
 
 class MatchEventTimelineWidget(QWidget):
@@ -1992,6 +2113,38 @@ class PostGameScoreboardWindow(QMainWindow):
         self.timeline_chart_widget.set_metric("estimated_score")
         layout.addWidget(self.timeline_chart_widget, 1)
 
+        events_row = QHBoxLayout()
+        events_label = QLabel("Show events:")
+        events_label.setObjectName("graphSubText")
+        events_row.addWidget(events_label)
+
+        self.superweapon_timeline_checkbox = self._make_event_checkbox(
+            "Superweapons", "scoreboard_timeline_show_superweapons"
+        )
+        self.radar_tech_timeline_checkbox = self._make_event_checkbox(
+            "Radar tech", "scoreboard_timeline_show_radar_tech"
+        )
+        self.battle_lab_timeline_checkbox = self._make_event_checkbox(
+            "Battle lab", "scoreboard_timeline_show_battle_lab"
+        )
+        self.special_units_timeline_checkbox = self._make_event_checkbox(
+            "Special units", "scoreboard_timeline_show_special_units"
+        )
+        self.mcv_lost_timeline_checkbox = self._make_event_checkbox(
+            "MCV lost", "scoreboard_timeline_show_mcv_lost"
+        )
+        for checkbox in (
+            self.superweapon_timeline_checkbox,
+            self.radar_tech_timeline_checkbox,
+            self.battle_lab_timeline_checkbox,
+            self.special_units_timeline_checkbox,
+            self.mcv_lost_timeline_checkbox,
+        ):
+            events_row.addWidget(checkbox)
+        events_row.addStretch()
+        layout.addLayout(events_row)
+        self._refresh_timeline_filters()
+
         legend_layout = QHBoxLayout()
         for player in self.summary["players"]:
             button = QPushButton(player["username"])
@@ -2097,9 +2250,15 @@ class PostGameScoreboardWindow(QMainWindow):
         self.chart_widget.set_current_unit_selection(self.chart_widget.available_unit_names())
         self._refresh_filter_controls()
 
+    def _make_event_checkbox(self, label, pref_key):
+        checkbox = QCheckBox(label)
+        checkbox.setChecked(self._timeline_pref(pref_key, True))
+        checkbox.toggled.connect(lambda _checked: self._refresh_timeline_filters())
+        return checkbox
+
     def _refresh_timeline_filters(self):
         if (
-            self.event_timeline_widget is None
+            self.timeline_chart_widget is None
             or self.superweapon_timeline_checkbox is None
             or self.radar_tech_timeline_checkbox is None
             or self.battle_lab_timeline_checkbox is None
@@ -2107,11 +2266,11 @@ class PostGameScoreboardWindow(QMainWindow):
             or self.mcv_lost_timeline_checkbox is None
         ):
             return
-        self.event_timeline_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
-        self.event_timeline_widget.set_show_radar_tech(self.radar_tech_timeline_checkbox.isChecked())
-        self.event_timeline_widget.set_show_battle_lab(self.battle_lab_timeline_checkbox.isChecked())
-        self.event_timeline_widget.set_show_special_units(self.special_units_timeline_checkbox.isChecked())
-        self.event_timeline_widget.set_show_mcv_lost(self.mcv_lost_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_superweapons(self.superweapon_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_radar_tech(self.radar_tech_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_battle_lab(self.battle_lab_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_special_units(self.special_units_timeline_checkbox.isChecked())
+        self.timeline_chart_widget.set_show_mcv_lost(self.mcv_lost_timeline_checkbox.isChecked())
         self._save_timeline_preferences()
 
 
