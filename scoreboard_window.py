@@ -633,11 +633,6 @@ class PlayerReportCard(QFrame):
         header.setSpacing(18)
 
         flag_label = FlagBadge(_player_flag_path(self.player_snapshot))
-        flag_shadow = QGraphicsDropShadowEffect(flag_label)
-        flag_shadow.setBlurRadius(10)
-        flag_shadow.setColor(QColor(0, 0, 0, 160))
-        flag_shadow.setOffset(2, 2)
-        flag_label.setGraphicsEffect(flag_shadow)
         header.addWidget(flag_label)
 
         title_block = QVBoxLayout()
