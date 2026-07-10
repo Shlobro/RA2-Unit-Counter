@@ -180,6 +180,7 @@ tank_offsets = {
     0x64: "Dolphin",  # [DLPH] → Dolphin
     0x68: "Soviet Construction Vehicle",  # [SMCV] → Soviet Construction Vehicle
     0x6c: "Tank Destroyer",  # [TNKD] → Tank Destroyer
+    0x74: "Tesla Tank",  # [TTNK] → Tesla Tank
     0x7c: "Lasher Light Tank",  # [LTNK] → Lasher Light Tank
     0x84: "Chrono Miner",  # [CMIN] → Chrono Miner
     0x88: "Prism Tank",  # [SREF] → Prism Tank
@@ -319,6 +320,7 @@ BUILT_UNIT_TOTAL_OFFSETS = {
     0x139c: "Dolphin",
     0x13a0: "Soviet Construction Vehicle",
     0x13a4: "Tank Destroyer",
+    0x13ac: "Tesla Tank",
     0x13b4: "Lasher Light Tank",
     0x13bc: "Chrono Miner",
     0x13c0: "Prism Tank",
@@ -450,6 +452,7 @@ LOST_UNIT_TOTAL_OFFSETS = {
     0x33bc: "Dolphin",
     0x33c0: "Soviet Construction Vehicle",
     0x33c4: "Tank Destroyer",
+    0x33cc: "Tesla Tank",
     0x33d4: "Lasher Light Tank",
     0x33dc: "Chrono Miner",
     0x33e0: "Prism Tank",
@@ -661,6 +664,7 @@ names = {
             "War Miner",
             "V3 Launcher",  # was "V3 Rocket Launcher"
             "Apocalypse",  # was "Apoc"
+            "Tesla Tank",
             "Soviet Siege Chopper",  # was "Siege Chopper"
             "Soviet Construction Vehicle",  # was "Soviet MCV"
             "Kirov Airship",  # was "Kirov"

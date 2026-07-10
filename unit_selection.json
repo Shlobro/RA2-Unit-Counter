@@ -1,3 +1,22 @@
 {
-    "selected_units": {}
+    "selected_units": {
+        "Soviet": {
+            "Tank": {
+                "Tesla Tank": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Soviet",
+                    "unit_type": "Tank"
+                },
+                "War Miner": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Soviet",
+                    "unit_type": "Tank"
+                }
+            }
+        }
+    }
 }
