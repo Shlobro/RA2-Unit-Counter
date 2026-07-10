@@ -740,6 +740,17 @@ SLAVE_MINER_ALIASES = {
 
 DISPLAY_IMAGE_ALIASES = {
     "Armored Transport": "Landing Craft",
+    # Red Alert 2 mode uses the shorter Name= values from rules.ini, while
+    # the bundled cameos use the faction-qualified Yuri's Revenge names.
+    "Power Plant": "Allied Power Plant",
+    "Pill Box": "Allied Pill Box",
+    "Patriot Missile": "Allied Patriot Missile",
+    "Prism Cannon": "Allied Prism Cannon",
+    "SpySat Uplink": "Allied SpySat Uplink",
+    "Chrono Sphere": "Allied Chrono Sphere",
+    "Tesla Coil": "Soviet Tesla Coil",
+    "Iron Curtain Device": "Soviet Iron Curtain Device",
+    "Nuclear Missile Silo": "Soviet Nuclear Missile Silo",
     "GGI": "Guardian GI",
     "Allied Engineer": "Engineer",
     "Navy Seal": "SEAL",
