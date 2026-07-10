@@ -377,6 +377,7 @@ BUILT_BUILDING_TOTAL_OFFSETS = {
     0x1c64: "Allied Ore Processor",
     0x1ce4: "Allied Airforce Command Headquarters",
     0x1d5c: "Allied American Airforce Command Headquarters",
+    0x1e1c: "Psychic Beacon",  # Blitz oil
     0x1ff0: "Yuri Construction Yard",
     0x1ff4: "Yuri Bio Reactor",
     0x1ff8: "Yuri Barracks",
@@ -507,6 +508,7 @@ LOST_BUILDING_TOTAL_OFFSETS = {
     0x3c7c: "Allied Ore Processor",
     0x3d04: "Allied Airforce Command Headquarters",
     0x3d7c: "Allied American Airforce Command Headquarters",
+    0x3e3c: "Psychic Beacon",  # Blitz oil
     0x4010: "Yuri Construction Yard",
     0x4014: "Yuri Bio Reactor",
     0x4018: "Yuri Barracks",
