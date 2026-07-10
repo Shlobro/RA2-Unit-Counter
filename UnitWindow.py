@@ -355,6 +355,37 @@ class UnitWindowBase(QMainWindow):
             anchor['y'],
         )
 
+    def get_saved_anchor_position(self):
+        return self._get_saved_anchor_position()
+
+    def save_anchor_position(self, anchor):
+        set_player_position(
+            self.hud_pos,
+            self.player_bucket_key,
+            self.get_hud_type(),
+            anchor['x'],
+            anchor['y'],
+        )
+
+    def top_left_to_anchor(self, x, y, size, direction=None):
+        direction = direction or ('reverse' if self._is_reverse_expansion() else 'forward')
+        anchor_x = x
+        anchor_y = y
+        if self.layout_type == 'Horizontal' and direction == 'reverse':
+            anchor_x += size.width()
+        elif self.layout_type == 'Vertical' and direction == 'reverse':
+            anchor_y += size.height()
+        return {'x': anchor_x, 'y': anchor_y}
+
+    def anchor_to_top_left(self, anchor, size):
+        x = anchor['x']
+        y = anchor['y']
+        if self.layout_type == 'Horizontal' and self._is_reverse_expansion():
+            x -= size.width()
+        elif self.layout_type == 'Vertical' and self._is_reverse_expansion():
+            y -= size.height()
+        return {'x': x, 'y': y}
+
     def _get_saved_anchor_position(self):
         return get_player_position(
             self.hud_pos,
@@ -836,9 +867,10 @@ class SingleWindowWorkspace(QMainWindow):
     WINDOW_BAR_KEY = 'single_window_show_window_bar'
     ALWAYS_ON_TOP_KEY = 'single_window_always_on_top'
 
-    def __init__(self, hud_pos):
+    def __init__(self, hud_pos, state=None):
         super().__init__()
         self.hud_pos = hud_pos
+        self.state = state
         self.canvas = QWidget(self)
         self.canvas.setObjectName("singleWindowCanvas")
         self.setAttribute(Qt.WA_OpaquePaintEvent, False)
@@ -887,6 +919,12 @@ class SingleWindowWorkspace(QMainWindow):
 
     def closeEvent(self, event):
         self.save_layout_to_state()
+        if self.state is not None:
+            try:
+                from hud_manager import save_hud_positions
+                save_hud_positions(self.state)
+            except Exception as exc:
+                logging.exception("Failed to save single-window layout on workspace close: %s", exc)
         super().closeEvent(event)
 
     def is_window_bar_visible(self):
@@ -1130,6 +1168,9 @@ class WorkspaceWidgetContainer(QWidget):
         if hint.width() > 0 and hint.height() > 0:
             self.setFixedSize(hint)
         self.show()
+        if self._drag_offset is not None:
+            self._save_position(self.x(), self.y())
+            return
         self._refresh_geometry_from_saved_position()
 
     def set_content_visible(self, visible):
@@ -1163,7 +1204,7 @@ class WorkspaceWidgetContainer(QWidget):
             self.raise_()
             global_pos = self._mouse_global_point(event)
             self._drag_offset = global_pos - self.mapToGlobal(self.rect().topLeft())
-            return False
+            return True
         if event_type == QEvent.MouseMove and self._drag_offset is not None:
             global_pos = self._mouse_global_point(event)
             new_global_pos = global_pos - self._drag_offset
@@ -1171,11 +1212,11 @@ class WorkspaceWidgetContainer(QWidget):
             x, y = self._clamp_to_parent(parent_pos.x(), parent_pos.y())
             self.move(x, y)
             self._save_position(x, y)
-            return False
+            return True
         if event_type == QEvent.MouseButtonRelease and getattr(event, 'button', lambda: None)() == Qt.LeftButton:
             self._drag_offset = None
             self._save_position(self.x(), self.y())
-            return False
+            return True
         if watched is self.inner_widget and event_type in (QEvent.Resize, QEvent.Show, QEvent.Hide, QEvent.LayoutRequest):
             self._queue_sync_to_inner()
         return super().eventFilter(watched, event)
@@ -1279,6 +1320,9 @@ class GlobalWorkspaceWidgetContainer(QWidget):
         if hint.width() > 0 and hint.height() > 0:
             self.setFixedSize(hint)
         self.show()
+        if self._drag_offset is not None:
+            self._save_position(self.x(), self.y())
+            return
         self._refresh_geometry_from_saved_position()
 
     def set_content_visible(self, visible):
@@ -1312,7 +1356,7 @@ class GlobalWorkspaceWidgetContainer(QWidget):
             self.raise_()
             global_pos = self._mouse_global_point(event)
             self._drag_offset = global_pos - self.mapToGlobal(self.rect().topLeft())
-            return False
+            return True
         if event_type == QEvent.MouseMove and self._drag_offset is not None:
             global_pos = self._mouse_global_point(event)
             new_global_pos = global_pos - self._drag_offset
@@ -1320,11 +1364,11 @@ class GlobalWorkspaceWidgetContainer(QWidget):
             x, y = self._clamp_to_parent(parent_pos.x(), parent_pos.y())
             self.move(x, y)
             self._save_position(x, y)
-            return False
+            return True
         if event_type == QEvent.MouseButtonRelease and getattr(event, 'button', lambda: None)() == Qt.LeftButton:
             self._drag_offset = None
             self._save_position(self.x(), self.y())
-            return False
+            return True
         if watched is self.inner_widget and event_type in (QEvent.Resize, QEvent.Show, QEvent.Hide, QEvent.LayoutRequest):
             self._queue_sync_to_inner()
         return super().eventFilter(watched, event)

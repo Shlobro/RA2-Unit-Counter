@@ -44,6 +44,55 @@ from match_timeline import (
 )
 
 
+def dispose_qt_widget(widget):
+    """Close and schedule a Qt widget for destruction.
+
+    QWidget.close() only hides most top-level windows.  Match HUDs contain
+    timers, animations and player references, so merely closing them leaves a
+    complete match's object graph alive in the QApplication.
+    """
+    if widget is None:
+        return
+    if isinstance(widget, (tuple, list)):
+        for child in widget:
+            dispose_qt_widget(child)
+        return
+    try:
+        widget.close()
+        widget.deleteLater()
+    except RuntimeError:
+        # The C++ object may already have been destroyed by its Qt parent.
+        pass
+
+
+def dispose_match_huds(state):
+    """Destroy all widgets owned by the current match and clear references."""
+    for unit_window, resource_window in state.hud_windows:
+        dispose_qt_widget(unit_window)
+        if resource_window is not None and getattr(resource_window, 'windows', None):
+            dispose_qt_widget(resource_window.windows)
+        else:
+            dispose_qt_widget(resource_window)
+    state.hud_windows.clear()
+
+    dispose_qt_widget(getattr(state, 'factory_windows', []))
+    state.factory_windows = []
+
+    # Delete the workspace before dropping references to its embedded items.
+    dispose_qt_widget(getattr(state, 'single_window_workspace', None))
+    dispose_qt_widget(getattr(state, 'game_time_window', None))
+    dispose_qt_widget(getattr(state, 'game_time_workspace_item', None))
+    dispose_qt_widget(getattr(state, 'map_name_window', None))
+    dispose_qt_widget(getattr(state, 'map_name_workspace_item', None))
+    state.single_window_workspace = None
+    state.game_time_window = None
+    state.game_time_workspace_item = None
+    state.game_time_widget = None
+    state.map_name_window = None
+    state.map_name_workspace_item = None
+    state.map_name_widget = None
+
+
 # ---------------------------------------------------------------------------
 # Load HUD Positions
 # ---------------------------------------------------------------------------
@@ -407,7 +456,21 @@ def save_hud_positions(state):
 
         # Capture all spawned window positions through the same per-player helper.
         for unit_window, resource_window in state.hud_windows:
-            if unit_window is not None and hasattr(unit_window, 'player') and hasattr(unit_window, 'pos'):
+            if isinstance(unit_window, tuple):
+                for split_unit_window in unit_window:
+                    if split_unit_window is None or not hasattr(split_unit_window, 'player'):
+                        continue
+                    saved_pos = get_saved_window_position(split_unit_window, split_unit_window)
+                    if saved_pos is None:
+                        continue
+                    set_player_position(
+                        state.hud_positions,
+                        player_key(split_unit_window.player),
+                        split_unit_window.get_hud_type(),
+                        saved_pos[0],
+                        saved_pos[1],
+                    )
+            elif unit_window is not None and hasattr(unit_window, 'player') and hasattr(unit_window, 'pos'):
                 pos = unit_window.pos()
                 set_player_position(state.hud_positions, player_key(unit_window.player), 'combined', pos.x(), pos.y())
 
@@ -468,11 +531,7 @@ def create_unit_windows_in_current_mode(state):
 
             # close any existing unit_win
             if unit_win:
-                if isinstance(unit_win, tuple):
-                    for uw in unit_win:
-                        uw.close()
-                else:
-                    unit_win.close()
+                dispose_qt_widget(unit_win)
 
             # create new unit windows
             if separate:
@@ -544,44 +603,7 @@ def assign_player_display_slots(players):
 def create_hud_windows(state):
     """Create all HUD windows based on loaded players and HUD configuration."""
     try:
-        # Close existing windows.
-        for unit_window, resource_window in state.hud_windows:
-            if unit_window:
-                if isinstance(unit_window, tuple):
-                    for uw in unit_window:
-                        uw.close()
-                else:
-                    unit_window.close()
-            if resource_window:
-                if hasattr(resource_window, 'windows') and resource_window.windows:
-                    for w in resource_window.windows:
-                        w.close()
-                else:
-                    resource_window.close()
-        state.hud_windows = []
-        if getattr(state, 'game_time_window', None) is not None:
-            state.game_time_window.close()
-        state.game_time_window = None
-        if getattr(state, 'game_time_workspace_item', None) is not None:
-            state.game_time_workspace_item.close()
-        state.game_time_workspace_item = None
-        state.game_time_widget = None
-        if getattr(state, 'map_name_window', None) is not None:
-            state.map_name_window.close()
-        state.map_name_window = None
-        if getattr(state, 'map_name_workspace_item', None) is not None:
-            state.map_name_workspace_item.close()
-        state.map_name_workspace_item = None
-        state.map_name_widget = None
-        if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
-            state.single_window_workspace.close()
-        state.single_window_workspace = None
-
-        # Also close any existing factory windows.
-        if hasattr(state, 'factory_windows'):
-            for fac_win in state.factory_windows:
-                fac_win.close()
-        state.factory_windows = []
+        dispose_match_huds(state)
 
         if not state.players:
             logging.info("No valid players found. HUD will not be displayed.")
@@ -596,7 +618,7 @@ def create_hud_windows(state):
         # COMBINED HUD MODE
         # ----------------------------------------
         if state.hud_positions.get('combined_hud', False):
-            state.single_window_workspace = SingleWindowWorkspace(state.hud_positions)
+            state.single_window_workspace = SingleWindowWorkspace(state.hud_positions, state)
             from PySide6.QtGui import QColor, QFont
             from DataWidget import GameTimeWidget, MapNameWidget
             from UnitWindow import GlobalWorkspaceWidgetContainer
@@ -783,7 +805,7 @@ def show_pending_post_game_scoreboard(state):
         return
 
     if state.scoreboard_window is not None:
-        state.scoreboard_window.close()
+        dispose_qt_widget(state.scoreboard_window)
 
     state.scoreboard_window = PostGameScoreboardWindow(payload, state)
     state.scoreboard_window.show()
@@ -805,7 +827,7 @@ def game_started_handler(state):
         state.current_match_timeline = None
         state.completed_match_path = None
         if state.scoreboard_window is not None:
-            state.scoreboard_window.close()
+            dispose_qt_widget(state.scoreboard_window)
             state.scoreboard_window = None
 
         if not state.players:
@@ -857,45 +879,12 @@ def game_started_handler(state):
 # ---------------------------------------------------------------------------
 def game_stopped_handler(state):
     logging.info("Game stopped handler called")
-    # forcibly stop the data update thread:
-    if hasattr(state, 'data_update_thread') and state.data_update_thread:
-        state.data_update_thread.stop_event.set()
+    if getattr(state, 'is_shutting_down', False):
+        logging.info("Application is shutting down; saving positions without game-stopped teardown.")
+        save_hud_positions(state)
+        return
+
     save_hud_positions(state)
-    if hasattr(state, 'single_window_workspace') and state.single_window_workspace:
-        state.single_window_workspace.close()
-        state.single_window_workspace = None
-    if getattr(state, 'game_time_window', None) is not None:
-        state.game_time_window.close()
-        state.game_time_window = None
-    if getattr(state, 'game_time_workspace_item', None) is not None:
-        state.game_time_workspace_item.close()
-        state.game_time_workspace_item = None
-    state.game_time_widget = None
-    if getattr(state, 'map_name_window', None) is not None:
-        state.map_name_window.close()
-        state.map_name_window = None
-    if getattr(state, 'map_name_workspace_item', None) is not None:
-        state.map_name_workspace_item.close()
-        state.map_name_workspace_item = None
-    state.map_name_widget = None
-    for unit_window, resource_window in state.hud_windows:
-        if unit_window:
-            if isinstance(unit_window, tuple):
-                for uw in unit_window:
-                    uw.close()
-            else:
-                unit_window.close()
-        if resource_window:
-            if hasattr(resource_window, 'windows') and resource_window.windows:
-                for window in resource_window.windows:
-                    window.close()
-            else:
-                resource_window.close()
-    if hasattr(state, 'factory_windows'):
-        for factory_win in state.factory_windows:
-            factory_win.close()
-    state.hud_windows.clear()
-    if hasattr(state, 'factory_windows'):
-        state.factory_windows.clear()
+    dispose_match_huds(state)
     show_pending_post_game_scoreboard(state)
     state.players.clear()

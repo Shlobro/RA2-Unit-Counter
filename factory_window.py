@@ -216,6 +216,16 @@ class FactoryWindow(QMainWindow):
             legacy_bucket_keys=self.legacy_player_bucket_keys,
         )
 
+    def get_saved_anchor_position(self):
+        return self._get_saved_anchor_position()
+
+    def save_anchor_position(self, anchor):
+        set_player_position(self.hud_pos, self.player_bucket_key, 'factory', anchor['x'], anchor['y'])
+
+    def save_position_to_state(self):
+        anchor = self.top_left_to_anchor(self.x(), self.y(), self.size())
+        self.save_anchor_position(anchor)
+
     # --------------------------------------------------------------------
     # Movable window
     # --------------------------------------------------------------------
@@ -341,6 +351,9 @@ class FactoryWindow(QMainWindow):
         elif self.layout_type == 'Vertical' and self._is_reverse_expansion():
             y -= size.height()
         return {'x': x, 'y': y}
+
+    def anchor_to_top_left(self, anchor, size):
+        return self._anchor_to_top_left(anchor, size)
 
     def _move_to_saved_anchor(self):
         if self._dragging:

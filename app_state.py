@@ -74,6 +74,7 @@ class AppState:
         self.player_color_export_cache = {}
         self.current_map_name = ""
         self.map_name_address = None
+        self.is_shutting_down = False
         initialize_oil_count_files()
         os.makedirs(self.MATCH_HISTORY_DIR, exist_ok=True)
 

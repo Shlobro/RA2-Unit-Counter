@@ -963,8 +963,10 @@ class TimelineChartWidget(QWidget):
             return []
         unit_names = set()
         for player in self._player_entries():
-            for unit_name in ((player.get("unit_series") or {}).get(target_metric) or {}).keys():
+            for unit_name, points in ((player.get("unit_series") or {}).get(target_metric) or {}).items():
                 if unit_name in EXCLUDED_FILTER_UNIT_NAMES:
+                    continue
+                if not any(int(point.get("value", 0) or 0) > 0 for point in points):
                     continue
                 unit_names.add(unit_name)
         return sorted(unit_names)
@@ -988,6 +990,7 @@ class TimelineChartWidget(QWidget):
             unit_name: points
             for unit_name, points in unit_series.items()
             if unit_name not in EXCLUDED_FILTER_UNIT_NAMES
+            and any(int(point.get("value", 0) or 0) > 0 for point in points)
         }
         if not filtered_unit_series:
             return player.get("series", {}).get(self.metric_id, [])
@@ -2345,5 +2348,4 @@ class PostGameScoreboardWindow(QMainWindow):
         self.timeline_chart_widget.set_show_special_units(self.special_units_timeline_checkbox.isChecked())
         self.timeline_chart_widget.set_show_mcv_lost(self.mcv_lost_timeline_checkbox.isChecked())
         self._save_timeline_preferences()
-
 

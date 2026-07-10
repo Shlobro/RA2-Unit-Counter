@@ -2503,6 +2503,8 @@ class ControlPanel(QMainWindow):
     
     def closeEvent(self, event):
         """Handle window close event (X button clicked)."""
+        self.state.is_shutting_down = True
+
         # Close unit selection window if it exists and is visible
         if self.unit_selection_window is not None and self.unit_selection_window.isVisible():
             logging.info("Closing unit selection window")

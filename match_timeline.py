@@ -387,9 +387,11 @@ def _compute_player_metrics(player, player_meta, derived_loss_metrics):
     }
 
 
-def _record_named_count_series(target_bucket, elapsed_ms, counts):
+def _record_named_count_series(target_bucket, elapsed_ms, counts, missing_value=None):
     active_names = set()
     for unit_name, count in counts.items():
+        if int(count or 0) <= 0:
+            continue
         active_names.add(unit_name)
         target_bucket.setdefault(unit_name, []).append({"t_ms": elapsed_ms, "value": int(count)})
 
@@ -397,7 +399,8 @@ def _record_named_count_series(target_bucket, elapsed_ms, counts):
         if unit_name in active_names:
             continue
         last_value = int(points[-1]["value"]) if points else 0
-        points.append({"t_ms": elapsed_ms, "value": last_value})
+        value = last_value if missing_value is None else int(missing_value)
+        points.append({"t_ms": elapsed_ms, "value": value})
 
 
 def _split_built_tank_counts(counts):
@@ -461,9 +464,24 @@ def _record_unit_series_sample(unit_series, elapsed_ms, player):
         "units_lost_total": units_lost_total,
     }
 
+    current_metrics = {
+        "infantry_current",
+        "miners_current",
+        "vehicles_current",
+        "navy_current",
+        "buildings_current",
+        "aircraft_current",
+        "units_current_total",
+    }
+
     for metric_id, counts in category_counts.items():
         target_bucket = unit_series.setdefault(metric_id, {})
-        _record_named_count_series(target_bucket, elapsed_ms, counts)
+        _record_named_count_series(
+            target_bucket,
+            elapsed_ms,
+            counts,
+            missing_value=0 if metric_id in current_metrics else None,
+        )
 
 
 def _record_superweapon_events(player_meta, elapsed_ms, player):

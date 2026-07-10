@@ -91,6 +91,7 @@ def main():
         wait_for_current_file_path(app, state)
         logging.info("Starting data update thread")
         data_thread = DataUpdateThread(state)
+        state.data_update_thread = data_thread
         data_thread.update_signal.connect(lambda: update_huds(state))
         data_thread.game_started.connect(lambda: game_started_handler(state))
         data_thread.game_stopped.connect(lambda: game_stopped_handler(state))
@@ -101,7 +102,9 @@ def main():
         logging.exception("Unhandled exception occurred: %s", e)
     finally:
         logging.info("Exiting application, stopping data update thread")
+        state.is_shutting_down = True
         try:
+            save_hud_positions(state)
             if data_thread is not None:
                 data_thread.stop_event.set()
                 data_thread.wait()
