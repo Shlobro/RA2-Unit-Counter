@@ -171,6 +171,7 @@ def load_hud_positions(state):
         'scoreboard_timeline_show_special_units': True,
         'scoreboard_timeline_show_mcv_lost': True,
         'use_player_numbers': False,
+        'swap_player_1_2': False,
         # Toggle to show/hide the entire factory window
         'show_factory_window': True
     }
@@ -525,6 +526,13 @@ def create_unit_windows_in_current_mode(state):
         return  # never run in combined HUD mode
 
     try:
+        # This function can also be called later, independently of the full HUD
+        # creation path. Reapply the persisted slot mapping before new windows
+        # capture their per-player position bucket.
+        for player in state.players:
+            player.hud_positions_override = state.hud_positions
+        assign_player_display_slots(state.players)
+
         separate = state.hud_positions.get('separate_unit_counters', False)
         for i, (unit_win, res_win) in enumerate(state.hud_windows):
             player = res_win.player
@@ -598,6 +606,12 @@ def assign_player_display_slots(players):
         player.display_slot = next_open_slot
         assigned_slots.add(next_open_slot)
         next_open_slot += 1
+
+    if isinstance(hud_positions, dict) and hud_positions.get("swap_player_1_2", False):
+        player_1 = next((player for player in players if player.display_slot == 1), None)
+        player_2 = next((player for player in players if player.display_slot == 2), None)
+        if player_1 is not None and player_2 is not None:
+            player_1.display_slot, player_2.display_slot = 2, 1
 
 
 def create_hud_windows(state):

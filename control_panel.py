@@ -751,8 +751,35 @@ class ControlPanel(QMainWindow):
         self.state.hud_positions['use_player_numbers'] = enabled
         logging.info(f"Toggled use_player_numbers to: {enabled}")
 
+        if hasattr(self, 'swap_player_1_2_button'):
+            self.swap_player_1_2_button.setEnabled(enabled)
+
         from hud_manager import create_hud_windows
         create_hud_windows(self.state)
+
+    def swap_player_1_and_2(self):
+        # Capture any live drag adjustments under the current player-number
+        # buckets before changing which player owns those buckets.
+        from hud_manager import create_hud_windows, save_hud_positions
+        save_hud_positions(self.state)
+
+        swapped = not self.state.hud_positions.get('swap_player_1_2', False)
+        self.state.hud_positions['swap_player_1_2'] = swapped
+        self._update_player_swap_button_text()
+        logging.info("Player 1/2 manual swap override set to: %s", swapped)
+
+        # Persist the override even when no match is active (and therefore
+        # create_hud_windows has no windows to create or save).
+        save_hud_positions(self.state)
+        create_hud_windows(self.state)
+
+    def _update_player_swap_button_text(self):
+        if not hasattr(self, 'swap_player_1_2_button'):
+            return
+        if self.state.hud_positions.get('swap_player_1_2', False):
+            self.swap_player_1_2_button.setText("Swap Player 1 and 2 Back")
+        else:
+            self.swap_player_1_2_button.setText("Swap Player 1 and 2")
 
     def update_reserved_player_name(self, slot, text):
         key = f'player_{slot}_name'
@@ -1274,6 +1301,15 @@ class ControlPanel(QMainWindow):
         hud_mode_layout.addRow(self._with_help(self.use_player_numbers_checkbox,
             "Identify players by slot number (Player 1–8) instead of their in-game color.\n"
             "Use this when players are set to random colors, so the HUD can still track them reliably."))
+        self.swap_player_1_2_button = QPushButton()
+        self.swap_player_1_2_button.setEnabled(self.use_player_numbers_checkbox.isChecked())
+        self.swap_player_1_2_button.clicked.connect(self.swap_player_1_and_2)
+        self._update_player_swap_button_text()
+        hud_mode_layout.addRow(self._with_help(
+            self.swap_player_1_2_button,
+            "Manually exchange the Player 1 and Player 2 HUD assignments.\n"
+            "Use this when player-name matching fails or the players appear on the wrong sides."
+        ))
         for slot in range(1, 9):
             reserved_name_edit = QLineEdit()
             reserved_name_edit.setPlaceholderText(f"Reserved name for Player {slot}")
