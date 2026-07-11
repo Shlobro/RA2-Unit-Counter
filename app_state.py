@@ -45,7 +45,11 @@ def write_map_name_to_file(map_name):
 
 class AppState:
     def __init__(self):
+        from profile_manager import configure_state_profile
         self.HUD_POSITION_FILE = 'hud_positions.json'
+        self.UNIT_SELECTION_FILE = 'unit_selection.json'
+        self.active_profile = 'Default'
+        configure_state_profile(self)
         self.MATCH_HISTORY_DIR = 'match_history'
         self.players = []           # List to store player objects
         self.hud_windows = []       # List to store HUDWindow objects

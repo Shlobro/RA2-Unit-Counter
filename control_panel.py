@@ -2,7 +2,7 @@ import json
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QTabWidget, QFormLayout, QGroupBox,
     QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox,
-    QColorDialog, QFontComboBox, QScrollArea, QSizePolicy, QTextEdit, QApplication
+    QColorDialog, QFontComboBox, QScrollArea, QSizePolicy, QTextEdit, QApplication, QInputDialog
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QFont, QFontDatabase
@@ -13,6 +13,10 @@ from UnitWindow import CombinedHudWindow
 from hud_position_utils import normalize_position
 from scoreboard_window import PostGameScoreboardWindow, load_scoreboard_payload_from_file
 from selected_units_utils import load_selected_units_file, save_selected_units_file
+from profile_manager import (
+    activate_profile, configure_state_profile, create_profile, delete_profile,
+    list_profiles, rename_profile,
+)
 
 
 def _load_futured_family():
@@ -63,9 +67,16 @@ class ControlPanel(QMainWindow):
         self.restore_saved_position()
         self._apply_dark_theme()
 
+        central_widget = QWidget()
+        central_layout = QVBoxLayout(central_widget)
+        central_layout.setContentsMargins(8, 8, 8, 8)
+        central_layout.setSpacing(8)
+        central_layout.addWidget(self._create_profile_bar())
+
         # Create a tab widget
         self.tabs = QTabWidget()
-        self.setCentralWidget(self.tabs)
+        central_layout.addWidget(self.tabs)
+        self.setCentralWidget(central_widget)
 
         # Create individual tabs
         self.create_general_settings_tab()
@@ -80,6 +91,126 @@ class ControlPanel(QMainWindow):
 
         # Store reference in state so other modules can access control panel settings.
         self.state.control_panel = self
+
+    def _create_profile_bar(self):
+        group = QGroupBox("Profile")
+        layout = QHBoxLayout(group)
+        self.profile_combo = QComboBox()
+        self.profile_combo.addItems(list_profiles())
+        self.profile_combo.setCurrentText(self.state.active_profile)
+        self.profile_combo.currentTextChanged.connect(self.switch_profile)
+        layout.addWidget(self.profile_combo, 1)
+        for label, handler in (
+            ("New", self.create_new_profile),
+            ("Duplicate", self.duplicate_profile),
+            ("Rename", self.rename_current_profile),
+            ("Delete", self.delete_current_profile),
+        ):
+            button = QPushButton(label)
+            button.clicked.connect(handler)
+            layout.addWidget(button)
+        return group
+
+    def _profile_name_prompt(self, title, initial=""):
+        return QInputDialog.getText(self, title, "Profile name:", text=initial)
+
+    def _show_profile_error(self, error):
+        QMessageBox.warning(self, "Profile", str(error))
+
+    def _refresh_profile_combo(self, selected):
+        self.profile_combo.blockSignals(True)
+        self.profile_combo.clear()
+        self.profile_combo.addItems(list_profiles())
+        self.profile_combo.setCurrentText(selected)
+        self.profile_combo.blockSignals(False)
+
+    def create_new_profile(self):
+        name, accepted = self._profile_name_prompt("New Profile")
+        if not accepted:
+            return
+        try:
+            create_profile(name)
+            self._refresh_profile_combo(name.strip())
+            self.switch_profile(name.strip())
+        except (OSError, ValueError) as error:
+            self._show_profile_error(error)
+
+    def duplicate_profile(self):
+        current = self.state.active_profile
+        name, accepted = self._profile_name_prompt("Duplicate Profile", f"{current} Copy")
+        if not accepted:
+            return
+        try:
+            from hud_manager import save_hud_positions
+            save_selected_units(self.state)
+            save_hud_positions(self.state)
+            create_profile(name, copy_from=current)
+            self._refresh_profile_combo(name.strip())
+            self.switch_profile(name.strip(), save_current=False)
+        except (OSError, ValueError) as error:
+            self._show_profile_error(error)
+
+    def rename_current_profile(self):
+        current = self.state.active_profile
+        name, accepted = self._profile_name_prompt("Rename Profile", current)
+        if not accepted or name.strip() == current:
+            return
+        try:
+            renamed = rename_profile(current, name)
+            configure_state_profile(self.state, renamed)
+            self._refresh_profile_combo(renamed)
+        except (OSError, ValueError) as error:
+            self._show_profile_error(error)
+
+    def delete_current_profile(self):
+        current = self.state.active_profile
+        answer = QMessageBox.question(
+            self, "Delete Profile", f'Delete profile "{current}" and all of its saved settings?'
+        )
+        if answer != QMessageBox.Yes:
+            return
+        try:
+            replacement = delete_profile(current)
+            self._refresh_profile_combo(replacement)
+            self.switch_profile(replacement, save_current=False)
+        except (OSError, ValueError) as error:
+            self._show_profile_error(error)
+
+    def switch_profile(self, name, save_current=True):
+        if not name or name == self.state.active_profile:
+            return
+        try:
+            from hud_manager import dispose_match_huds, load_hud_positions, save_hud_positions, create_hud_windows
+            if save_current:
+                save_selected_units(self.state)
+                save_hud_positions(self.state)
+            if self.unit_selection_window is not None:
+                self.unit_selection_window.close()
+                self.unit_selection_window = None
+            dispose_match_huds(self.state)
+            activate_profile(name)
+            configure_state_profile(self.state, name)
+            load_hud_positions(self.state)
+            self.state.selected_units_dict = self.load_selected_units()
+            self._rebuild_settings_tabs()
+            self.restore_saved_position()
+            if self.state.players:
+                create_hud_windows(self.state)
+            logging.info("Switched to profile %s", name)
+        except (OSError, ValueError) as error:
+            self._show_profile_error(error)
+            self._refresh_profile_combo(self.state.active_profile)
+
+    def _rebuild_settings_tabs(self):
+        self.tabs.clear()
+        self.default_color_settings = self._capture_default_color_settings()
+        self.create_general_settings_tab()
+        self.create_name_flag_money_tab()
+        self.create_unit_settings_tab()
+        self.create_factory_settings_tab()
+        self.create_superweapon_settings_tab()
+        self.create_scoreboard_settings_tab()
+        self.create_help_tab()
 
     def _apply_dark_theme(self):
         self.setStyleSheet("""
@@ -2280,12 +2411,16 @@ class ControlPanel(QMainWindow):
     def open_unit_selection(self):
         from UnitSelectionWindow import UnitSelectionWindow
         if self.unit_selection_window is None or not self.unit_selection_window.isVisible():
-            self.unit_selection_window = UnitSelectionWindow(self.state.selected_units_dict, self.state.hud_windows)
+            self.unit_selection_window = UnitSelectionWindow(
+                self.state.selected_units_dict,
+                self.state.hud_windows,
+                self.state.UNIT_SELECTION_FILE,
+            )
             logging.info("Opening Unit Selection window")
             self.unit_selection_window.show()
 
     def load_selected_units(self):
-        json_file = 'unit_selection.json'
+        json_file = self.state.UNIT_SELECTION_FILE
         data, changed = load_selected_units_file(json_file)
         if changed:
             save_selected_units_file(data, json_file)
@@ -2745,6 +2880,6 @@ class ControlPanel(QMainWindow):
 
 
 def save_selected_units(state):
-    json_file = 'unit_selection.json'
+    json_file = state.UNIT_SELECTION_FILE
     state.selected_units_dict = save_selected_units_file(state.selected_units_dict, json_file)
     logging.info("Saved selected units.")

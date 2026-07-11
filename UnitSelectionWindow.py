@@ -19,9 +19,10 @@ from selected_units_utils import (
 
 
 class UnitSelectionWindow(QMainWindow):
-    def __init__(self, selected_units_dict, hud_windows, parent=None):
+    def __init__(self, selected_units_dict, hud_windows, json_file='unit_selection.json', parent=None):
         super().__init__(parent)
         self.hud_windows = hud_windows
+        self.json_file = json_file
         normalized_payload, _ = normalize_selected_units_payload(selected_units_dict)
         selected_units_dict.clear()
         selected_units_dict.update(normalized_payload)
@@ -356,11 +357,11 @@ class UnitSelectionWindow(QMainWindow):
     def save_unit_positions(self):
         """Save the current unit selection data to JSON file immediately."""
         try:
-            normalized_payload = save_selected_units_file(self.selected_units_dict)
+            normalized_payload = save_selected_units_file(self.selected_units_dict, self.json_file)
             self.selected_units_dict.clear()
             self.selected_units_dict.update(normalized_payload)
             self.units_data = self.selected_units_dict['selected_units']
-            print("Unit positions saved to unit_selection.json")
+            print(f"Unit positions saved to {self.json_file}")
         except Exception as e:
             print(f"Error saving unit positions: {e}")
 
