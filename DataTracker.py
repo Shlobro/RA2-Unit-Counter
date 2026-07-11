@@ -68,11 +68,17 @@ class ResourceWindow(QMainWindow):
         font_id = QFontDatabase.addApplicationFont("Other/Futured.ttf")
         font_family = QFontDatabase.applicationFontFamilies(font_id)
         if font_family:
-            money_font = QFont(font_family[0], 18, QFont.Bold)
+            default_font_family = font_family[0]
+            money_font = QFont(default_font_family, 18, QFont.Bold)
         else:
-            money_font = QFont("Arial", 18, QFont.Bold)
+            default_font_family = "Arial"
+            money_font = QFont(default_font_family, 18, QFont.Bold)
         power_font = QFont("Impact", 18, QFont.Bold)
-        username_font = QFont("Roboto", 16, QFont.Bold)
+        username_font = QFont(
+            self.hud_positions.get('name_font_family', default_font_family),
+            16,
+            QFont.Bold,
+        )
 
         # Create the resource widgets
         self.name_widget = NameWidget(

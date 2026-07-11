@@ -17,6 +17,40 @@
                     "unit_type": "Tank"
                 }
             }
+        },
+        "Allied": {
+            "Aircraft": {
+                "Intruder": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Aircraft"
+                },
+                "Black Eagle": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Aircraft"
+                }
+            },
+            "Tank": {
+                "Grizzly Battle Tank": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Tank"
+                },
+                "Chrono Miner": {
+                    "selected": true,
+                    "locked": false,
+                    "position": -1,
+                    "faction": "Allied",
+                    "unit_type": "Tank"
+                }
+            }
         }
     }
 }
