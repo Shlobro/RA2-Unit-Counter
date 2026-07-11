@@ -47,6 +47,12 @@ class CounterWidgetBase(QLabel):
         self.size = size
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.text_alignment = 'center'
+
+    def set_text_alignment(self, alignment):
+        alignment = str(alignment or 'center').strip().lower()
+        self.text_alignment = alignment if alignment in ('left', 'center', 'right') else 'center'
+        self.repaint()
 
     def update_size(self, new_size):
         self.size = new_size
@@ -165,7 +171,12 @@ class CounterWidgetNumberOnly(CounterWidgetBase):
         text_width = fm.horizontalAdvance(text)
         text_height = fm.height()
         self.setFixedSize(self.fixed_width, self.fixed_height)
-        x = (self.fixed_width - text_width) / 2
+        if self.text_alignment == 'left':
+            x = 0
+        elif self.text_alignment == 'right':
+            x = self.fixed_width - text_width
+        else:
+            x = (self.fixed_width - text_width) / 2
         y = self.fixed_height - fm.descent()
 
         # draw outline + text
@@ -229,7 +240,13 @@ class CounterWidgetImagesAndNumber(CounterWidgetBase):
         painter.setFont(number_font)
         padding_x = max(5, int(self.size * 0.05))
         padding_y = max(5, int(self.size * 0.05))
-        text_x = padding_x
+        text_width = painter.fontMetrics().horizontalAdvance(str(self.count))
+        if self.text_alignment == 'right':
+            text_x = self.width() - padding_x - text_width
+        elif self.text_alignment == 'center':
+            text_x = (self.width() - text_width) / 2
+        else:
+            text_x = padding_x
         text_y = self.height() - padding_y
         painter.setPen(Qt.black)
         outline_thickness = 2

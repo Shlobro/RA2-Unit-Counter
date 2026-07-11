@@ -101,6 +101,12 @@ class UnitWindowBase(QMainWindow):
         self.set_layout(self.layout_type, self.spacing)
         self.setCentralWidget(self.unit_frame)
         self.load_selected_units_and_create_counters()
+        self.set_number_alignment(get_player_setting(
+            self.hud_pos,
+            self.player_bucket_key,
+            'unit_count_alignment',
+            self.hud_pos.get('unit_count_alignment', 'center'),
+        ))
         self.adjustSize()
         self._move_to_saved_anchor()
         if not self.embedded_mode:
@@ -145,6 +151,12 @@ class UnitWindowBase(QMainWindow):
             unit_info = self.unit_info_by_name.get(unit_name, {})
             unit_type = unit_info.get('unit_type')
             counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
+            counter_widget.set_text_alignment(get_player_setting(
+                self.hud_pos,
+                self.player_bucket_key,
+                'unit_count_alignment',
+                self.hud_pos.get('unit_count_alignment', 'center'),
+            ))
             counter_widget.setToolTip(self.tooltip_text)
             counter_widget.hide()
             self.layout.addWidget(counter_widget)
@@ -296,6 +308,24 @@ class UnitWindowBase(QMainWindow):
 
     def show_context_menu(self, global_pos):
         menu = apply_context_menu_style(QMenu(self))
+        alignment_menu = menu.addMenu("Number Alignment")
+        current_alignment = get_player_setting(
+            self.hud_pos,
+            self.player_bucket_key,
+            'unit_count_alignment',
+            self.hud_pos.get('unit_count_alignment', 'center'),
+        )
+        alignment_actions = {}
+        for value, label in (('left', 'Left'), ('center', 'Center'), ('right', 'Right')):
+            action = alignment_menu.addAction(label)
+            action.setCheckable(True)
+            action.setChecked(current_alignment == value)
+            alignment_actions[action] = value
+        alignment_menu.addSeparator()
+        use_default_alignment = alignment_menu.addAction(
+            f"Use Default ({str(self.hud_pos.get('unit_count_alignment', 'center')).title()})"
+        )
+        menu.addSeparator()
         if self.layout_type == 'Horizontal':
             expand_forward = menu.addAction("Expand Right")
             expand_reverse = menu.addAction("Expand Left")
@@ -324,8 +354,25 @@ class UnitWindowBase(QMainWindow):
             self._set_expansion_direction('forward')
         elif selected_action == expand_reverse:
             self._set_expansion_direction('reverse')
+        elif selected_action in alignment_actions:
+            self.set_number_alignment(alignment_actions[selected_action], persist=True)
+        elif selected_action == use_default_alignment:
+            bucket = self.hud_pos.get(self.player_bucket_key, {})
+            if isinstance(bucket, dict):
+                bucket.pop('unit_count_alignment', None)
+            self.set_number_alignment(self.hud_pos.get('unit_count_alignment', 'center'))
         elif selected_action in (toggle_window_bar, toggle_always_on_top):
             return
+
+    def set_number_alignment(self, alignment, persist=False):
+        alignment = str(alignment or 'center').strip().lower()
+        if alignment not in ('left', 'center', 'right'):
+            alignment = 'center'
+        if persist:
+            set_player_setting(self.hud_pos, self.player_bucket_key, 'unit_count_alignment', alignment)
+        for counter_widget, _ in self.counters.values():
+            if hasattr(counter_widget, 'set_text_alignment'):
+                counter_widget.set_text_alignment(alignment)
 
     def contextMenuEvent(self, event):
         self.show_context_menu(event.globalPos())
@@ -437,6 +484,12 @@ class UnitWindowBase(QMainWindow):
             if unit_name not in self.counters:
                 unit_info = self.unit_info_by_name.get(unit_name, {})
                 counter_widget = self.create_counter_widget(unit_name, 0, unit_type)
+                counter_widget.set_text_alignment(get_player_setting(
+                    self.hud_pos,
+                    self.player_bucket_key,
+                    'unit_count_alignment',
+                    self.hud_pos.get('unit_count_alignment', 'center'),
+                ))
                 counter_widget.setToolTip(self.tooltip_text)
                 counter_widget.hide()  # Will be shown when unit_count > 0
                 self.counters[unit_name] = (counter_widget, unit_type)

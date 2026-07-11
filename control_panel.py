@@ -586,6 +586,7 @@ class ControlPanel(QMainWindow):
         self.layout_combo.setCurrentText(self.state.hud_positions.get('unit_layout', 'Vertical'))
         self.layout_combo.currentTextChanged.connect(self.update_layout)
         general_layout.addRow(layout_label, self.layout_combo)
+        self._add_alignment_control(general_layout, 'unit_count')
 
         distance_images_label = QLabel("Spacing Between Images:")
         self.distance_images_spinbox = QSpinBox()
@@ -867,6 +868,7 @@ class ControlPanel(QMainWindow):
         self.name_size_spinbox.valueChanged.connect(self.update_name_widget_size)
         name_layout.addRow(name_size_label, self.name_size_spinbox)
         name_layout.addRow("Font:", self._create_font_control_row('name_font_combo', 'name_font_family', self.update_name_font))
+        self._add_alignment_control(name_layout, 'name')
         self.name_color_row = self._create_color_control_row(
             'name_color_button',
             self.choose_name_color,
@@ -913,6 +915,7 @@ class ControlPanel(QMainWindow):
         self.money_size_spinbox.valueChanged.connect(self.update_money_widget_size)
         money_layout.addRow(money_size_label, self.money_size_spinbox)
         money_layout.addRow("Font:", self._create_font_control_row('money_font_combo', 'money_font_family', self.update_money_font))
+        self._add_alignment_control(money_layout, 'money')
         self.money_color_row = self._create_color_control_row(
             'money_color_button',
             self.choose_money_color,
@@ -940,6 +943,7 @@ class ControlPanel(QMainWindow):
         self.money_spent_size_spinbox.valueChanged.connect(self.update_money_spent_widget_size)
         money_spent_layout.addRow(money_spent_size_label, self.money_spent_size_spinbox)
         money_spent_layout.addRow("Font:", self._create_font_control_row('money_spent_font_combo', 'money_spent_font_family', self.update_money_spent_font))
+        self._add_alignment_control(money_spent_layout, 'money_spent')
         self.money_spent_color_row = self._create_color_control_row(
             'money_spent_color_button',
             self.choose_money_spent_color,
@@ -968,6 +972,7 @@ class ControlPanel(QMainWindow):
         self.power_size_spinbox.valueChanged.connect(self.update_power_widget_size)
         power_layout.addRow(power_size_label, self.power_size_spinbox)
         power_layout.addRow("Font:", self._create_font_control_row('power_font_combo', 'power_font_family', self.update_power_font))
+        self._add_alignment_control(power_layout, 'power')
         self.power_good_color_row = self._create_color_control_row(
             'power_good_color_button',
             self.choose_power_good_color,
@@ -1004,6 +1009,7 @@ class ControlPanel(QMainWindow):
         game_time_layout.addRow(game_time_size_label, self.game_time_size_spinbox)
 
         game_time_layout.addRow("Font:", self._create_font_control_row('game_time_font_combo', 'game_time_font_family', self._update_game_time_font_family))
+        self._add_alignment_control(game_time_layout, 'game_time')
 
         self.game_time_color_row = self._create_color_control_row(
             'game_time_color_button',
@@ -1033,6 +1039,7 @@ class ControlPanel(QMainWindow):
         self.map_name_size_spinbox.valueChanged.connect(self.update_map_name_widget_size)
         map_name_layout.addRow(map_name_size_label, self.map_name_size_spinbox)
         map_name_layout.addRow("Font:", self._create_font_control_row('map_name_font_combo', 'map_name_font_family', self.update_map_name_font))
+        self._add_alignment_control(map_name_layout, 'map_name')
 
         self.map_name_color_row = self._create_color_control_row(
             'map_name_color_button',
@@ -1048,6 +1055,67 @@ class ControlPanel(QMainWindow):
 
         tab.setLayout(layout)
         self.tabs.addTab(self._wrap_in_scroll_area(tab), "Widgets")
+
+    def _add_alignment_control(self, layout, widget_key):
+        combo = QComboBox()
+        combo.addItems(['Left', 'Center', 'Right'])
+        combo.setCurrentText(str(self.state.hud_positions.get(f'{widget_key}_alignment', 'center')).title())
+        combo.currentTextChanged.connect(
+            lambda value, key=widget_key: self.update_default_widget_alignment(key, value)
+        )
+        setattr(self, f'{widget_key}_alignment_combo', combo)
+        layout.addRow('Default Alignment:', self._with_help(
+            combo,
+            'Default horizontal alignment. Right-click an individual HUD widget to override it for that player.'
+        ))
+
+    def update_default_widget_alignment(self, widget_key, alignment):
+        alignment = str(alignment).strip().lower()
+        if alignment not in ('left', 'center', 'right'):
+            return
+        self.state.hud_positions[f'{widget_key}_alignment'] = alignment
+
+        for combined, resource in self.state.hud_windows:
+            resource_widget = getattr(combined, 'resource_widget', None) if combined is not None else resource
+            widget = getattr(resource_widget, f'{widget_key}_widget', None) if resource_widget is not None else None
+            if widget is not None and hasattr(widget, 'apply_saved_alignment'):
+                widget.apply_saved_alignment()
+
+            if widget_key == 'unit_count' and combined is not None:
+                for unit_widget in (
+                    getattr(combined, 'unit_widget', None),
+                    getattr(combined, 'unit_widget_numbers', None),
+                ):
+                    if unit_widget is not None:
+                        saved = unit_widget.hud_pos.get(unit_widget.player_bucket_key, {}).get(
+                            'unit_count_alignment', alignment
+                        )
+                        unit_widget.set_number_alignment(saved)
+
+        if widget_key == 'unit_count' and not self.state.hud_positions.get('combined_hud', False):
+            for unit_window, _ in self.state.hud_windows:
+                windows = unit_window if isinstance(unit_window, tuple) else (unit_window,)
+                for candidate in windows:
+                    if candidate is not None and hasattr(candidate, 'set_number_alignment'):
+                        saved = candidate.hud_pos.get(candidate.player_bucket_key, {}).get(
+                            'unit_count_alignment', alignment
+                        )
+                        candidate.set_number_alignment(saved)
+
+        if widget_key == 'game_time':
+            widget = getattr(self.state, 'game_time_widget', None)
+            if widget is None:
+                window = getattr(self.state, 'game_time_window', None)
+                widget = getattr(window, 'game_time_widget', None) or getattr(window, 'widget', None)
+        elif widget_key == 'map_name':
+            widget = getattr(self.state, 'map_name_widget', None)
+            if widget is None:
+                window = getattr(self.state, 'map_name_window', None)
+                widget = getattr(window, 'map_name_widget', None) or getattr(window, 'widget', None)
+        else:
+            widget = None
+        if widget is not None and hasattr(widget, 'apply_saved_alignment'):
+            widget.apply_saved_alignment()
 
     def update_distance_between_numbers(self):
         new_distance = self.distance_spinbox.value()

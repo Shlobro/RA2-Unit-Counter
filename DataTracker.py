@@ -121,6 +121,13 @@ class ResourceWindow(QMainWindow):
             hud_positions=self.hud_positions
         )
         self.superweapon_widget.update_size(superweapon_widget_size)
+        for widget_key, widget in (
+            ('name', self.name_widget),
+            ('money', self.money_widget),
+            ('money_spent', self.money_spent_widget),
+            ('power', self.power_widget),
+        ):
+            widget.bind_alignment_settings(self.hud_positions, widget_key, self.player_bucket_key)
         self._apply_widget_tooltips()
         self.apply_all_widget_backgrounds()
 

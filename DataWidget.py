@@ -3,7 +3,7 @@ import logging
 import time
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPixmap, QColor, QPainter, QFont, QFontMetrics
-from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QMenu
 
 from match_timeline import get_match_elapsed_ms
 
@@ -23,6 +23,10 @@ class BaseDataWidget(QWidget):
         self.background_color = QColor(0, 0, 0, 160)
         self.background_width = 0
         self.background_height = 0
+        self.hud_positions = None
+        self.alignment_widget_key = None
+        self.alignment_player_key = None
+        self.text_alignment = 'center'
 
         # Create label for displaying data
         self.data_label = QLabel(str(self.value), self)
@@ -46,6 +50,90 @@ class BaseDataWidget(QWidget):
         self.layout.addWidget(self.data_label, alignment=Qt.AlignVCenter)
         self.layout.setAlignment(Qt.AlignCenter)
 
+    @staticmethod
+    def _normalize_alignment(value):
+        value = str(value or 'center').strip().lower()
+        return value if value in ('left', 'center', 'right') else 'center'
+
+    def bind_alignment_settings(self, hud_positions, widget_key, player_key=None):
+        """Bind this widget to the persisted default/per-player alignment settings."""
+        self.hud_positions = hud_positions
+        self.alignment_widget_key = widget_key
+        self.alignment_player_key = player_key
+        self.apply_saved_alignment()
+
+    def _alignment_overrides(self):
+        if self.hud_positions is None:
+            return {}
+        root_key = 'player_widget_alignments' if self.alignment_player_key else 'global_widget_alignments'
+        root = self.hud_positions.setdefault(root_key, {})
+        if self.alignment_player_key:
+            root = root.setdefault(self.alignment_player_key, {})
+        return root
+
+    def get_default_alignment(self):
+        if self.hud_positions is None or not self.alignment_widget_key:
+            return 'center'
+        return self._normalize_alignment(
+            self.hud_positions.get(f'{self.alignment_widget_key}_alignment', 'center')
+        )
+
+    def get_saved_alignment(self):
+        overrides = self._alignment_overrides()
+        return self._normalize_alignment(
+            overrides.get(self.alignment_widget_key, self.get_default_alignment())
+        )
+
+    def apply_saved_alignment(self):
+        self.set_text_alignment(self.get_saved_alignment())
+
+    def set_text_alignment(self, alignment):
+        self.text_alignment = self._normalize_alignment(alignment)
+        qt_alignment = {
+            'left': Qt.AlignLeft,
+            'center': Qt.AlignHCenter,
+            'right': Qt.AlignRight,
+        }[self.text_alignment] | Qt.AlignVCenter
+        self.data_label.setAlignment(qt_alignment)
+        self.layout.setAlignment(self.data_label, qt_alignment)
+        self.layout.setAlignment(qt_alignment)
+        self.updateGeometry()
+        self.adjust_size()
+
+    def save_text_alignment(self, alignment):
+        if self.hud_positions is None or not self.alignment_widget_key:
+            return
+        self._alignment_overrides()[self.alignment_widget_key] = self._normalize_alignment(alignment)
+        self.set_text_alignment(alignment)
+
+    def reset_text_alignment(self):
+        if self.hud_positions is None or not self.alignment_widget_key:
+            return
+        self._alignment_overrides().pop(self.alignment_widget_key, None)
+        self.apply_saved_alignment()
+
+    def contextMenuEvent(self, event):
+        if self.hud_positions is None or not self.alignment_widget_key:
+            super().contextMenuEvent(event)
+            return
+        from CounterWidget import apply_context_menu_style
+        menu = apply_context_menu_style(QMenu(self))
+        alignment_menu = menu.addMenu('Text Alignment')
+        current = self.get_saved_alignment()
+        for value, label in (('left', 'Left'), ('center', 'Center'), ('right', 'Right')):
+            action = alignment_menu.addAction(label)
+            action.setCheckable(True)
+            action.setChecked(current == value)
+            action.triggered.connect(lambda checked=False, selected=value: self.save_text_alignment(selected))
+        alignment_menu.addSeparator()
+        reset_action = alignment_menu.addAction(f'Use Default ({self.get_default_alignment().title()})')
+        reset_action.triggered.connect(self.reset_text_alignment)
+        workspace = self.window()
+        if hasattr(workspace, 'add_window_context_actions'):
+            menu.addSeparator()
+            workspace.add_window_context_actions(menu)
+        menu.exec(event.globalPos())
+
     def configure_background(self, enabled=False, color=None, width=0, height=0):
         self.background_enabled = bool(enabled)
         if color is not None:
@@ -61,8 +149,8 @@ class BaseDataWidget(QWidget):
         return self.layout.sizeHint()
 
     def _background_size(self, content_width, content_height):
-        if not self.background_enabled:
-            return content_width, content_height
+        # Keep the configured box size even when its background is transparent. This gives
+        # left/center/right alignment a stable frame and prevents names from jumping when text changes.
         return max(content_width, self.background_width), max(content_height, self.background_height)
 
     def paintEvent(self, event):
@@ -542,10 +630,10 @@ class GameTimeWidget(BaseDataWidget):
         )
         self.state = state
         self.hud_positions = hud_positions
+        self.bind_alignment_settings(hud_positions, 'game_time')
         self._timer = QTimer(self)
         self._timer.setInterval(250)
         self._timer.timeout.connect(self.refresh_time)
-        self.data_label.setAlignment(Qt.AlignCenter)
         self.refresh_time()
         self._timer.start()
 
@@ -605,10 +693,10 @@ class MapNameWidget(BaseDataWidget):
             parent=parent,
         )
         self.state = state
+        self.bind_alignment_settings(state.hud_positions, 'map_name')
         self._timer = QTimer(self)
         self._timer.setInterval(500)
         self._timer.timeout.connect(self.refresh_map_name)
-        self.data_label.setAlignment(Qt.AlignCenter)
         self.refresh_map_name()
         self._timer.start()
 
