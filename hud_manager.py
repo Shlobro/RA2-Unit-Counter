@@ -160,6 +160,7 @@ def load_hud_positions(state):
         # --- New defaults for factory windows ---
         'show_factory_window': True,
         'show_factory_queue': True,
+        'show_current_factory_queue_count': False,
         'factory_size': 100,
         'factory_layout': 'Horizontal',  # Could be Vertical as well.
         'show_factory_frames': True,
@@ -389,6 +390,15 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.show_factory_checkbox, 'isChecked', state.hud_positions.get('show_factory_window', True))
                 if value is not None:
                     state.hud_positions['show_factory_window'] = value
+
+            if hasattr(cp, 'show_current_factory_queue_count_checkbox'):
+                value = safe_widget_value(
+                    cp.show_current_factory_queue_count_checkbox,
+                    'isChecked',
+                    state.hud_positions.get('show_current_factory_queue_count', False),
+                )
+                if value is not None:
+                    state.hud_positions['show_current_factory_queue_count'] = value
 
             if hasattr(cp, 'post_game_scoreboard_checkbox'):
                 value = safe_widget_value(cp.post_game_scoreboard_checkbox, 'isChecked', state.hud_positions.get('show_post_game_scoreboard', True))

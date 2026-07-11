@@ -165,7 +165,10 @@ class FactoryPanel(QWidget):
 
             # Update the main factory widget
             status = self.player.factory_status.get(factory_name, {"producing": False})
-            current_widget.set_status(status)
+            current_widget.set_status(
+                status,
+                self.hud_pos.get('show_current_factory_queue_count', False),
+            )
 
             # Remove old queue widgets
             for qw in queue_widgets:

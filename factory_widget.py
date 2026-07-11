@@ -1,6 +1,6 @@
 import logging
-from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont
-from PySide6.QtCore import Qt
+from PySide6.QtGui import QPixmap, QPainter, QPen, QFontDatabase, QFont, QColor
+from PySide6.QtCore import Qt, QRectF
 from CounterWidget import CounterWidgetBase
 from constants import resolve_factory_image_path
 
@@ -21,12 +21,13 @@ class FactoryWidget(CounterWidgetBase):
 
         # We'll store the current displayed text here, e.g. "40%" or "Ready"
         self.progress_text = ""
+        self.queue_count_text = ""
         self.scaled_pixmap = QPixmap()
 
         # Hide if not producing
         self.hide()
 
-    def set_status(self, status):
+    def set_status(self, status, show_current_queue_count=False):
         """
         status typically has:
           - producing: bool
@@ -35,6 +36,7 @@ class FactoryWidget(CounterWidgetBase):
         """
         if not status.get("producing"):
             self.progress_text = ""
+            self.queue_count_text = ""
             self.hide()
             return
 
@@ -42,6 +44,14 @@ class FactoryWidget(CounterWidgetBase):
 
         # 1) Scale the image
         unit_name = status.get("currently_building", "")
+        if show_current_queue_count and "queued_units" in status:
+            queued_units = status.get("queued_units") or []
+            total_in_batch = 1 + sum(
+                1 for queued_unit in queued_units if queued_unit == unit_name
+            )
+            self.queue_count_text = str(total_in_batch) if total_in_batch > 1 else ""
+        else:
+            self.queue_count_text = ""
         prefer_vet = (
             (self.factory.factory_name == "Infantry" and self.player.barracks_infiltrated) or
             (self.factory.factory_name == "Vehicles" and self.player.war_factory_infiltrated)
@@ -127,6 +137,31 @@ class FactoryWidget(CounterWidgetBase):
             # Draw main text in white
             painter.setPen(Qt.white)
             painter.drawText(text_x, text_y, self.progress_text)
+
+        if self.queue_count_text:
+            painter.save()
+            badge_font = QFont(text_font)
+            badge_font.setPointSize(max(7, int(self.size / 9)))
+            painter.setFont(badge_font)
+            fm = painter.fontMetrics()
+            horizontal_padding = max(4, int(self.size / 20))
+            vertical_padding = max(2, int(self.size / 40))
+            badge_width = fm.horizontalAdvance(self.queue_count_text) + horizontal_padding * 2
+            badge_height = fm.height() + vertical_padding * 2
+            edge_margin = max(3, int(self.size / 25))
+            badge_rect = QRectF(
+                self.scaled_pixmap.width() - badge_width - edge_margin,
+                self.scaled_pixmap.height() - badge_height - edge_margin,
+                badge_width,
+                badge_height,
+            )
+
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(QColor(0, 0, 0, 190))
+            painter.drawRoundedRect(badge_rect, badge_height / 3, badge_height / 3)
+            painter.setPen(Qt.white)
+            painter.drawText(badge_rect, Qt.AlignCenter, self.queue_count_text)
+            painter.restore()
 
         # 3) If show_frame, draw a colored rounded frame
         if self.show_frame:

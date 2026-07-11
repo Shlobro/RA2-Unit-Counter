@@ -1254,6 +1254,22 @@ class ControlPanel(QMainWindow):
             "Show what unit is currently being built in each factory.\n"
             "Displays a queue of upcoming units with a progress indicator."))
 
+        self.show_current_factory_queue_count_checkbox = QCheckBox(
+            "Show Current Unit Queue Count"
+        )
+        self.show_current_factory_queue_count_checkbox.setChecked(
+            self.state.hud_positions.get('show_current_factory_queue_count', False)
+        )
+        self.show_current_factory_queue_count_checkbox.stateChanged.connect(
+            self.toggle_current_factory_queue_count
+        )
+        layout.addRow(self._with_help(
+            self.show_current_factory_queue_count_checkbox,
+            "Show the total number of the current unit being produced, including the active one.\n"
+            "The badge is hidden when only one is being produced.\n"
+            "The number appears near the bottom of its main factory cameo."
+        ))
+
 
         self.show_factory_checkbox = QCheckBox("Show Factory Window")
         show_factory_window = self.state.hud_positions.get("show_factory_window", True)
@@ -1342,6 +1358,20 @@ class ControlPanel(QMainWindow):
         # Do a full recreation in both modes to fix spacing issues (same approach as other toggles)
         from hud_manager import create_hud_windows
         create_hud_windows(self.state)
+
+    def toggle_current_factory_queue_count(self, state_val):
+        show_count = (state_val != 0)
+        self.state.hud_positions['show_current_factory_queue_count'] = show_count
+        logging.info(f"Set show_current_factory_queue_count to {show_count}")
+
+        if not self.state.hud_positions.get('combined_hud', False):
+            for factory_win in getattr(self.state, 'factory_windows', []):
+                factory_win.update_labels()
+        else:
+            for combined_window, _ in self.state.hud_windows:
+                factory_panel = getattr(combined_window, 'factory_panel', None)
+                if factory_panel:
+                    factory_panel.update_labels()
 
     def toggle_factory_window(self, state_val):
         show = (state_val != 0)
