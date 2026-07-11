@@ -537,13 +537,15 @@ class UnitWindowWithImages(UnitWindowBase):
         return 'unit_counter_combined'
     def create_counter_widget(self, unit_name, unit_count, unit_type):
         unit_image_path = name_to_path(get_display_image_name(unit_name))
-        return CounterWidgetImagesAndNumber(
+        widget = CounterWidgetImagesAndNumber(
             count=unit_count,
             image_path=unit_image_path,
             color=self.player.color,
             size=self.size,
             show_frame=self.show_unit_frames
         )
+        widget.configure_outline(self.hud_pos.get('unit_count_outline_enabled', False), self.hud_pos.get('unit_count_outline_color', '#000000'), self.hud_pos.get('unit_count_outline_thickness', 2))
+        return widget
     def get_unit_count(self, unit_type, unit_name):
         return super().get_unit_count(unit_type, unit_name)
 
@@ -597,11 +599,13 @@ class UnitWindowNumbersOnly(UnitWindowBase):
     def get_hud_type(self):
         return 'unit_counter_numbers'
     def create_counter_widget(self, unit_name, unit_count, unit_type):
-        return CounterWidgetNumberOnly(
+        widget = CounterWidgetNumberOnly(
             count=unit_count,
             color=self.player.color,
             size=self.size
         )
+        widget.configure_outline(self.hud_pos.get('unit_count_outline_enabled', False), self.hud_pos.get('unit_count_outline_color', '#000000'), self.hud_pos.get('unit_count_outline_thickness', 2))
+        return widget
     def update_spacing(self, new_spacing):
         self.layout.setSpacing(new_spacing)
         self.updateGeometry()

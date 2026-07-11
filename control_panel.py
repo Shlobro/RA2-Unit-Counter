@@ -2,7 +2,7 @@ import json
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QTabWidget, QFormLayout, QGroupBox,
     QLabel, QSpinBox, QComboBox, QCheckBox, QPushButton, QHBoxLayout, QLineEdit, QFileDialog, QMessageBox,
-    QColorDialog, QFontComboBox, QScrollArea, QSizePolicy, QTextEdit
+    QColorDialog, QFontComboBox, QScrollArea, QSizePolicy, QTextEdit, QApplication
 )
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QFont, QFontDatabase
@@ -587,6 +587,7 @@ class ControlPanel(QMainWindow):
         self.layout_combo.currentTextChanged.connect(self.update_layout)
         general_layout.addRow(layout_label, self.layout_combo)
         self._add_alignment_control(general_layout, 'unit_count')
+        self._add_outline_controls(general_layout, 'unit_count')
 
         distance_images_label = QLabel("Spacing Between Images:")
         self.distance_images_spinbox = QSpinBox()
@@ -876,6 +877,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_name_color_button()
         name_layout.addRow("Name Color:", self.name_color_row)
+        self._add_outline_controls(name_layout, 'name')
         self._add_background_controls(name_layout, 'name')
         name_group.setLayout(name_layout)
         layout.addWidget(name_group)
@@ -923,6 +925,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_money_color_button()
         money_layout.addRow("Money Color:", self.money_color_row)
+        self._add_outline_controls(money_layout, 'money')
         self._add_background_controls(money_layout, 'money')
         money_group.setLayout(money_layout)
         layout.addWidget(money_group)
@@ -951,6 +954,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_money_spent_color_button()
         money_spent_layout.addRow("Money Spent Color:", self.money_spent_color_row)
+        self._add_outline_controls(money_spent_layout, 'money_spent')
         self._add_background_controls(money_spent_layout, 'money_spent')
         money_spent_group.setLayout(money_spent_layout)
         layout.addWidget(money_spent_group)
@@ -988,6 +992,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_power_low_color_button()
         power_layout.addRow("Low Power Color:", self.power_low_color_row)
+        self._add_outline_controls(power_layout, 'power')
         self._add_background_controls(power_layout, 'power')
         power_group.setLayout(power_layout)
         layout.addWidget(power_group)
@@ -1018,6 +1023,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_game_time_color_button()
         game_time_layout.addRow("Game Time Color:", self.game_time_color_row)
+        self._add_outline_controls(game_time_layout, 'game_time')
         self._add_background_controls(game_time_layout, 'game_time')
 
         game_time_group.setLayout(game_time_layout)
@@ -1048,6 +1054,7 @@ class ControlPanel(QMainWindow):
         )
         self._set_map_name_color_button()
         map_name_layout.addRow(QLabel("Map Name Color:"), self.map_name_color_row)
+        self._add_outline_controls(map_name_layout, 'map_name')
         self._add_background_controls(map_name_layout, 'map_name')
 
         map_name_group.setLayout(map_name_layout)
@@ -1055,6 +1062,81 @@ class ControlPanel(QMainWindow):
 
         tab.setLayout(layout)
         self.tabs.addTab(self._wrap_in_scroll_area(tab), "Widgets")
+
+    def _add_outline_controls(self, layout, widget_key):
+        checkbox = QCheckBox("Show Outline")
+        checkbox.setChecked(self.state.hud_positions.get(f'{widget_key}_outline_enabled', False))
+        checkbox.stateChanged.connect(lambda value, key=widget_key: self._toggle_widget_outline(key, value))
+        setattr(self, f'{widget_key}_outline_checkbox', checkbox)
+        layout.addRow(self._with_help(checkbox, "Draw an outline around this widget's text."))
+
+        thickness = QSpinBox()
+        thickness.setRange(1, 10)
+        thickness.setValue(self.state.hud_positions.get(f'{widget_key}_outline_thickness', 2))
+        thickness.valueChanged.connect(lambda value, key=widget_key: self._update_widget_outline_thickness(key, value))
+        setattr(self, f'{widget_key}_outline_thickness_spinbox', thickness)
+        layout.addRow("Outline Thickness:", thickness)
+
+        row = self._create_color_control_row(
+            f'{widget_key}_outline_color_button',
+            lambda key=widget_key: self._choose_widget_outline_color(key),
+            lambda key=widget_key: self._reset_widget_outline_color(key),
+        )
+        self._set_widget_outline_color_button(widget_key)
+        layout.addRow("Outline Color:", row)
+
+    def _set_widget_outline_color_button(self, widget_key):
+        button = getattr(self, f'{widget_key}_outline_color_button')
+        value = self.state.hud_positions.get(f'{widget_key}_outline_color', '#000000')
+        self._set_color_button_state(
+            button, value,
+            'Default (Black)',
+            value.upper() != '#000000',
+        )
+
+    def _choose_widget_outline_color(self, widget_key):
+        initial = QColor(self.state.hud_positions.get(f'{widget_key}_outline_color', '#000000'))
+        color = QColorDialog.getColor(initial, self, "Choose Text Outline Color", QColorDialog.ShowAlphaChannel)
+        if color.isValid():
+            self.state.hud_positions[f'{widget_key}_outline_color'] = self._color_to_storage(color)
+            self._set_widget_outline_color_button(widget_key)
+            self._apply_widget_outline_settings(widget_key)
+
+    def _reset_widget_outline_color(self, widget_key):
+        self.state.hud_positions[f'{widget_key}_outline_color'] = '#000000'
+        self._set_widget_outline_color_button(widget_key)
+        self._apply_widget_outline_settings(widget_key)
+
+    def _toggle_widget_outline(self, widget_key, state_val):
+        self.state.hud_positions[f'{widget_key}_outline_enabled'] = state_val == 2
+        self._apply_widget_outline_settings(widget_key)
+
+    def _update_widget_outline_thickness(self, widget_key, value):
+        self.state.hud_positions[f'{widget_key}_outline_thickness'] = int(value)
+        self._apply_widget_outline_settings(widget_key)
+
+    def _apply_widget_outline_settings(self, widget_key):
+        enabled = self.state.hud_positions.get(f'{widget_key}_outline_enabled', False)
+        color = self.state.hud_positions.get(f'{widget_key}_outline_color', '#000000')
+        thickness = self.state.hud_positions.get(f'{widget_key}_outline_thickness', 2)
+        from DataWidget import BaseDataWidget, GameTimeWidget, MapNameWidget
+        from CounterWidget import CounterWidgetImagesAndNumber, CounterWidgetNumberOnly
+        from factory_widget import FactoryWidget
+        from superweapon_widget import SuperweaponWidget
+        counter_types = {
+            'unit_count': (CounterWidgetImagesAndNumber, CounterWidgetNumberOnly),
+            'factory': (FactoryWidget,),
+            'superweapon': (SuperweaponWidget,),
+        }
+        data_types = {'game_time': GameTimeWidget, 'map_name': MapNameWidget}
+        for window in QApplication.topLevelWidgets():
+            widgets = [w for w in window.findChildren(BaseDataWidget) if w.alignment_widget_key == widget_key]
+            if widget_key in data_types:
+                widgets.extend(window.findChildren(data_types[widget_key]))
+            for widget_type in counter_types.get(widget_key, ()):
+                widgets.extend(window.findChildren(widget_type))
+            for widget in widgets:
+                widget.configure_outline(enabled, color, thickness)
 
     def _add_alignment_control(self, layout, widget_key):
         combo = QComboBox()
@@ -1207,6 +1289,7 @@ class ControlPanel(QMainWindow):
         self.factory_layout_combo.setCurrentText(factory_layout_type)
         self.factory_layout_combo.currentTextChanged.connect(self.update_factory_layout)
         layout.addRow(factory_layout_label, self.factory_layout_combo)
+        self._add_outline_controls(layout, 'factory')
 
         tab.setLayout(layout)
         self.tabs.addTab(self._wrap_in_scroll_area(tab), "Factory")
@@ -1246,6 +1329,7 @@ class ControlPanel(QMainWindow):
         self.superweapon_layout_combo.setCurrentText(superweapon_layout_type)
         self.superweapon_layout_combo.currentTextChanged.connect(self.update_superweapon_layout)
         layout.addRow(superweapon_layout_label, self.superweapon_layout_combo)
+        self._add_outline_controls(layout, 'superweapon')
 
         tab.setLayout(layout)
         self.tabs.addTab(self._wrap_in_scroll_area(tab), "Superweapons")

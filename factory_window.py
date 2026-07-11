@@ -148,6 +148,7 @@ class FactoryWindow(QMainWindow):
                 show_frame=show_frames,
                 parent=container
             )
+            current_widget.configure_outline(self.hud_pos.get('factory_outline_enabled', False), self.hud_pos.get('factory_outline_color', '#000000'), self.hud_pos.get('factory_outline_thickness', 2))
             container.setToolTip(self.tooltip_text)
             current_widget.setToolTip(self.tooltip_text)
             sub_layout.addWidget(current_widget)

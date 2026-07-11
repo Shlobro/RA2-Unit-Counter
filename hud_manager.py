@@ -186,6 +186,10 @@ def load_hud_positions(state):
     }
     for key, value in defaults.items():
         state.hud_positions.setdefault(key, value)
+    for outline_key in ('name', 'money', 'money_spent', 'power', 'game_time', 'map_name', 'unit_count', 'factory', 'superweapon'):
+        state.hud_positions.setdefault(f'{outline_key}_outline_enabled', False)
+        state.hud_positions.setdefault(f'{outline_key}_outline_thickness', 2)
+        state.hud_positions.setdefault(f'{outline_key}_outline_color', '#000000')
     for prefix, config in background_defaults.items():
         state.hud_positions.setdefault(f'{prefix}_background_enabled', config['enabled'])
         state.hud_positions.setdefault(f'{prefix}_background_color', config['color'])
@@ -229,6 +233,24 @@ def save_hud_positions(state):
                 value = safe_widget_value(cp.number_size_spinbox, 'value', state.hud_positions.get('number_size', 75))
                 if value is not None:
                     state.hud_positions['number_size'] = value
+
+            for outline_key in ('name', 'money', 'money_spent', 'power', 'game_time', 'map_name', 'unit_count', 'factory', 'superweapon'):
+                checkbox = getattr(cp, f'{outline_key}_outline_checkbox', None)
+                if checkbox is not None:
+                    state.hud_positions[f'{outline_key}_outline_enabled'] = safe_widget_value(
+                        checkbox, 'isChecked', state.hud_positions.get(f'{outline_key}_outline_enabled', False)
+                    )
+                spinbox = getattr(cp, f'{outline_key}_outline_thickness_spinbox', None)
+                if spinbox is not None:
+                    state.hud_positions[f'{outline_key}_outline_thickness'] = safe_widget_value(
+                        spinbox, 'value', state.hud_positions.get(f'{outline_key}_outline_thickness', 2)
+                    )
+                button = getattr(cp, f'{outline_key}_outline_color_button', None)
+                if button is not None:
+                    state.hud_positions[f'{outline_key}_outline_color'] = (
+                        button.property('selected_color')
+                        or state.hud_positions.get(f'{outline_key}_outline_color', '#000000')
+                    )
                     
             if hasattr(cp, 'distance_spinbox'):
                 value = safe_widget_value(cp.distance_spinbox, 'value', state.hud_positions.get('distance_between_numbers', 0))
@@ -649,6 +671,11 @@ def create_hud_windows(state):
                 font=game_time_font,
                 parent=state.single_window_workspace.canvas,
             )
+            state.game_time_widget.configure_outline(
+                state.hud_positions.get('game_time_outline_enabled', False),
+                state.hud_positions.get('game_time_outline_color', '#000000'),
+                state.hud_positions.get('game_time_outline_thickness', 2),
+            )
             state.game_time_widget.configure_background(
                 enabled=state.hud_positions.get('game_time_background_enabled', False),
                 color=state.hud_positions.get('game_time_background_color', '#A0000000'),
@@ -672,6 +699,11 @@ def create_hud_windows(state):
                 size=state.hud_positions.get('map_name_widget_size', 50),
                 font=QFont(state.hud_positions.get('map_name_font_family', 'Arial'), 16, QFont.Bold),
                 parent=state.single_window_workspace.canvas,
+            )
+            state.map_name_widget.configure_outline(
+                state.hud_positions.get('map_name_outline_enabled', False),
+                state.hud_positions.get('map_name_outline_color', '#000000'),
+                state.hud_positions.get('map_name_outline_thickness', 2),
             )
             state.map_name_widget.configure_background(
                 enabled=state.hud_positions.get('map_name_background_enabled', False),

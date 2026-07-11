@@ -75,13 +75,12 @@ class SuperweaponWidget(CounterWidgetBase):
             text_x = (pix_w - text_w) / 2
             text_y = (pix_h - text_h) / 2 + fm.ascent()
 
-            painter.setPen(Qt.black)
-            outline_thickness = 2
-            for dx in range(-outline_thickness, outline_thickness + 1):
-                for dy in range(-outline_thickness, outline_thickness + 1):
-                    if dx == 0 and dy == 0:
-                        continue
-                    painter.drawText(text_x + dx, text_y + dy, self.progress_text)
+            if self.outline_enabled:
+                painter.setPen(self.outline_color)
+                for dx in range(-self.outline_thickness, self.outline_thickness + 1):
+                    for dy in range(-self.outline_thickness, self.outline_thickness + 1):
+                        if dx * dx + dy * dy <= self.outline_thickness ** 2 and (dx or dy):
+                            painter.drawText(text_x + dx, text_y + dy, self.progress_text)
 
             painter.setPen(Qt.white)
             painter.drawText(text_x, text_y, self.progress_text)

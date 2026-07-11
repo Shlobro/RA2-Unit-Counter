@@ -136,6 +136,7 @@ class FactoryPanel(QWidget):
                 show_frame=show_frames,
                 parent=container
             )
+            current_widget.configure_outline(self.hud_pos.get('factory_outline_enabled', False), self.hud_pos.get('factory_outline_color', '#000000'), self.hud_pos.get('factory_outline_thickness', 2))
             sub_layout.addWidget(current_widget)
 
             # 2) Queue widgets will be added dynamically in update_labels

@@ -212,6 +212,7 @@ class SuperweaponTimerPanel(QWidget):
                 show_frame=show_frames,
                 parent=self,
             )
+            widget.configure_outline(self.hud_positions.get('superweapon_outline_enabled', False), self.hud_positions.get('superweapon_outline_color', '#000000'), self.hud_positions.get('superweapon_outline_thickness', 2))
             widget.setToolTip(f"{self.tooltip_text}\n{name}")
             self.main_layout.addWidget(widget)
             self.widgets[name] = widget

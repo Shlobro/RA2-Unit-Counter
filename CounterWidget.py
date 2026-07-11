@@ -48,6 +48,17 @@ class CounterWidgetBase(QLabel):
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.text_alignment = 'center'
+        self.outline_enabled = False
+        self.outline_color = QColor(Qt.black)
+        self.outline_thickness = 2
+
+    def configure_outline(self, enabled=False, color='#000000', thickness=2):
+        self.outline_enabled = bool(enabled)
+        resolved = QColor(color)
+        if resolved.isValid():
+            self.outline_color = resolved
+        self.outline_thickness = max(1, int(thickness))
+        self.repaint()
 
     def set_text_alignment(self, alignment):
         alignment = str(alignment or 'center').strip().lower()
@@ -180,11 +191,12 @@ class CounterWidgetNumberOnly(CounterWidgetBase):
         y = self.fixed_height - fm.descent()
 
         # draw outline + text
-        painter.setPen(Qt.black)
-        for dx in (-1, 0, 1):
-            for dy in (-1, 0, 1):
-                if dx or dy:
-                    painter.drawText(int(x+dx), int(y+dy), text)
+        if self.outline_enabled:
+            painter.setPen(self.outline_color)
+            for dx in range(-self.outline_thickness, self.outline_thickness + 1):
+                for dy in range(-self.outline_thickness, self.outline_thickness + 1):
+                    if dx * dx + dy * dy <= self.outline_thickness ** 2 and (dx or dy):
+                        painter.drawText(int(x+dx), int(y+dy), text)
         painter.setPen(Qt.white)
         painter.drawText(int(x), int(y), text)
 
@@ -248,12 +260,12 @@ class CounterWidgetImagesAndNumber(CounterWidgetBase):
         else:
             text_x = padding_x
         text_y = self.height() - padding_y
-        painter.setPen(Qt.black)
-        outline_thickness = 2
-        for dx in range(-outline_thickness, outline_thickness + 1):
-            for dy in range(-outline_thickness, outline_thickness + 1):
-                if dx != 0 or dy != 0:
-                    painter.drawText(text_x + dx, text_y + dy, str(self.count))
+        if self.outline_enabled:
+            painter.setPen(self.outline_color)
+            for dx in range(-self.outline_thickness, self.outline_thickness + 1):
+                for dy in range(-self.outline_thickness, self.outline_thickness + 1):
+                    if dx * dx + dy * dy <= self.outline_thickness ** 2 and (dx or dy):
+                        painter.drawText(text_x + dx, text_y + dy, str(self.count))
         painter.setPen(Qt.white)
         painter.drawText(text_x, text_y, str(self.count))
         if self.show_frame:

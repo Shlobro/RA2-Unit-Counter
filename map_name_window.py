@@ -22,6 +22,11 @@ class MapNameWindow(QWidget):
             size=self.hud_positions.get("map_name_widget_size", 50),
             font=QFont(self.hud_positions.get("map_name_font_family", font.family()), 16, QFont.Bold),
         )
+        self.map_name_widget.configure_outline(
+            self.hud_positions.get('map_name_outline_enabled', False),
+            self.hud_positions.get('map_name_outline_color', '#000000'),
+            self.hud_positions.get('map_name_outline_thickness', 2),
+        )
         self.map_name_widget.setToolTip("Current map name")
         self._apply_background_settings()
 

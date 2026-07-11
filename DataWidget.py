@@ -7,6 +7,50 @@ from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout, QMenu
 
 from match_timeline import get_match_elapsed_ms
 
+class OutlinedLabel(QLabel):
+    """A QLabel-compatible text renderer with an optional solid outline."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text_color = QColor(Qt.black)
+        self.outline_enabled = False
+        self.outline_color = QColor(Qt.black)
+        self.outline_thickness = 2
+
+    def configure_text(self, text_color=None, outline_enabled=None, outline_color=None, outline_thickness=None):
+        if text_color is not None:
+            color = QColor(text_color)
+            if color.isValid():
+                self.text_color = color
+        if outline_enabled is not None:
+            self.outline_enabled = bool(outline_enabled)
+        if outline_color is not None:
+            color = QColor(outline_color)
+            if color.isValid():
+                self.outline_color = color
+        if outline_thickness is not None:
+            self.outline_thickness = max(1, int(outline_thickness))
+        padding = self.outline_thickness if self.outline_enabled else 0
+        self.setContentsMargins(padding, padding, padding, padding)
+        self.updateGeometry()
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing, True)
+        painter.setFont(self.font())
+        flags = int(self.alignment()) | Qt.TextSingleLine
+        text_rect = self.contentsRect()
+        if self.outline_enabled:
+            painter.setPen(self.outline_color)
+            thickness = self.outline_thickness
+            for dx in range(-thickness, thickness + 1):
+                for dy in range(-thickness, thickness + 1):
+                    if dx * dx + dy * dy <= thickness * thickness and (dx or dy):
+                        painter.drawText(text_rect.translated(dx, dy), flags, self.text())
+        painter.setPen(self.text_color)
+        painter.drawText(text_rect, flags, self.text())
+
+
 class BaseDataWidget(QWidget):
     def __init__(self, data=None, text_color=Qt.black, size=16, font=None, use_fixed_width=False, max_digits=10, parent=None):
         """
@@ -29,7 +73,7 @@ class BaseDataWidget(QWidget):
         self.text_alignment = 'center'
 
         # Create label for displaying data
-        self.data_label = QLabel(str(self.value), self)
+        self.data_label = OutlinedLabel(str(self.value), self)
         if self.use_fixed_width:
             self.data_label.setAlignment(Qt.AlignCenter)
         try:
@@ -60,7 +104,23 @@ class BaseDataWidget(QWidget):
         self.hud_positions = hud_positions
         self.alignment_widget_key = widget_key
         self.alignment_player_key = player_key
+        self.configure_outline(
+            hud_positions.get(f'{widget_key}_outline_enabled', False),
+            hud_positions.get(f'{widget_key}_outline_color', '#000000'),
+            hud_positions.get(f'{widget_key}_outline_thickness', 2),
+        )
         self.apply_saved_alignment()
+
+    def configure_outline(self, enabled=False, color='#000000', thickness=2):
+        self.data_label.configure_text(
+            text_color=self.text_color,
+            outline_enabled=enabled,
+            outline_color=color,
+            outline_thickness=thickness,
+        )
+        self.data_label.adjustSize()
+        if hasattr(self, 'layout'):
+            self.adjust_size()
 
     def _alignment_overrides(self):
         if self.hud_positions is None:
@@ -175,8 +235,8 @@ class BaseDataWidget(QWidget):
             self.fixed_width = 50
 
     def _apply_label_style(self):
-        text_color = QColor(self.text_color).name()
-        self.data_label.setStyleSheet(f"color: {text_color}; margin-top: -2px;")
+        self.data_label.configure_text(text_color=self.text_color)
+        self.data_label.setStyleSheet("margin-top: -2px;")
 
     def update_font_size(self):
         """

@@ -27,6 +27,11 @@ class GameTimeWindow(QWidget):
             size=self.hud_positions.get("game_time_widget_size", 50),
             font=font,
         )
+        self.game_time_widget.configure_outline(
+            self.hud_positions.get('game_time_outline_enabled', False),
+            self.hud_positions.get('game_time_outline_color', '#000000'),
+            self.hud_positions.get('game_time_outline_thickness', 2),
+        )
         self.game_time_widget.setToolTip("Game time")
         self._apply_background_settings()
 
